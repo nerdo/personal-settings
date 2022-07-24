@@ -3,7 +3,7 @@ My tmux configuration
 
 ## Usage
 ```
-ln -s path/to/tmux-configuration/tmux.conf ~/.tmux.conf
+ln -s ~/settings/tmux-configuration/tmux.conf ~/.tmux.conf
 ```
 
 ## Linux
