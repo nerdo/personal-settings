@@ -1,9 +1,6 @@
-# tmux-configuration
-My tmux configuration
-
 ## Usage
 ```
-ln -s ~/settings/tmux-configuration/tmux.conf ~/.tmux.conf
+ln -s ~/settings/tmux/tmux.conf ~/.tmux.conf
 ```
 
 ## Linux
