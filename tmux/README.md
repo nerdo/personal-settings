@@ -1,6 +1,6 @@
 ## Usage
 ```
-ln -s ~/settings/tmux/tmux.conf ~/.tmux.conf
+ln -s ~/personal/settings/tmux/tmux.conf ~/.tmux.conf
 ```
 
 ## Linux
