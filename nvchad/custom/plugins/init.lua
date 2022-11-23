@@ -1,4 +1,6 @@
 return {
+	["junegunn/vim-easy-align"] = {},
+
 	["NvChad/ui"] = {
 		override_options = {
 			statusline = {
