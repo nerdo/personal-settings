@@ -44,9 +44,15 @@ M.basic = {
 		-- greatest remap evar! https://youtu.be/qZO9A5F6BZs?t=356
 		-- preserves the register when using this keymap to paste
 		[",p"] = { '"_dP' },
+
+		-- start live easy align
+		[",a"] = { ":LiveEasyAlign<CR>" },
 	},
 
 	n = {
+		-- start live easy align
+		[",a"] = { ":LiveEasyAlign<CR>" },
+
 		["<leader>i"] = {
 			function()
 				require("lsp-inlayhints").toggle()
