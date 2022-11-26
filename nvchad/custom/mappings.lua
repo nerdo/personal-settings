@@ -67,6 +67,10 @@ M.basic = {
 		["!"] = { ";", "next horizontal match" },
 
 		-- simpler window navigation
+		[",|"] =  {"<C-w>v"},
+		[",-"] =  {"<C-w>s"},
+		["<C-w>|"] =  {"<C-w>v"},
+		["<C-w>-"] =  {"<C-w>s"},
 		["<C-h>"] = { "<C-w>h" },
 		["<C-j>"] = { "<C-w>j" },
 		["<C-k>"] = { "<C-w>k" },
