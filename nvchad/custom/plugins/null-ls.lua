@@ -20,6 +20,11 @@ local sources = {
 	b.formatting.stylua,
 
 	-- PHP
+	b.diagnostics.php,
+	b.diagnostics.phpcs.with({
+		extra_args = { "--standard=PSR12" },
+	}),
+
 	-- b.formatting.phpcbf.with({
 	-- 	prefer_local = "./vendor/bin",
 	-- 	condition = function(utils)
@@ -38,6 +43,9 @@ local sources = {
 			return has_pint_installed_locally
 		end,
 	}),
+
+	-- Rust
+	b.formatting.rustfmt,
 }
 
 null_ls.setup({
