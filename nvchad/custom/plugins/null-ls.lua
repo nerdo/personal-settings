@@ -8,9 +8,9 @@ local b = null_ls.builtins
 
 local sources = {
 	-- webdev stuff
-	b.diagnostics.eslint.with({
-		prefer_local = "node_modules/.bin",
-	}),
+	-- b.diagnostics.eslint.with({
+	-- 	prefer_local = "node_modules/.bin",
+	-- }),
 
 	b.formatting.prettier.with({
 		prefer_local = "node_modules/.bin",
