@@ -30,12 +30,6 @@ M.disabled = {
 		-- nvterm
 		["<leader>h"] = "",
 		["<leader>v"] = "",
-		["<M-i>"] = "",
-	},
-
-	t = {
-		-- nvterm
-		["<M-i>"] = "",
 	},
 }
 
@@ -235,56 +229,6 @@ M.git = {
 
 		["<leader>gN"] = { "<cmd> Gitsigns prev_hunk <CR>", "  git prev hunk" },
 		[";k"] = { "<cmd> Gitsigns prev_hunk <CR>", "  git prev hunk" },
-	},
-}
-
-M.nvterm = {
-	t = {
-		-- toggle in terminal mode
-		["<M-f>"] = {
-			function()
-				require("nvterm.terminal").toggle("float")
-			end,
-			"toggle floating term",
-		},
-
-		["<M-h>"] = {
-			function()
-				require("nvterm.terminal").toggle("horizontal")
-			end,
-			"toggle horizontal term",
-		},
-
-		["<M-v>"] = {
-			function()
-				require("nvterm.terminal").toggle("vertical")
-			end,
-			"toggle vertical term",
-		},
-	},
-
-	n = {
-		-- toggle in normal mode
-		["<M-f>"] = {
-			function()
-				require("nvterm.terminal").toggle("float")
-			end,
-			"toggle floating term",
-		},
-
-		["<M-h>"] = {
-			function()
-				require("nvterm.terminal").toggle("horizontal")
-			end,
-			"toggle horizontal term",
-		},
-
-		["<M-v>"] = {
-			function()
-				require("nvterm.terminal").toggle("vertical")
-			end,
-			"toggle vertical term",
-		},
 	},
 }
 
