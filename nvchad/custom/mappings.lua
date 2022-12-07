@@ -232,6 +232,52 @@ M.git = {
 	},
 }
 
+M.nvterm = {
+	t = {
+		-- toggle in terminal mode
+		["<A-o>"] = {
+			function()
+				require("nvterm.terminal").toggle("float")
+			end,
+			"toggle floating term",
+		},
+		["<M-i>"] = {
+			function()
+				require("nvterm.terminal").toggle("float")
+			end,
+			"toggle floating term",
+		},
+		["<M-o>"] = {
+			function()
+				require("nvterm.terminal").toggle("float")
+			end,
+			"toggle floating term",
+		},
+	},
+
+	n = {
+		-- toggle in normal mode
+		["<A-o>"] = {
+			function()
+				require("nvterm.terminal").toggle("float")
+			end,
+			"toggle floating term",
+		},
+		["<M-i>"] = {
+			function()
+				require("nvterm.terminal").toggle("float")
+			end,
+			"toggle floating term",
+		},
+		["<M-o>"] = {
+			function()
+				require("nvterm.terminal").toggle("float")
+			end,
+			"toggle floating term",
+		},
+	},
+}
+
 M.neotest = {
 	n = {
 		["<M-t>"] = {
