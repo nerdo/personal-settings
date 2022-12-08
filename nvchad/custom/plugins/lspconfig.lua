@@ -85,6 +85,16 @@ local server_options = {
 			},
 		},
 	},
+
+	rust_analyzer = {
+		settings = {
+			["rust-analyzer"] = {
+				checkOnSave = {
+					command = "clippy",
+				},
+			},
+		},
+	},
 }
 
 for _, lsp in ipairs(servers) do

@@ -17,12 +17,19 @@ return {
 		end,
 	},
 
-	["akinsho/neotest-go"] = {},
-	["haydenmeade/neotest-jest"] = {},
-	["marilari88/neotest-vitest"] = {},
-	["olimorris/neotest-phpunit"] = {},
-	["rouge8/neotest-rust"] = {},
 	["nvim-neotest/neotest"] = {
+		requires = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+			"antoinemadec/FixCursorHold.nvim",
+
+			-- not actually required, but might since they are adapters for neotest, including them as such...
+			"akinsho/neotest-go",
+			"haydenmeade/neotest-jest",
+			"marilari88/neotest-vitest",
+			"olimorris/neotest-phpunit",
+			"rouge8/neotest-rust",
+		},
 		config = function()
 			require("custom.plugins.neotest")
 		end,
