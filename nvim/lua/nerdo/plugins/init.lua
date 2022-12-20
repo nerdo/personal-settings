@@ -69,4 +69,7 @@ return function(use)
 
   -- Comment out lines with keymap.
   use 'numToStr/Comment.nvim'
+
+  -- For formatting code.
+  use "jose-elias-alvarez/null-ls.nvim"
 end
