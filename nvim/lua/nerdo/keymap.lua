@@ -11,8 +11,8 @@ vim.keymap.set("n", "<leader>;", ":w<CR>")
 vim.keymap.set("n", "<leader>.", ":bd<CR>")
 
 -- Save/quit.
-vim.keymap.set("n", "<leader>q", ":q")
-vim.keymap.set("n", "<leader>x", ":x")
+vim.keymap.set("n", "<leader>q", ":q<CR>")
+vim.keymap.set("n", "<leader>x", ":x<CR>")
 
 -- Tab through buffers.
 vim.keymap.set("n", "<Tab>", ":bn<CR>")
