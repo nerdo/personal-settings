@@ -7,3 +7,6 @@ vim.opt.relativenumber = true
 
 -- Turn off line wrapping
 vim.opt.wrap = false
+
+-- Set line numbers in netrw
+vim.g.netrw_bufsettings = 'number relativenumber nowrap'
