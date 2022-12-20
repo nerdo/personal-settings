@@ -16,5 +16,5 @@ return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
 
   -- Declare the rest of the plugins
-  require "nerdo.plugins"
+  require("nerdo.plugins")(use)
 end)
