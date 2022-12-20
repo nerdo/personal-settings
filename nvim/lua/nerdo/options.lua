@@ -13,3 +13,10 @@ vim.g.netrw_bufsettings = 'number relativenumber nowrap'
 
 -- Always keep gutter open.
 vim.opt.signcolumn = 'yes'
+
+-- Turn on cursor line.
+vim.opt.cursorline = true
+vim.opt.cursorlineopt = 'line,number'
+
+-- Turn on true color.
+vim.opt.termguicolors = true
