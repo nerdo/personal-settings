@@ -42,4 +42,13 @@ return function(use)
       {'rafamadriz/friendly-snippets'},
     }
   }
+
+  -- Clear search highlighting when done.
+  use 'romainl/vim-cool'
+
+  -- Align text with spaces easily.
+  use 'junegunn/vim-easy-align'
+
+  -- Highlights unique characters to jump to in a line.
+  use 'unblevable/quick-scope'
 end
