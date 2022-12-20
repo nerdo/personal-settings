@@ -1,3 +1,4 @@
+require("nerdo.functions")
 require("nerdo.keymap")
 require("nerdo.auto")
 require("nerdo.options")
