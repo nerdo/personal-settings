@@ -10,3 +10,6 @@ vim.opt.wrap = false
 
 -- Set line numbers in netrw
 vim.g.netrw_bufsettings = 'number relativenumber nowrap'
+
+-- Always keep gutter open.
+vim.opt.signcolumn = 'yes'
