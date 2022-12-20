@@ -58,9 +58,15 @@ return function(use)
     config = function () require('indent-o-matic').setup {} end,
   }
 
+  -- Inlay hints for type/metadata.
   use 'lvimuser/lsp-inlayhints.nvim'
 
+  -- Show indent lines.
 	use "lukas-reineke/indent-blankline.nvim"
 
+  -- Automatically close html/jsx tags.
   use "windwp/nvim-ts-autotag"
+
+  -- Comment out lines with keymap.
+  use 'numToStr/Comment.nvim'
 end
