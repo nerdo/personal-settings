@@ -61,4 +61,6 @@ return function(use)
   use 'lvimuser/lsp-inlayhints.nvim'
 
 	use "lukas-reineke/indent-blankline.nvim"
+
+  use "windwp/nvim-ts-autotag"
 end
