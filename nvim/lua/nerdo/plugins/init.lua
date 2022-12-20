@@ -51,4 +51,10 @@ return function(use)
 
   -- Highlights unique characters to jump to in a line.
   use 'unblevable/quick-scope'
+
+  -- Automatic detection of tab size.
+  use {
+    'Darazaki/indent-o-matic',
+    config = function () require('indent-o-matic').setup {} end,
+  }
 end
