@@ -10,4 +10,8 @@ return function(use)
       vim.cmd.colorscheme 'purify'
     end
   }
+
+  use {
+    'nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' }
+  }
 end
