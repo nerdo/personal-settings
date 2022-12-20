@@ -14,4 +14,6 @@ return function(use)
   use {
     'nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' }
   }
+
+  use 'lewis6991/gitsigns.nvim'
 end
