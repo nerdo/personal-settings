@@ -1,6 +1,6 @@
 require("nerdo.functions")
 require("nerdo.keymap")
-require("nerdo.auto")
+require("nerdo.autocmd")
 require("nerdo.options")
 require("nerdo.packer")
 require("nerdo.gui")

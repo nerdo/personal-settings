@@ -14,6 +14,7 @@ return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
 
   -- Declare the rest of the plugins.
+  package.loaded["nerdo.plugins"] = nil -- force reload the plugins file, useful for when the configs are sourced again
   require("nerdo.plugins")(use)
 
   -- Automatically set up your configuration after cloning packer.nvim
