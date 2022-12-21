@@ -9,7 +9,7 @@ vim.keymap.set("n", "<leader>f", vim.cmd.Ex)
 -- Save/close buffer.
 vim.keymap.set("n", "<leader>;", "<cmd>w<CR>")
 vim.keymap.set("n", "<leader><CR>", "<cmd>w<CR>:bd<CR>")
-vim.keymap.set("n", "<leader>.", "<cmd>bd<CR>")
+vim.keymap.set("n", "<leader><BS>", "<cmd>bd<CR>")
 
 -- Save/quit.
 vim.keymap.set("n", "<leader>q", "<cmd>qa<CR>")
