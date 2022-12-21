@@ -23,7 +23,6 @@ if vim.g.vscode then
 	settings.context_highlight_list = {
 		"IndentBlanklineSpaceCharBlankline",
 	}
-
 end
 
 indent_blankline.setup(settings)
