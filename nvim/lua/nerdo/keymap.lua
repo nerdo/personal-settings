@@ -6,10 +6,14 @@ vim.g.mapleader = " "
 -- Open file explorer `:Explore`.
 vim.keymap.set("n", "<leader>f", vim.cmd.Ex)
 
--- Save/close buffer.
+-- Save buffer.
 vim.keymap.set("n", "<leader>;", "<Cmd>w<CR>")
-vim.keymap.set("n", "<leader><CR>", "<Cmd>w<CR>:bd<CR>")
-vim.keymap.set("n", "<leader><BS>", "<Cmd>bd<CR>")
+
+-- New buffer.
+vim.keymap.set("n", "<leader>b", "<Cmd>enew<CR>")
+
+-- Destroy buffer. Also goes to the next buffer for convenience.
+vim.keymap.set("n", "<leader>d", "<Cmd>bd<CR><Cmd>bnext<CR>")
 
 -- Save/quit.
 vim.keymap.set("n", "<leader>q", "<Cmd>qa<CR>")
@@ -36,3 +40,6 @@ vim.keymap.set("n", "<A-S-h>", "<Cmd>vertical resize -1<CR>")
 vim.keymap.set("n", "<A-S-j>", "<Cmd>resize +1<CR>")
 vim.keymap.set("n", "<A-S-k>", "<Cmd>resize -1<CR>")
 vim.keymap.set("n", "<A-S-l>", "<Cmd>vertical resize +1<CR>")
+
+-- Close split
+vim.keymap.set("n", "<leader><BS>", "<Cmd>close<CR>")
