@@ -4,7 +4,22 @@ if not present then
 	return
 end
 
-toggleterm.setup()
+toggleterm.setup({
+	-- Dynamic sizing function based on terminal direction.
+	size = function(term)
+		if term.direction == "horizontal" then
+			return math.max(20, vim.api.nvim_win_get_height(0) * 0.2)
+		elseif term.direction == "vertical" then
+			return math.max(50, vim.o.columns * 0.35)
+		else
+			return 100
+		end
+	end,
+
+	float_opts = {
+		border = "curved",
+	},
+})
 
 -- Set up some keybindings just for the terminal buffer.
 vim.api.nvim_create_autocmd("TermOpen", {
@@ -12,5 +27,13 @@ vim.api.nvim_create_autocmd("TermOpen", {
 	callback = function()
 		local opts = { buffer = 0 }
 		vim.keymap.set("t", "<esc><esc>", [[<C-\><C-n>]], opts)
+		vim.keymap.set("t", "<A-o>", "<Cmd>1ToggleTerm direction=float<CR>", opts)
+		vim.keymap.set("t", "<A-v>", "<Cmd>2ToggleTerm direction=vertical<CR>", opts)
+		vim.keymap.set("t", "<A-h>", "<Cmd>3ToggleTerm direction=horizontal<CR>", opts)
 	end,
 })
+
+-- Set some keymaps.
+vim.keymap.set("n", "<A-o>", "<Cmd>1ToggleTerm direction=float<CR>")
+vim.keymap.set("n", "<A-v>", "<Cmd>2ToggleTerm direction=vertical<CR>")
+vim.keymap.set("n", "<A-h>", "<Cmd>3ToggleTerm direction=horizontal<CR>")
