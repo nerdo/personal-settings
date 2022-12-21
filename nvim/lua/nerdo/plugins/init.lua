@@ -1,14 +1,16 @@
 return function(use)
+	-- Theme(s).
+	use({ "kyoz/purify", rtp = "vim" })
+
 	use({
 		"nvim-telescope/telescope.nvim",
 		tag = "0.1.0",
 		requires = { { "nvim-lua/plenary.nvim" } },
 	})
 
-	use({ "kyoz/purify", rtp = "vim" })
-
 	use({ "nvim-treesitter/nvim-treesitter", { run = ":TSUpdate" } })
 
+	-- Keeps parts of the code on screen for context.
 	use({ "nvim-treesitter/nvim-treesitter-context", { after = "nvim-treesitter" } })
 
 	use({ "nvim-treesitter/playground", { after = "nvim-treesitter", run = ":TSInstall query" } })
@@ -37,6 +39,9 @@ return function(use)
 		},
 	})
 
+	-- For formatting code.
+	use("jose-elias-alvarez/null-ls.nvim")
+
 	-- Clear search highlighting when done.
 	use("romainl/vim-cool")
 
@@ -60,9 +65,6 @@ return function(use)
 
 	-- Comment out lines with keymap.
 	use("numToStr/Comment.nvim")
-
-	-- For formatting code.
-	use("jose-elias-alvarez/null-ls.nvim")
 
 	-- Colorizer for displaying colors in code.
 	use("norcalli/nvim-colorizer.lua")
