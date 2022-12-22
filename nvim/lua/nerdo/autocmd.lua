@@ -1,9 +1,11 @@
--- Fix issue with netrw buffers not closing
--- https://github.com/tpope/vim-vinegar/issues/13#issuecomment-47133890
-vim.api.nvim_create_autocmd(
-  "FileType",
-  {
-    pattern = "netrw",
-    command = "setl bufhidden=delete"
-  }
-)
+-- Go to the next highest buffer when a buffer is deleted.
+vim.api.nvim_create_autocmd("BufDelete", {
+	pattern = "#",
+	callback = function()
+		local highest_bufnr = vim.cmd.bufnr("$")
+		local current_bufnr = vim.cmd.bufnr("%")
+		if current_bufnr < highest_bufnr then
+			vim.cmd("bnext")
+		end
+	end,
+})

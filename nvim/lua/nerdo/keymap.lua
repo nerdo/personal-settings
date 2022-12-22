@@ -9,9 +9,6 @@ vim.keymap.set("n", "<leader>;", "<Cmd>w<CR>")
 -- New buffer.
 vim.keymap.set("n", "<leader>b", "<Cmd>enew<CR>")
 
--- Destroy buffer. Also goes to the next buffer for convenience.
-vim.keymap.set("n", "<leader>d", "<Cmd>bd<CR><Cmd>bnext<CR>")
-
 -- Save/quit.
 vim.keymap.set("n", "<leader>q", "<Cmd>qa<CR>")
 vim.keymap.set("n", "<leader>x", "<Cmd>xa<CR>")
@@ -38,5 +35,12 @@ vim.keymap.set("n", "<A-S-j>", "<Cmd>resize +1<CR>")
 vim.keymap.set("n", "<A-S-k>", "<Cmd>resize -1<CR>")
 vim.keymap.set("n", "<A-S-l>", "<Cmd>vertical resize +1<CR>")
 
--- Close split
-vim.keymap.set("n", "<leader><BS>", "<Cmd>close<CR>")
+-- Close splits, or when there is only one, close buffers.
+vim.keymap.set("n", "<leader><BS>", function()
+	local num_windows = #vim.api.nvim_tabpage_list_wins(0)
+	if num_windows == 1 then
+		vim.cmd("bd")
+	else
+		vim.cmd("close")
+	end
+end)
