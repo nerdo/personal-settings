@@ -3,9 +3,6 @@
 -- Set leader.
 vim.g.mapleader = " "
 
--- Open file explorer `:Explore`.
-vim.keymap.set("n", "<leader>f", vim.cmd.Ex)
-
 -- Save buffer.
 vim.keymap.set("n", "<leader>;", "<Cmd>w<CR>")
 

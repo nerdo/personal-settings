@@ -2,6 +2,9 @@ return function(use)
 	-- Theme(s).
 	use({ "kyoz/purify", rtp = "vim" })
 
+	-- File explorer.
+	use "justinmk/vim-dirvish"
+
 	use({
 		"nvim-telescope/telescope.nvim",
 		tag = "0.1.0",
