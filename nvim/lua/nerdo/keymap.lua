@@ -37,10 +37,21 @@ vim.keymap.set("n", "<A-S-l>", "<Cmd>vertical resize +1<CR>")
 
 -- Close splits, or when there is only one, close buffers.
 vim.keymap.set("n", "<leader><BS>", function()
-	local num_windows = #vim.api.nvim_tabpage_list_wins(0)
-	if num_windows == 1 then
-		vim.cmd("bd")
-	else
-		vim.cmd("close")
+	local win_numbers = vim.api.nvim_tabpage_list_wins(0)
+	local num_focusable_windows = 0
+
+	-- Check for focusable windows (treesitter context, for example, creates windows that aren't focusable).
+	for i = 1, #win_numbers do
+		if vim.api.nvim_win_get_config(win_numbers[i])["focusable"] then
+			num_focusable_windows = num_focusable_windows + 1
+		end
+
+		if num_focusable_windows > 1 then
+			vim.cmd("close")
+			return
+		end
 	end
+
+	-- Close the buffer instead.
+	vim.cmd("bd")
 end)
