@@ -28,12 +28,12 @@ vim.api.nvim_create_autocmd("TermOpen", {
 		local opts = { buffer = 0 }
 		vim.keymap.set("t", "<esc><esc>", [[<C-\><C-n>]], opts)
 		vim.keymap.set("t", "<A-o>", "<Cmd>1ToggleTerm direction=float<CR>", opts)
-		vim.keymap.set("t", "<A-v>", "<Cmd>2ToggleTerm direction=vertical<CR>", opts)
-		vim.keymap.set("t", "<A-h>", "<Cmd>3ToggleTerm direction=horizontal<CR>", opts)
+		vim.keymap.set("t", "<A-r>", "<Cmd>2ToggleTerm direction=vertical<CR>", opts)
+		vim.keymap.set("t", "<A-d>", "<Cmd>3ToggleTerm direction=horizontal<CR>", opts)
 	end,
 })
 
 -- Set some keymaps.
 vim.keymap.set("n", "<A-o>", "<Cmd>1ToggleTerm direction=float<CR>")
-vim.keymap.set("n", "<A-v>", "<Cmd>2ToggleTerm direction=vertical<CR>")
-vim.keymap.set("n", "<A-h>", "<Cmd>3ToggleTerm direction=horizontal<CR>")
+vim.keymap.set("n", "<A-r>", "<Cmd>2ToggleTerm direction=vertical<CR>")
+vim.keymap.set("n", "<A-d>", "<Cmd>3ToggleTerm direction=horizontal<CR>")

@@ -71,4 +71,7 @@ return function(use)
 
 	-- Colorizer for displaying colors in code.
 	use("norcalli/nvim-colorizer.lua")
+
+	-- Terminal.
+	use({ "akinsho/toggleterm.nvim", tag = "v2.*" })
 end
