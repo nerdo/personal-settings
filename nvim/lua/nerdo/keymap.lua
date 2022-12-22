@@ -55,3 +55,7 @@ vim.keymap.set("n", "<leader><BS>", function()
 	-- Close the buffer instead.
 	vim.cmd("bd")
 end)
+
+-- theprimagen's awesome visual move text keymap.
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
