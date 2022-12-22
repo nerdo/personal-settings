@@ -3,7 +3,7 @@ return function(use)
 	use({ "kyoz/purify", rtp = "vim" })
 
 	-- File explorer.
-	use "justinmk/vim-dirvish"
+	use("justinmk/vim-dirvish")
 
 	use({
 		"nvim-telescope/telescope.nvim",
@@ -74,4 +74,7 @@ return function(use)
 
 	-- Terminal.
 	use({ "akinsho/toggleterm.nvim", tag = "v2.*" })
+
+	-- Display tabs for buffers.
+	use({ "akinsho/bufferline.nvim", tag = "v3.*", requires = "nvim-tree/nvim-web-devicons" })
 end
