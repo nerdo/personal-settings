@@ -20,6 +20,7 @@ return function(use)
 
 	use("lewis6991/gitsigns.nvim")
 
+	-- LSPs
 	use({
 		"VonHeikemen/lsp-zero.nvim",
 		requires = {
@@ -39,6 +40,18 @@ return function(use)
 			-- Snippets
 			{ "L3MON4D3/LuaSnip" },
 			{ "rafamadriz/friendly-snippets" },
+		},
+	})
+
+	-- Rust tools.
+	use({
+		"simrat39/rust-tools.nvim",
+		requires = {
+			{ "neovim/nvim-lspconfig" },
+
+			-- For debugging.
+			{ "nvim-lua/plenary.nvim" },
+			{ "mfussenegger/nvim-dap" },
 		},
 	})
 
@@ -83,4 +96,7 @@ return function(use)
 		"nvim-lualine/lualine.nvim",
 		requires = { "kyazdani42/nvim-web-devicons", opt = true },
 	})
+
+	-- Debug adapter.
+	use("mfussenegger/nvim-dap")
 end
