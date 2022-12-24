@@ -36,6 +36,16 @@ lsp_zero.ensure_installed({
 	"sumneko_lua",
 })
 
+local schemastore_is_present, schemastore = pcall(require, "schemastore")
+local json_settings = nil
+
+if schemastore_is_present then
+	json_settings = {
+		schemas = schemastore.json.schemas(),
+		validate = { enable = true },
+	}
+end
+
 local server_options = {
 	gopls = {
 		settings = {
@@ -100,6 +110,12 @@ local server_options = {
 					preloadFileSize = 10000,
 				},
 			},
+		},
+	},
+
+	jsonls = {
+		settings = {
+			json = json_settings,
 		},
 	},
 }

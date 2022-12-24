@@ -99,4 +99,7 @@ return function(use)
 
 	-- Debug adapter.
 	use("mfussenegger/nvim-dap")
+
+	-- JSON schema.
+	use("b0o/schemastore.nvim")
 end
