@@ -4,6 +4,13 @@ if not present then
 	return
 end
 
+-- Set up signs for dap.
+vim.fn.sign_define("DapBreakpoint", { text = "🛑", texthl = "", linehl = "", numhl = "" })
+vim.fn.sign_define("DapBreakpointCondition", { text = "🔶", texthl = "", linehl = "", numhl = "" })
+vim.fn.sign_define("DapLogPoint", { text = "📝", texthl = "", linehl = "", numhl = "" })
+vim.fn.sign_define("DapStopped", { text = "→", texthl = "", linehl = "", numhl = "" })
+vim.fn.sign_define("DapBreakpointRejected", { text = "⛔️", texthl = "", linehl = "", numhl = "" })
+
 -- Set up debugging keymaps.
 vim.keymap.set("n", "<F5>", function()
 	dap.continue()
