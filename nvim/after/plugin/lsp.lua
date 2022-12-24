@@ -132,8 +132,8 @@ local set_keymaps = function(bufnr)
 		end
 	end
 
+	local opts = { noremap = true, silent = true }
 	local map = function(m, lhs, rhs)
-		local opts = { noremap = true, silent = true }
 		vim.api.nvim_buf_set_keymap(bufnr, m, lhs, rhs, opts)
 	end
 
@@ -153,6 +153,13 @@ local set_keymaps = function(bufnr)
 	map("n", "<leader>li", diagnostic("open_float()"))
 	map("n", "<C-k>", diagnostic("goto_prev()"))
 	map("n", "<C-j>", diagnostic("goto_next()"))
+
+	map("n", "<leader>w", vim.cmd.write())
+	vim.keymap.set("n", "<leader>;", function()
+		-- Formats before saving.
+		vim.lsp.buf.format({ async = false })
+		vim.cmd.write()
+	end, opts)
 end
 
 lsp_zero.on_attach(function(_, bufnr)
