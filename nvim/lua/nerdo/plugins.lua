@@ -102,6 +102,7 @@ return function(use)
 
 	-- Debug adapter.
 	use("mfussenegger/nvim-dap")
+	use({ "rcarriga/nvim-dap-ui", requires = { "mfussenegger/nvim-dap" } })
 
 	-- JSON schema.
 	use("b0o/schemastore.nvim")
