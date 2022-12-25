@@ -15,6 +15,13 @@ vim.fn.sign_define("DapBreakpointRejected", { text = "⛔️", texthl = "", line
 vim.keymap.set("n", "<F5>", function()
 	dap.continue()
 end)
+vim.keymap.set("n", "<S-F5>", function()
+	dap.terminate()
+end)
+-- S-F5 seems to read as F17 in my terminal...
+vim.keymap.set("n", "<F17>", function()
+	dap.terminate()
+end)
 vim.keymap.set("n", "<F8>", function()
 	dap.step_out()
 end)
