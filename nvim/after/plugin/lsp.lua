@@ -167,3 +167,18 @@ lsp_zero.on_attach(function(_, bufnr)
 end)
 
 lsp_zero.setup()
+
+-- Configure debug adapter configurations.
+local dap_present, dap = pcall(require, "dap")
+
+if dap_present then
+	dap.configurations.rust = {
+		{
+			type = "rust",
+			request = "launch",
+			name = "Launch",
+			-- TODO `program` should be a function that gets a list of the available binaries from the toml...
+			program = "${workspaceFolder}/target/debug/${workspaceFolderBasename}",
+		},
+	}
+end

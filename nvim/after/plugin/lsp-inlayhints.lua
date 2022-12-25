@@ -23,4 +23,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 -- Toggles inlay hints.
-vim.keymap.set("n", "<leader>i", function() inlayhints.toggle() end)
+vim.keymap.set("n", "<leader>i", function()
+	inlayhints.toggle()
+end)

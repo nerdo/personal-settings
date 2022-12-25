@@ -59,18 +59,6 @@ return function(use)
 		},
 	})
 
-	-- Rust tools.
-	use({
-		"simrat39/rust-tools.nvim",
-		requires = {
-			{ "neovim/nvim-lspconfig" },
-
-			-- For debugging.
-			{ "nvim-lua/plenary.nvim" },
-			{ "mfussenegger/nvim-dap" },
-		},
-	})
-
 	-- For formatting code.
 	use("jose-elias-alvarez/null-ls.nvim")
 

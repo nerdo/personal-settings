@@ -46,3 +46,57 @@ end)
 vim.keymap.set("n", "<leader>dR", function()
 	dap.run_last()
 end)
+
+-- Set up debug adapters.
+local mason_present, _ = pcall(require, "mason")
+
+-- This assumes that codelldb was installed with mason (TODO actually check to see if it is installed).
+if mason_present then
+	-- For codelldb support.
+	-- Probably couldn't have gotten this working without looking at simrat/rust-tools.nvim
+	-- Specifically, https://github.com/simrat39/rust-tools.nvim/wiki/Debugging/61fdcef2e4afeac53553542a072d97b26d2f6e5a
+	-- The only reason I didn't end up just using rust-tools is because it broke on me unexpectedly,
+	-- and, tbh, I have pretty much what I need with lsp-zero...
+	local function get_codelldb_adapter_settings(extension_path)
+		-- Get the file extension for dynamic libraries based on the operating system.
+		local os_name = vim.loop.os_uname().sysname
+		local dynamic_lib_extension = "os_name_" .. os_name
+		if os_name == "Darwin" then
+			-- macOS
+			dynamic_lib_extension = "dylib"
+		elseif os_name == "Windows_NT" then
+			-- Windows
+			dynamic_lib_extension = "dll"
+		elseif os_name == "Linux" then
+			-- Linux
+			dynamic_lib_extension = "so"
+		end
+
+		local codelldb_path = extension_path .. "adapter/codelldb"
+		local liblldb_path = extension_path .. "lldb/lib/liblldb." .. dynamic_lib_extension
+
+		return {
+			codelldb_path = codelldb_path,
+			liblldb_path = liblldb_path,
+		}
+	end
+
+	local codelldb_settings =
+		get_codelldb_adapter_settings(vim.fn.stdpath("data") .. "/mason/packages/codelldb/extension/")
+
+	-- Configure codelldb adapter for rust.
+	dap.adapters.rust = {
+		type = "server",
+		executable = {
+			args = {
+				"--liblldb",
+				codelldb_settings.liblldb_path,
+				"--port",
+				"${port}",
+			},
+			command = codelldb_settings.codelldb_path,
+		},
+		host = "127.0.0.1",
+		port = "${port}",
+	}
+end
