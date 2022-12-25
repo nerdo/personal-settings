@@ -23,6 +23,7 @@ lsp_zero.set_preferences({
 lsp_zero.ensure_installed({
 	"gopls",
 	"rust_analyzer",
+	"taplo", -- For .toml
 	"intelephense",
 	"svelte",
 	"tsserver",
