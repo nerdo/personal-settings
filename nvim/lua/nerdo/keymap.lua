@@ -1,6 +1,4 @@
 -- Default vi key bindings: https://hea-www.harvard.edu/~fine/Tech/vi.html (try to preserve these...)
-local nerdo = require("nerdo.functions")
-
 -- Set leader.
 vim.g.mapleader = " "
 
@@ -44,16 +42,6 @@ vim.keymap.set("n", "<A-S-h>", "<Cmd>vertical resize -1<CR>")
 vim.keymap.set("n", "<A-S-j>", "<Cmd>resize +1<CR>")
 vim.keymap.set("n", "<A-S-k>", "<Cmd>resize -1<CR>")
 vim.keymap.set("n", "<A-S-l>", "<Cmd>vertical resize +1<CR>")
-
--- Close splits, or when there is only one, close buffers.
-vim.keymap.set("n", "<leader><BS>", function()
-	nerdo.editor.win_or_buf("close", "bd")
-end)
-
--- Just close the buffer.
-vim.keymap.set("n", "<leader><S-BS>", function()
-	nerdo.editor.win_or_buf("bd", "bd")
-end)
 
 -- theprimagen's awesome visual move text keymap.
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")

@@ -110,4 +110,7 @@ return function(use)
 
 	-- JSON schema.
 	use("b0o/schemastore.nvim")
+
+	-- Customize buffer delete behavior.
+	use({ "ojroques/nvim-bufdel" })
 end
