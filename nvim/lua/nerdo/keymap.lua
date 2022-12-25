@@ -27,6 +27,7 @@ vim.keymap.set("n", "<leader>%r", "<Cmd>NerdoShowRelPath<CR>")
 vim.keymap.set("n", "<leader>%a", "<Cmd>NerdoShowAbsPath<CR>")
 
 -- Line number functions.
+vim.keymap.set("n", "<leader>3", "<Cmd>NerdoToggleLineNr<CR>") -- A shortcut for toggling line numbers.
 vim.keymap.set("n", "<leader>##", "<Cmd>NerdoToggleLineNr<CR>")
 vim.keymap.set("n", "<leader>#r", "<Cmd>NerdoSetLineNrRelative<CR>")
 vim.keymap.set("n", "<leader>#a", "<Cmd>NerdoSetLineNrAbsolute<CR>")
