@@ -8,11 +8,15 @@ return function(use)
 	-- Git info in file explorer.
 	use("kristijanhusak/vim-dirvish-git")
 
+	-- Telescope
 	use({
 		"nvim-telescope/telescope.nvim",
 		tag = "0.1.0",
 		requires = { { "nvim-lua/plenary.nvim" } },
 	})
+
+	-- Replace basic vim selection with Telescope.
+	use({ "nvim-telescope/telescope-ui-select.nvim" })
 
 	use({ "nvim-treesitter/nvim-treesitter", { run = ":TSUpdate" } })
 
