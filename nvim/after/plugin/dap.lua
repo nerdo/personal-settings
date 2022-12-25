@@ -48,10 +48,10 @@ vim.keymap.set("n", "<leader>dR", function()
 end)
 
 -- Set up debug adapters.
-local mason_present, _ = pcall(require, "mason")
+local mason_present, mason_registry = pcall(require, "mason-registry")
 
--- This assumes that codelldb was installed with mason (TODO actually check to see if it is installed).
-if mason_present then
+-- This assumes that codelldb was installed with mason.
+if mason_present and mason_registry.is_installed("codelldb") then
 	-- For codelldb support.
 	-- Probably couldn't have gotten this working without looking at simrat/rust-tools.nvim
 	-- Specifically, https://github.com/simrat39/rust-tools.nvim/wiki/Debugging/61fdcef2e4afeac53553542a072d97b26d2f6e5a
