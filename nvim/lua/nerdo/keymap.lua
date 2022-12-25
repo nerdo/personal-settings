@@ -23,8 +23,13 @@ vim.keymap.set("n", "<S-Tab>", "<Cmd>bp<CR>")
 -- Path functions.
 vim.keymap.set("n", "<leader>yr", "<Cmd>NerdoCpRelPath<CR>")
 vim.keymap.set("n", "<leader>ya", "<Cmd>NerdoCpAbsPath<CR>")
-vim.keymap.set("n", "<leader>#r", "<Cmd>NerdoShowRelPath<CR>")
-vim.keymap.set("n", "<leader>#a", "<Cmd>NerdoShowAbsPath<CR>")
+vim.keymap.set("n", "<leader>%r", "<Cmd>NerdoShowRelPath<CR>")
+vim.keymap.set("n", "<leader>%a", "<Cmd>NerdoShowAbsPath<CR>")
+
+-- Line number functions.
+vim.keymap.set("n", "<leader>##", "<Cmd>NerdoToggleLineNr<CR>")
+vim.keymap.set("n", "<leader>#r", "<Cmd>NerdoSetLineNrRelative<CR>")
+vim.keymap.set("n", "<leader>#a", "<Cmd>NerdoSetLineNrAbsolute<CR>")
 
 -- Split navigation with Alt+nav keys.
 vim.keymap.set("n", "<A-h>", "<Cmd>wincmd h<CR>")

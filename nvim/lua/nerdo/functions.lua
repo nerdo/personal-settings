@@ -50,8 +50,44 @@ vim.api.nvim_create_user_command("NerdoShowAbsPath", function()
 	path.show({ absolute = true })
 end, {})
 
+local line_numbers = {}
+
+-- Toggles line numbers on and off.
+line_numbers.toggle = function()
+	if vim.api.nvim_win_get_option(0, "number") then
+		vim.opt.number = false
+		vim.opt.relativenumber = false
+	else
+		vim.opt.number = true
+		vim.opt.relativenumber = true
+	end
+end
+
+-- Turn on line numbers and set it to relative mode.
+line_numbers.set_relative = function()
+	vim.opt.number = true
+	vim.opt.relativenumber = true
+end
+
+-- Turn on line numbers and set it to absolute mode.
+line_numbers.set_absolute = function()
+	vim.opt.number = true
+	vim.opt.relativenumber = false
+end
+
+vim.api.nvim_create_user_command("NerdoToggleLineNr", function()
+	line_numbers.toggle()
+end, {})
+vim.api.nvim_create_user_command("NerdoSetLineNrRelative", function()
+	line_numbers.set_relative()
+end, {})
+vim.api.nvim_create_user_command("NerdoSetLineNrAbsolute", function()
+	line_numbers.set_absolute()
+end, {})
+
 local M = {
 	path = path,
+	line_numbers = line_numbers,
 }
 
 return M
