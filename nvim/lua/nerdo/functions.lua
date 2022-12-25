@@ -85,9 +85,34 @@ vim.api.nvim_create_user_command("NerdoSetLineNrAbsolute", function()
 	line_numbers.set_absolute()
 end, {})
 
+-- Buffer/window functions.
+local editor = {}
+
+-- Issues window_cmd if there is more than one visible, editable window open, or buffer_cmd otherwise.
+editor.win_or_buf = function(window_cmd, buffer_cmd)
+	local win_numbers = vim.api.nvim_tabpage_list_wins(0)
+	local num_focusable_windows = 0
+
+	-- Check for focusable windows (treesitter context, for example, creates windows that aren't focusable).
+	for i = 1, #win_numbers do
+		if vim.api.nvim_win_get_config(win_numbers[i])["focusable"] then
+			num_focusable_windows = num_focusable_windows + 1
+		end
+
+		if num_focusable_windows > 1 then
+			vim.cmd(window_cmd) -- typically "close" to close the window
+			return
+		end
+	end
+
+	-- Issue the buffer_cmd instead, presumably to close/destroy the buffer (typically bd).
+	vim.cmd(buffer_cmd)
+end
+
 local M = {
 	path = path,
 	line_numbers = line_numbers,
+	editor = editor,
 }
 
 return M

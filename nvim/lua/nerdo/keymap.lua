@@ -1,4 +1,5 @@
 -- Default vi key bindings: https://hea-www.harvard.edu/~fine/Tech/vi.html (try to preserve these...)
+local nerdo = require("nerdo.functions")
 
 -- Set leader.
 vim.g.mapleader = " "
@@ -46,23 +47,12 @@ vim.keymap.set("n", "<A-S-l>", "<Cmd>vertical resize +1<CR>")
 
 -- Close splits, or when there is only one, close buffers.
 vim.keymap.set("n", "<leader><BS>", function()
-	local win_numbers = vim.api.nvim_tabpage_list_wins(0)
-	local num_focusable_windows = 0
+	nerdo.editor.win_or_buf("close", "bd")
+end)
 
-	-- Check for focusable windows (treesitter context, for example, creates windows that aren't focusable).
-	for i = 1, #win_numbers do
-		if vim.api.nvim_win_get_config(win_numbers[i])["focusable"] then
-			num_focusable_windows = num_focusable_windows + 1
-		end
-
-		if num_focusable_windows > 1 then
-			vim.cmd("close")
-			return
-		end
-	end
-
-	-- Close the buffer instead.
-	vim.cmd("bd")
+-- Just close the buffer.
+vim.keymap.set("n", "<leader><S-BS>", function()
+	nerdo.editor.win_or_buf("bd", "bd")
 end)
 
 -- theprimagen's awesome visual move text keymap.
