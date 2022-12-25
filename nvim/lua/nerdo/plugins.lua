@@ -5,6 +5,9 @@ return function(use)
 	-- File explorer.
 	use("justinmk/vim-dirvish")
 
+	-- Git info in file explorer.
+	use("kristijanhusak/vim-dirvish-git")
+
 	use({
 		"nvim-telescope/telescope.nvim",
 		tag = "0.1.0",
