@@ -18,13 +18,16 @@ return function(use)
 	-- Replace basic vim selection with Telescope.
 	use({ "nvim-telescope/telescope-ui-select.nvim" })
 
+	-- Abstract syntax tree that speeds up a lot of neovim operations.
 	use({ "nvim-treesitter/nvim-treesitter", { run = ":TSUpdate" } })
 
 	-- Keeps parts of the code on screen for context.
 	use({ "nvim-treesitter/nvim-treesitter-context", { after = "nvim-treesitter" } })
 
+	-- A playground for testing Treesitter.
 	use({ "nvim-treesitter/playground", { after = "nvim-treesitter", run = ":TSInstall query" } })
 
+	-- Show symbols in gutter for git changes.
 	use("lewis6991/gitsigns.nvim")
 
 	-- LSPs

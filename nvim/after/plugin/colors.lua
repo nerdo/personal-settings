@@ -17,5 +17,6 @@ vim.api.nvim_set_hl(0, "Visual", { ctermbg = "Grey", bg = "#044A4E" })
 -- Set highlight group for importing TS types for a nice visual distinction.
 vim.api.nvim_set_hl(0, "TSConstructor", { fg = "#25888E" })
 
--- Set TreeSitter Context color.
--- vim.api.nvim_set_hl(0, "TreesitterContext", { bg = "#0841A1" })
+-- Set highlights for quick scope (highlights letters for quick horizontal movement).
+vim.api.nvim_set_hl(0, "QuickScopePrimary", { fg = "#afff5f", bold = true, ctermfg = 155 })
+vim.api.nvim_set_hl(0, "QuickScopeSecondary", { fg = "#5fffff", bold = true, ctermfg = 81 })
