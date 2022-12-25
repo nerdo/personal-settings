@@ -21,10 +21,10 @@ vim.keymap.set("n", "<Tab>", "<Cmd>bn<CR>")
 vim.keymap.set("n", "<S-Tab>", "<Cmd>bp<CR>")
 
 -- Path functions.
-vim.keymap.set("n", "<leader>yr", "<Cmd>CpRelPath<CR>")
-vim.keymap.set("n", "<leader>ya", "<Cmd>CpAbsPath<CR>")
-vim.keymap.set("n", "<leader>#r", "<Cmd>ShowRelPath<CR>")
-vim.keymap.set("n", "<leader>#a", "<Cmd>ShowAbsPath<CR>")
+vim.keymap.set("n", "<leader>yr", "<Cmd>NerdoCpRelPath<CR>")
+vim.keymap.set("n", "<leader>ya", "<Cmd>NerdoCpAbsPath<CR>")
+vim.keymap.set("n", "<leader>#r", "<Cmd>NerdoShowRelPath<CR>")
+vim.keymap.set("n", "<leader>#a", "<Cmd>NerdoShowAbsPath<CR>")
 
 -- Split navigation with Alt+nav keys.
 vim.keymap.set("n", "<A-h>", "<Cmd>wincmd h<CR>")
