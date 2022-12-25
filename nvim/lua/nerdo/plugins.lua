@@ -59,6 +59,9 @@ return function(use)
 		},
 	})
 
+	-- LSP diagnostic info.
+	use({ "folke/trouble.nvim", requires = "kyazdani42/nvim-web-devicons" })
+
 	-- For formatting code.
 	use("jose-elias-alvarez/null-ls.nvim")
 
