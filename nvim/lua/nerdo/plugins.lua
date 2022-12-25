@@ -1,6 +1,16 @@
 return function(use)
+	-- Override some colors for purify...
+	-- Unfortunately, this seems to be the best place to put this so it doesn't get lost...
+	vim.g.purify_override_colors = {
+		yellow = { gui = "#f2f2e6", cterm = "Grey" },
+	}
+
 	-- Theme(s).
-	use({ "kyoz/purify", rtp = "vim" })
+	use({
+		"kyoz/purify",
+		rtp = "vim",
+		setup = function() end,
+	})
 
 	-- File explorer.
 	use("justinmk/vim-dirvish")
