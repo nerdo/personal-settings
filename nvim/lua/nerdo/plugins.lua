@@ -6,11 +6,7 @@ return function(use)
 	}
 
 	-- Theme(s).
-	use({
-		"kyoz/purify",
-		rtp = "vim",
-		setup = function() end,
-	})
+	use({ "kyoz/purify", rtp = "vim" })
 
 	-- File explorer.
 	use("justinmk/vim-dirvish")
