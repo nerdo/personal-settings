@@ -4,10 +4,8 @@ if not present then
 	return
 end
 
-comment.setup({
-	ignore = "^$",
-	toggler = {
-		line = "<leader><leader>",
-		block = "<leader>/*",
-	},
-})
+comment.setup()
+
+vim.keymap.set({ "n", "v" }, "<leader>/", function()
+	comment.toggle()
+end)
