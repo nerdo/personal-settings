@@ -5,7 +5,7 @@ if not present then
 end
 
 -- For codelldb support.
-function get_codelldb_adapter_settings(extension_path)
+local function get_codelldb_adapter_settings(extension_path)
 	-- Get the file extension for dynamic libraries based on the operating system.
 	local os_name = vim.loop.os_uname().sysname
 	local dynamic_lib_extension = "os_name_" .. os_name
