@@ -126,7 +126,8 @@ for name, options in pairs(server_options) do
 end
 
 -- Keymaps
-local set_keymaps = function(bufnr)
+local on_attach_behaviors = function(bufnr)
+	-- LSP keymaps.
 	local fmt = function(cmd)
 		return function(str)
 			return cmd:format(str)
@@ -164,7 +165,7 @@ local set_keymaps = function(bufnr)
 end
 
 lsp_zero.on_attach(function(_, bufnr)
-	set_keymaps(bufnr)
+	on_attach_behaviors(bufnr)
 end)
 
 lsp_zero.setup()
