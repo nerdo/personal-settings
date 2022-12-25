@@ -96,7 +96,7 @@ return function(use)
 	use("windwp/nvim-ts-autotag")
 
 	-- Comment out lines with keymap.
-	use("numToStr/Comment.nvim")
+	use("tpope/vim-commentary")
 
 	-- Colorizer for displaying colors in code.
 	use("norcalli/nvim-colorizer.lua")
