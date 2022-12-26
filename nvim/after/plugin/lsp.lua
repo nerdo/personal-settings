@@ -119,6 +119,16 @@ local server_options = {
 			json = json_settings,
 		},
 	},
+
+	rust_analyzer = {
+		settings = {
+			["rust-analyzer"] = {
+				checkOnSave = {
+					command = "clippy",
+				},
+			},
+		},
+	},
 }
 
 for name, options in pairs(server_options) do
