@@ -9,14 +9,14 @@ vim.opt.relativenumber = true
 vim.opt.wrap = false
 
 -- Set line numbers in netrw
-vim.g.netrw_bufsettings = 'number relativenumber nowrap'
+vim.g.netrw_bufsettings = "number relativenumber nowrap"
 
 -- Always keep gutter open.
-vim.opt.signcolumn = 'yes'
+vim.opt.signcolumn = "yes"
 
 -- Turn on cursor line.
 vim.opt.cursorline = true
-vim.opt.cursorlineopt = 'line,number'
+vim.opt.cursorlineopt = "line,number"
 
 -- Turn on true color.
 vim.opt.termguicolors = true
