@@ -4,6 +4,8 @@ if not present then
 	return
 end
 
+local selected_bg = "#fefbea"
+
 bufferline.setup({
 	options = {
 		indicator = {
@@ -16,21 +18,21 @@ bufferline.setup({
 	-- :help bufferline-highlights
 	highlights = {
 		indicator_selected = {
-			fg = "#F2E9EA",
+			fg = selected_bg,
 		},
 		buffer_selected = {
-			bg = "#F2E9EA",
+			bg = selected_bg,
 			fg = "#393d47",
 			bold = true,
 		},
 		-- i.e. When there are duplicate file names open in different paths,
 		-- this highlight is for the path part...
 		duplicate_selected = {
-			bg = "#F2E9EA",
+			bg = selected_bg,
 			bold = false,
 		},
 		close_button_selected = {
-			bg = "#F2E9EA",
+			bg = selected_bg,
 			fg = "#b30018",
 			bold = true,
 		},
@@ -38,7 +40,7 @@ bufferline.setup({
 			fg = "#fe5000",
 		},
 		modified_selected = {
-			bg = "#F2E9EA",
+			bg = selected_bg,
 			fg = "#fe5000",
 		},
 	},
