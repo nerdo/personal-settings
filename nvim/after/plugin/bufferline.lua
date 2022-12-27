@@ -6,7 +6,6 @@ end
 
 bufferline.setup({
 	options = {
-		-- modified_icon = "✏️",
 		indicator = {
 			-- It kind of resembles a chat bubble... I like it !
 			icon = "◢█",
