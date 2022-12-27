@@ -109,6 +109,17 @@ editor.win_or_buf = function(window_cmd, buffer_cmd)
 	vim.cmd(buffer_cmd)
 end
 
+-- Checks to see if a specific buffer filetype is open...
+-- Thanks ChatGPT for putting me on the right track...
+editor.buffer_filetype_is_open = function(filetype)
+	for _, buffer in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.api.nvim_buf_get_option(buffer, "filetype") == filetype then
+			return true
+		end
+	end
+	return false
+end
+
 local M = {
 	path = path,
 	line_numbers = line_numbers,
