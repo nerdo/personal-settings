@@ -1,4 +1,5 @@
 -- :so $VIMRUNTIME/syntax/hitest.vim
+-- https://colorcodes.io is a great starting point...
 
 -- Set the color scheme.
 vim.cmd.colorscheme("purify")

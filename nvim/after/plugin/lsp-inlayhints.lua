@@ -6,6 +6,18 @@ end
 
 inlayhints.setup({
 	enabled_at_startup = false,
+	inlay_hints = {
+		parameter_hints = {
+			prefix = "<- ",
+			remove_colon_start = true,
+			remove_colon_end = true,
+		},
+		type_hints = {
+			prefix = "=> ",
+			remove_colon_start = true,
+			remove_colon_end = true,
+		},
+	},
 })
 
 vim.api.nvim_create_augroup("LspAttach_inlayhints", {})
@@ -26,3 +38,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
 vim.keymap.set("n", "<leader>ih", function()
 	inlayhints.toggle()
 end)
+
+-- Highlight color.
+-- https://colorcodes.io is a great starting point...
+-- Lavender on a brighter shade of Midnight Purple...
+vim.api.nvim_set_hl(0, "LspInlayHint", { bg = "#371f54", fg = "#dba6f7", bold = true })
