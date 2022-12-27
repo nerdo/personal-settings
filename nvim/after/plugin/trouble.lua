@@ -5,7 +5,9 @@ if not present then
 end
 
 -- Start some trouble hehe...
-trouble.setup()
+trouble.setup({
+	position = "top",
+})
 
 -- Set keymaps.
 vim.keymap.set("n", "<leader>ii", "<cmd>TroubleToggle<cr>", { silent = true, noremap = true })
