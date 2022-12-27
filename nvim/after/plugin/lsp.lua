@@ -135,6 +135,10 @@ for name, options in pairs(server_options) do
 	lsp_zero.configure(name, options)
 end
 
+-- For some dynamic behavior based on whether trobuble is present and open.
+local trouble_is_present, trouble = pcall(require, "trouble")
+local nerdo = require("nerdo.functions")
+
 -- Keymaps
 local on_attach_behaviors = function(bufnr)
 	-- LSP keymaps.
@@ -163,8 +167,24 @@ local on_attach_behaviors = function(bufnr)
 	map("x", "<leader>la", lsp("buf.range_code_action()"))
 	map("n", "<leader>lf", lsp("buf.format({ async = true })"))
 	map("n", "<leader>li", diagnostic("open_float()"))
-	map("n", "<C-k>", diagnostic("goto_prev()"))
-	map("n", "<C-j>", diagnostic("goto_next()"))
+
+	-- When Trouble is installed and the panel is open, use its next/prev diagnostics instead.
+	-- This has the effect of traveling the entire codebase's diagnostics
+	-- (with Trouble's default behavior of showing you everything in the codebase).
+	vim.keymap.set("n", "<C-k>", function()
+		if trouble_is_present and nerdo.editor.buffer_filetype_is_open("Trouble") then
+			trouble.previous({ skip_groups = true, jump = true })
+		else
+			vim.diagnostic.goto_prev()
+		end
+	end, opts)
+	vim.keymap.set("n", "<C-j>", function()
+		if trouble_is_present and nerdo.editor.buffer_filetype_is_open("Trouble") then
+			trouble.next({ skip_groups = true, jump = true })
+		else
+			vim.diagnostic.goto_next()
+		end
+	end, opts)
 
 	map("n", "<leader>w", vim.cmd.write())
 	vim.keymap.set("n", "<leader>;", function()
