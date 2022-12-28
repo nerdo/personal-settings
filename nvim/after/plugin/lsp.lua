@@ -198,6 +198,32 @@ lsp_zero.on_attach(function(_, bufnr)
 	on_attach_behaviors(bufnr)
 end)
 
+-- Change nvim-cmp settings.
+local cmp = require("cmp")
+lsp_zero.setup_nvim_cmp({
+	completion = {
+		-- Turn off autocomplete, rely on keybinding to trigger it...
+		autocomplete = false,
+	},
+	mapping = lsp_zero.defaults.cmp_mappings({
+		["<C-Space>"] = cmp.mapping.complete(),
+		["<C-j>"] = function(fallback)
+			if cmp.visible() then
+				cmp.select_next_item()
+			else
+				fallback()
+			end
+		end,
+		["<C-k>"] = function(fallback)
+			if cmp.visible() then
+				cmp.select_prev_item()
+			else
+				fallback()
+			end
+		end,
+	}),
+})
+
 lsp_zero.setup()
 
 -- Configure debug adapter configurations.
