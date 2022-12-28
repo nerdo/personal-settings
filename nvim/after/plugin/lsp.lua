@@ -4,6 +4,9 @@ if not present then
 	return
 end
 
+-- https://github.com/VonHeikemen/lsp-zero.nvim/blob/main/advance-usage.md#the-current-api-is-not-enough
+lsp_zero.preset("lsp-compe")
+
 lsp_zero.set_preferences({
 	suggest_lsp_servers = true,
 	setup_servers_on_start = true,
@@ -200,7 +203,24 @@ end)
 
 -- Change nvim-cmp settings.
 local cmp = require("cmp")
-lsp_zero.setup_nvim_cmp({
+
+-- Set the priorites of the cmp sources.
+local cmp_sources = {}
+for k, v in pairs(lsp_zero.defaults.cmp_sources()) do
+	if v.name == "nvim_lsp" then
+		v.priority = 4
+	elseif v.name == "luasnip" then
+		v.priority = 3
+	elseif v.name == "buffer" then
+		v.priority = 2
+	elseif v.name == "path" then
+		v.priority = 1
+	end
+	cmp_sources[k] = v
+end
+
+cmp.setup(lsp_zero.defaults.cmp_config({
+	sources = cmp_sources,
 	completion = {
 		-- Turn off autocomplete, rely on keybinding to trigger it...
 		autocomplete = false,
@@ -222,7 +242,7 @@ lsp_zero.setup_nvim_cmp({
 			end
 		end,
 	}),
-})
+}))
 
 lsp_zero.setup()
 
