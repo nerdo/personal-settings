@@ -10,3 +10,11 @@ vim.g.neovide_floating_opacity = 0.9
 vim.g.neovide_hide_mouse_when_typing = true
 
 require("nerdo.gui.neovide-font-sizing")
+
+-- https://github.com/neovide/neovide/issues/1263#issuecomment-1100895622
+-- Allow clipboard copy paste in neovim
+vim.g.neovide_input_use_logo = 1
+vim.api.nvim_set_keymap("", "<D-v>", "+p<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("!", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("t", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<D-v>", "<C-R>+", { noremap = true, silent = true })
