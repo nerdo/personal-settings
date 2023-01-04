@@ -20,3 +20,6 @@ vim.opt.cursorlineopt = "line,number"
 
 -- Turn on true color.
 vim.opt.termguicolors = true
+
+-- Turn off the mouse.
+vim.opt.mouse = ""
