@@ -189,7 +189,7 @@ local on_attach_behaviors = function(bufnr)
 		end
 	end, opts)
 
-	map("n", "<leader>w", vim.cmd.write())
+	vim.keymap.set("n", "<leader>w", "<Cmd>w<CR>")
 	vim.keymap.set("n", "<leader>;", function()
 		-- Formats before saving.
 		vim.lsp.buf.format({ async = false })
