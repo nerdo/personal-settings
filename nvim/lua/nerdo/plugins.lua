@@ -98,6 +98,9 @@ return function(use)
 	-- Comment out lines with keymap.
 	use("tpope/vim-commentary")
 
+	-- Surround things easily.
+	use("tpope/vim-surround")
+
 	-- Colorizer for displaying colors in code.
 	use("norcalli/nvim-colorizer.lua")
 
