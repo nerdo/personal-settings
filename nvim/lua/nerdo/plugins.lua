@@ -36,6 +36,16 @@ return function(use)
 	-- Show symbols in gutter for git changes.
 	use("lewis6991/gitsigns.nvim")
 
+	-- Display tabs for buffers.
+	use({ "akinsho/bufferline.nvim", tag = "v3.*", requires = "nvim-tree/nvim-web-devicons" })
+
+	-- Status line.
+	-- Note: for some reason this wipes out the NVIM splash screen buffer.
+	use({
+		"nvim-lualine/lualine.nvim",
+		requires = { "kyazdani42/nvim-web-devicons", opt = true },
+	})
+
 	-- LSPs
 	use({
 		"VonHeikemen/lsp-zero.nvim",
@@ -56,29 +66,28 @@ return function(use)
 			-- Snippets
 			{ "L3MON4D3/LuaSnip" },
 			{ "rafamadriz/friendly-snippets" },
+
+			-- The rest are my own LSP requirements (NOT required for lsp-zero)
+
+			-- for formatting code
+			{ "jose-elias-alvarez/null-ls.nvim" },
+
+			-- Inlay hints for type/metadata.
+			{ "lvimuser/lsp-inlayhints.nvim" },
 		},
 	})
 
 	-- LSP diagnostic info.
 	use({ "folke/trouble.nvim", requires = "kyazdani42/nvim-web-devicons" })
 
-	-- For formatting code.
-	use("jose-elias-alvarez/null-ls.nvim")
-
 	-- Clear search highlighting when done.
 	use("romainl/vim-cool")
-
-	-- Align text with spaces easily.
-	use("junegunn/vim-easy-align")
 
 	-- Highlights unique characters to jump to in a line.
 	use("unblevable/quick-scope")
 
 	-- Automatic detection of tab size.
 	use("Darazaki/indent-o-matic")
-
-	-- Inlay hints for type/metadata.
-	use("lvimuser/lsp-inlayhints.nvim")
 
 	-- Show indent lines.
 	use("lukas-reineke/indent-blankline.nvim")
@@ -95,15 +104,6 @@ return function(use)
 	-- Terminal.
 	use({ "akinsho/toggleterm.nvim", tag = "v2.*" })
 
-	-- Display tabs for buffers.
-	use({ "akinsho/bufferline.nvim", tag = "v3.*", requires = "nvim-tree/nvim-web-devicons" })
-
-	-- Status line.
-	use({
-		"nvim-lualine/lualine.nvim",
-		requires = { "kyazdani42/nvim-web-devicons", opt = true },
-	})
-
 	-- Debug adapter.
 	use("mfussenegger/nvim-dap")
 	use({ "rcarriga/nvim-dap-ui", requires = { "mfussenegger/nvim-dap" } })
@@ -112,5 +112,8 @@ return function(use)
 	use("b0o/schemastore.nvim")
 
 	-- Customize buffer delete behavior.
-	use({ "ojroques/nvim-bufdel" })
+	use("ojroques/nvim-bufdel")
+
+	-- Align text with spaces easily.
+	use("junegunn/vim-easy-align")
 end
