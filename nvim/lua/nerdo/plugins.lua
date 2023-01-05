@@ -101,6 +101,9 @@ return function(use)
 	-- Surround things easily.
 	use("tpope/vim-surround")
 
+	-- Case-intelligent serach and replace.
+	use("tpope/vim-abolish")
+
 	-- Colorizer for displaying colors in code.
 	use("norcalli/nvim-colorizer.lua")
 
