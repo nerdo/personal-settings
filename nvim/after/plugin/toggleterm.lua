@@ -17,7 +17,17 @@ toggleterm.setup({
 	end,
 
 	float_opts = {
-		border = "curved",
+		border = "single",
+	},
+
+	highlights = {
+		NormalFloat = {
+			guibg = "#1f2022",
+		},
+		FloatBorder = {
+			guibg = "#1f2022",
+			guifg = "#1f2022",
+		},
 	},
 })
 
