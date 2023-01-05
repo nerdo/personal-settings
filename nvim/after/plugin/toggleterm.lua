@@ -44,6 +44,6 @@ vim.api.nvim_create_autocmd("TermOpen", {
 })
 
 -- Set some keymaps.
-vim.keymap.set("n", "<A-o>", "<Cmd>1ToggleTerm direction=float<CR>")
-vim.keymap.set("n", "<A-r>", "<Cmd>2ToggleTerm direction=vertical<CR>")
-vim.keymap.set("n", "<A-b>", "<Cmd>3ToggleTerm direction=horizontal<CR>")
+vim.keymap.set({ "n", "i", "v" }, "<A-o>", "<Cmd>1ToggleTerm direction=float<CR>")
+vim.keymap.set({ "n", "i", "v" }, "<A-r>", "<Cmd>2ToggleTerm direction=vertical<CR>")
+vim.keymap.set({ "n", "i", "v" }, "<A-b>", "<Cmd>3ToggleTerm direction=horizontal<CR>")
