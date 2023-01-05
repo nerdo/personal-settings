@@ -104,6 +104,9 @@ return function(use)
 	-- Case-intelligent serach and replace.
 	use("tpope/vim-abolish")
 
+	-- Auto pairing of brackets and suck.
+	use("windwp/nvim-autopairs")
+
 	-- Colorizer for displaying colors in code.
 	use("norcalli/nvim-colorizer.lua")
 
