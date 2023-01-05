@@ -3,15 +3,15 @@ if vim.g.nerdo_workspace_load_attempted == true then
 	return
 end
 
+local nerdo = require("nerdo.functions")
+
 -- When vim loads, source the workspace.
 vim.api.nvim_create_autocmd("VimEnter", {
+	once = true,
 	pattern = "*",
 	callback = function()
 		-- Don't try to load the session if an argument was given on the command line
-		-- This is naive, because it doesn't take into account that some of these may be options
-		-- The right way to do this: check if there are any arguments after an option --
-		-- OR if there are any options that don't otherwise begin with a -
-		if #vim.v.argv > 1 then
+		if #nerdo.editor.get_command_line_paths() > 0 then
 			return
 		end
 
@@ -22,7 +22,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
 			return
 		end
 	end,
-	once = true,
 })
 
 vim.g.nerdo_workspace_load_attempted = true

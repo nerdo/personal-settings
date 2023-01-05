@@ -120,6 +120,28 @@ editor.buffer_filetype_is_open = function(filetype)
 	return false
 end
 
+-- Gets table of paths requested on the commandline.
+editor.get_command_line_paths = function()
+	local paths = {}
+	local everything_else_is_a_path = false
+
+	for i, v in ipairs(vim.v.argv) do
+		if i == 1 then
+			-- Skip the first entry (the executable that was run).
+		elseif everything_else_is_a_path then
+			table.insert(paths, v)
+		else
+			if v == "--" then
+				everything_else_is_a_path = true
+			elseif string.sub(v, 1, 1) ~= "-" then
+				table.insert(paths, v)
+			end
+		end
+	end
+
+	return paths
+end
+
 local M = {
 	path = path,
 	line_numbers = line_numbers,
