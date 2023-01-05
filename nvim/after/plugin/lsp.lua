@@ -211,19 +211,21 @@ for k, v in pairs(lsp_zero.defaults.cmp_sources()) do
 		v.priority = 4
 	elseif v.name == "luasnip" then
 		v.priority = 3
-	elseif v.name == "buffer" then
-		v.priority = 2
 	elseif v.name == "path" then
 		v.priority = 1
 	end
-	cmp_sources[k] = v
+
+	-- Omit buffer from the autocomplete, it's too noisy...
+	if v.name ~= "buffer" then
+		cmp_sources[k] = v
+	end
 end
 
 cmp.setup(lsp_zero.defaults.cmp_config({
 	sources = cmp_sources,
 	completion = {
-		-- Turn off autocomplete, rely on keybinding to trigger it...
-		autocomplete = false,
+		-- Turn autocomplete on.
+		autocomplete = true,
 	},
 	mapping = lsp_zero.defaults.cmp_mappings({
 		["<C-Space>"] = cmp.mapping.complete(),
