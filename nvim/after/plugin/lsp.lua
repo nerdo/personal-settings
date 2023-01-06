@@ -225,7 +225,7 @@ cmp.setup(lsp_zero.defaults.cmp_config({
 	sources = cmp_sources,
 	completion = {
 		-- Turn autocomplete on.
-		autocomplete = true,
+		-- autocomplete = true,
 	},
 	mapping = lsp_zero.defaults.cmp_mappings({
 		["<C-Space>"] = cmp.mapping.complete(),
