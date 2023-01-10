@@ -86,6 +86,9 @@ return function(use)
 	-- Highlights unique characters to jump to in a line.
 	use("unblevable/quick-scope")
 
+	-- Leap to specific positions in text.
+	use("ggandor/leap.nvim")
+
 	-- Automatic detection of tab size.
 	use("Darazaki/indent-o-matic")
 
