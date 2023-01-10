@@ -197,6 +197,16 @@ local on_attach_behaviors = function(bufnr)
 	end, opts)
 end
 
+vim.api.nvim_create_autocmd("User", {
+	pattern = "TroubleJump",
+	callback = function()
+		-- Open the diagnostic float after 300ms.
+		vim.schedule(function()
+			vim.cmd("lua vim.diagnostic.open_float()")
+		end, 300)
+	end,
+})
+
 lsp_zero.on_attach(function(_, bufnr)
 	on_attach_behaviors(bufnr)
 end)

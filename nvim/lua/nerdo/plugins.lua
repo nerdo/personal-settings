@@ -78,7 +78,8 @@ return function(use)
 	})
 
 	-- LSP diagnostic info.
-	use({ "folke/trouble.nvim", requires = "kyazdani42/nvim-web-devicons" })
+	use({ "nerdo/trouble.nvim", requires = "kyazdani42/nvim-web-devicons" })
+	-- use({ "folke/trouble.nvim", requires = "kyazdani42/nvim-web-devicons" })
 
 	-- Clear search highlighting when done.
 	use("romainl/vim-cool")
