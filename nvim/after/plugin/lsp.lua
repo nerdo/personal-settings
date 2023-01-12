@@ -142,6 +142,18 @@ end
 local trouble_is_present, trouble = pcall(require, "trouble")
 local nerdo = require("nerdo.functions")
 
+local saga_is_present, _ = pcall(require, "lspsaga")
+
+local open_floating_diagnostic = function()
+	if saga_is_present then
+		-- Removed because lspsaga doesn't seem to always show all the diagnostic info properly :(
+		-- vim.cmd("Lspsaga show_cursor_diagnostics")
+		vim.diagnostic.open_float()
+	else
+		vim.diagnostic.open_float()
+	end
+end
+
 -- Keymaps
 local on_attach_behaviors = function(bufnr)
 	-- LSP keymaps.
@@ -151,59 +163,89 @@ local on_attach_behaviors = function(bufnr)
 		end
 	end
 
-	local opts = { noremap = true, silent = true }
+	local opts = { noremap = true, silent = true, buffer = bufnr }
 	local map = function(m, lhs, rhs)
-		vim.api.nvim_buf_set_keymap(bufnr, m, lhs, rhs, opts)
+		vim.keymap.set(m, lhs, rhs, opts)
 	end
 
 	local lsp = fmt("<cmd>lua vim.lsp.%s<cr>")
 	local diagnostic = fmt("<cmd>lua vim.diagnostic.%s<cr>")
 
-	map("n", "K", lsp("buf.hover()"))
+	local goto_next_diagnostic = function()
+		if saga_is_present then
+			-- Removed because lspsaga doesn't seem to always show all the diagnostic info properly :(
+			-- vim.cmd("Lspsaga diagnostic_jump_next")
+			vim.diagnostic.goto_next()
+		else
+			vim.diagnostic.goto_next()
+		end
+	end
+
+	local goto_prev_diagnostic = function()
+		if saga_is_present then
+			-- Removed because lspsaga doesn't seem to always show all the diagnostic info properly :(
+			-- vim.cmd("Lspsaga diagnostic_jump_prev")
+			vim.diagnostic.goto_prev()
+		else
+			vim.diagnostic.goto_prev()
+		end
+	end
+
+	if saga_is_present then
+		map("n", "K", "<cmd>Lspsaga hover_doc<CR>")
+		map("n", "<leader>la", "<cmd>Lspsaga show_cursor_diagnostics<CR>")
+		map("n", "<leader>li", open_floating_diagnostic)
+		map("n", "<leader>lr", "<cmd>Lspsaga rename<CR>")
+		map("n", "<leader>lr", "<cmd>Lspsaga rename<CR>")
+
+		-- Things only lspsaga provides...
+		map("n", "<leader>o", "<cmd>Lspsaga outline<CR>")
+		map("n", "gh", "<cmd>Lspsaga lsp_finder<CR>")
+	else
+		map("n", "K", lsp("buf.hover()"))
+		map({ "n", "v" }, "<leader>la", lsp("buf.code_action()"))
+		map("n", "<leader>li", diagnostic("open_float()"))
+		map("n", "<leader>lr", lsp("buf.rename()"))
+	end
+
 	map("n", "gd", lsp("buf.definition()"))
 	map("n", "gD", lsp("buf.declaration()"))
 	map("n", "gi", lsp("buf.implementation()"))
 	map("n", "go", lsp("buf.type_definition()"))
 	map("n", "gr", lsp("buf.references()"))
-	map("n", "<leader>lr", lsp("buf.rename()"))
-	map("n", "<leader>la", lsp("buf.code_action()"))
 	map("x", "<leader>la", lsp("buf.range_code_action()"))
 	map("n", "<leader>lf", lsp("buf.format({ async = true })"))
-	map("n", "<leader>li", diagnostic("open_float()"))
 
 	-- When Trouble is installed and the panel is open, use its next/prev diagnostics instead.
 	-- This has the effect of traveling the entire codebase's diagnostics
 	-- (with Trouble's default behavior of showing you everything in the codebase).
-	vim.keymap.set("n", "<C-k>", function()
+	map("n", "<C-k>", function()
 		if trouble_is_present and nerdo.editor.buffer_filetype_is_open("Trouble") then
 			trouble.previous({ skip_groups = true, jump = true })
 		else
-			vim.diagnostic.goto_prev()
+			goto_prev_diagnostic()
 		end
-	end, opts)
-	vim.keymap.set("n", "<C-j>", function()
+	end)
+	map("n", "<C-j>", function()
 		if trouble_is_present and nerdo.editor.buffer_filetype_is_open("Trouble") then
 			trouble.next({ skip_groups = true, jump = true })
 		else
-			vim.diagnostic.goto_next()
+			goto_next_diagnostic()
 		end
-	end, opts)
+	end)
 
-	vim.keymap.set("n", "<leader>w", "<Cmd>w<CR>")
-	vim.keymap.set("n", "<leader>;", function()
+	map("n", "<leader>w", "<Cmd>w<CR>")
+	map("n", "<leader>;", function()
 		-- Formats before saving.
 		vim.lsp.buf.format({ async = false })
 		vim.cmd.write()
-	end, opts)
+	end)
 end
 
 vim.api.nvim_create_autocmd("User", {
 	pattern = "TroubleJump",
 	callback = function()
-		-- Open the diagnostic float after 300ms.
-		vim.schedule(function()
-			vim.cmd("lua vim.diagnostic.open_float()")
-		end, 300)
+		vim.schedule(open_floating_diagnostic)
 	end,
 })
 

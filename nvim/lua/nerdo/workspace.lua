@@ -21,6 +21,16 @@ vim.api.nvim_create_autocmd("VimEnter", {
 			vim.api.nvim_command("source " .. filename)
 			return
 		end
+
+		-- If we're here, no workspace was loaded...
+		-- Start some trouble =]
+		local trouble_is_present, _ = pcall(require, "trouble")
+		if trouble_is_present then
+			vim.schedule(function()
+				vim.cmd("Trouble")
+				vim.cmd("buffer 1")
+			end)
+		end
 	end,
 })
 

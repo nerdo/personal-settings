@@ -81,6 +81,9 @@ return function(use)
 	use({ "nerdo/trouble.nvim", requires = "kyazdani42/nvim-web-devicons" })
 	-- use({ "folke/trouble.nvim", requires = "kyazdani42/nvim-web-devicons" })
 
+	-- Improved UI for lsp features.
+	use({ "glepnir/lspsaga.nvim", branch = "main" })
+
 	-- Clear search highlighting when done.
 	use("romainl/vim-cool")
 
