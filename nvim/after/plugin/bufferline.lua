@@ -1,6 +1,6 @@
 local present, bufferline = pcall(require, "bufferline")
 
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 

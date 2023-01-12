@@ -1,6 +1,6 @@
 local present, bufdel = pcall(require, "bufdel")
 
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 

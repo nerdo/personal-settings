@@ -1,6 +1,6 @@
 local present, saga = pcall(require, "lspsaga")
 
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 

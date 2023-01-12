@@ -1,6 +1,6 @@
 local present, dap = pcall(require, "dap")
 
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 

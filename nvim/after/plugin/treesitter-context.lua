@@ -1,6 +1,6 @@
 local present, nvim_treesitter_context = pcall(require, "treesitter-context")
 
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 

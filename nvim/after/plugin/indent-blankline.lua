@@ -1,12 +1,21 @@
 local present, indent_blankline = pcall(require, "indent_blankline")
 
-if not present then
+if not present or vim.g.vscode then
 	return
+end
+
+local context_char
+if vim.g.vscode then
+	-- VSCode has space between lines, so this looks ugly.
+	-- Use Indenticator in VSCode for this instead...
+	context_char = ""
+else
+	context_char = "▎"
 end
 
 local settings = {
 	char = "",
-	context_char = "▎",
+	context_char = context_char,
 	space_char_blankline = " ",
 	use_treesitter = true,
 	show_current_context = true,

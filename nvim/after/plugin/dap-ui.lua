@@ -1,6 +1,6 @@
 local present, dapui = pcall(require, "dapui")
 
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 

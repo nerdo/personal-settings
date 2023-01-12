@@ -1,6 +1,6 @@
 local present, lualine = pcall(require, "lualine")
 
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 

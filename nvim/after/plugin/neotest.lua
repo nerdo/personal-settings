@@ -1,6 +1,6 @@
 local present, neotest = pcall(require, "neotest")
 
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 

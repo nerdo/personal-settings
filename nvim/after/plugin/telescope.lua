@@ -1,6 +1,6 @@
 local present, telescope = pcall(require, "telescope")
 
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 

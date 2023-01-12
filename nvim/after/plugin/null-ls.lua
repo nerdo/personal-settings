@@ -1,6 +1,6 @@
 local present, null_ls = pcall(require, "null-ls")
 
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 

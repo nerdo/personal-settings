@@ -1,4 +1,4 @@
-if not vim.g.loaded_dirvish then
+if not vim.g.loaded_dirvish or vim.g.vscode then
 	return
 end
 

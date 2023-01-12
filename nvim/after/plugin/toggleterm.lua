@@ -1,6 +1,6 @@
 local present, toggleterm = pcall(require, "toggleterm")
 
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 

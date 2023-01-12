@@ -1,6 +1,6 @@
 local present, lsp_zero = pcall(require, "lsp-zero")
 
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 

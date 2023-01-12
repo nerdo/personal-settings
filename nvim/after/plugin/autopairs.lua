@@ -1,5 +1,5 @@
 local present, autopairs = pcall(require, "nvim-autopairs")
-if not present then
+if not present or vim.g.vscode then
 	return
 end
 
