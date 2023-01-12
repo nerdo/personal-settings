@@ -5,8 +5,16 @@ vim.g.mapleader = " "
 -- Save buffer.
 -- Note: these two do the same thing by default, but in a buffer where a language server is present,
 -- <leader>; will format the buffer before saving. <leader>w will not.
-vim.keymap.set("n", "<leader>w", "<Cmd>w<CR>")
-vim.keymap.set("n", "<leader>;", "<Cmd>w<CR>")
+local function save_buffer()
+	if vim.g.vscode then
+		vim.cmd("call VSCodeCall('workbench.action.files.save')")
+	else
+		vim.cmd("write")
+	end
+end
+
+vim.keymap.set("n", "<leader>w", save_buffer)
+vim.keymap.set("n", "<leader>;", save_buffer)
 
 -- New buffer.
 vim.keymap.set("n", "<leader>b", "<Cmd>enew<CR>")
