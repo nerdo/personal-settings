@@ -4,6 +4,12 @@ if not present then
 	return
 end
 
+local neodev_is_present, neodev = pcall(require, "neodev")
+
+if neodev_is_present then
+	neodev.setup({})
+end
+
 -- https://github.com/VonHeikemen/lsp-zero.nvim/blob/main/advance-usage.md#the-current-api-is-not-enough
 lsp_zero.preset("lsp-compe")
 
@@ -185,9 +191,9 @@ local on_attach_behaviors = function(bufnr)
 		if saga_is_present then
 			-- Removed because lspsaga doesn't seem to always show all the diagnostic info properly :(
 			-- vim.cmd("Lspsaga diagnostic_jump_prev")
-			vim.diagnostic.goto_prev()
+			vim.diagnostic.goto_prev({})
 		else
-			vim.diagnostic.goto_prev()
+			vim.diagnostic.goto_prev({})
 		end
 	end
 
@@ -280,7 +286,7 @@ cmp.setup(lsp_zero.defaults.cmp_config({
 		-- autocomplete = true,
 	},
 	mapping = lsp_zero.defaults.cmp_mappings({
-		["<C-Space>"] = cmp.mapping.complete(),
+		["<C-Space>"] = cmp.mapping.complete({}),
 		["<C-j>"] = function(fallback)
 			if cmp.visible() then
 				cmp.select_next_item()
