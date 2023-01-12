@@ -87,6 +87,22 @@ return function(use)
 	-- Improved UI for lsp features.
 	use({ "glepnir/lspsaga.nvim", branch = "main" })
 
+	-- Test runner.
+	use({
+		"nvim-neotest/neotest",
+		requires = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+			"antoinemadec/FixCursorHold.nvim",
+
+			-- Test adapters
+			"rouge8/neotest-rust",
+			"olimorris/neotest-phpunit",
+			"marilari88/neotest-vitest",
+			"haydenmeade/neotest-jest",
+		},
+	})
+
 	-- Clear search highlighting when done.
 	use("romainl/vim-cool")
 
