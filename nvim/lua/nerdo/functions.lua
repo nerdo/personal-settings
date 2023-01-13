@@ -1,5 +1,8 @@
 local path = {}
 
+-- Create an augroup to associate with my stuff...
+local augroup = vim.api.nvim_create_augroup("Nerdo", {})
+
 -- My lua skills suck! But thanks StackOverflow: https://stackoverflow.com/a/6023372/2057996
 
 -- Copies the current filename to the system (+) clipboard.
@@ -142,13 +145,51 @@ editor.get_command_line_paths = function()
 	return paths
 end
 
--- Create an augroup to associate with my stuff...
-local augroup = vim.api.nvim_create_augroup("Nerdo", {})
+-- Track the last focused file through bufferline.
+local last_normal_focused_bufnr = 0
+
+local get_last_normal_focused_bufnr = function()
+	return last_normal_focused_bufnr
+end
+
+local bufferline_present, bufferline = pcall(require, "bufferline")
+
+if bufferline_present then
+	vim.api.nvim_create_autocmd("BufEnter", {
+		group = augroup,
+		pattern = "*",
+		callback = function()
+			local current_bufnr = vim.fn.bufnr()
+			local elements = bufferline.get_elements()
+
+			for _, value in pairs(elements.elements) do
+				if value.id == current_bufnr then
+					last_normal_focused_bufnr = current_bufnr
+					break
+				end
+			end
+		end,
+	})
+end
+
+-- Context variable accessors.
+local trouble_auto_leave = true
+local set_trouble_auto_leave = function(flag)
+	trouble_auto_leave = flag
+end
+local get_trouble_auto_leave = function()
+	return trouble_auto_leave
+end
 
 local M = {
 	path = path,
 	line_numbers = line_numbers,
 	editor = editor,
+	last_normal_focused_bufnr = get_last_normal_focused_bufnr,
+	trouble_auto_leave = {
+		set = set_trouble_auto_leave,
+		get = get_trouble_auto_leave,
+	},
 	augroup = augroup,
 }
 

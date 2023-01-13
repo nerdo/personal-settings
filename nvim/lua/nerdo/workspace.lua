@@ -44,12 +44,6 @@ vim.api.nvim_create_autocmd("SessionLoadPost", {
 	callback = function()
 		if vim.g.nerdo_session_load_trouble then
 			vim.cmd("TroubleToggle")
-			vim.schedule(function()
-				-- I just can't figure out a better way to make this work :(
-				vim.defer_fn(function()
-					vim.cmd("bp")
-				end, 500)
-			end)
 			vim.g.nerdo_session_load_trouble = false
 		end
 	end,
