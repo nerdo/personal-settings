@@ -151,4 +151,7 @@ return function(use)
 
 	-- Align text with spaces easily.
 	use("junegunn/vim-easy-align")
+
+	-- Preview register contents.
+	use("junegunn/vim-peekaboo")
 end
