@@ -8,8 +8,8 @@ telescope.setup()
 
 local builtin = require("telescope.builtin")
 
-vim.keymap.set({ "n", "i" }, "<C-g>", builtin.git_files, {})
-vim.keymap.set({ "n", "i" }, "<C-p>", builtin.find_files, {})
+vim.keymap.set({ "n", "i" }, "<C-p>", builtin.git_files, {})
+vim.keymap.set({ "n", "i" }, "<A-p>", builtin.find_files, {})
 vim.keymap.set({ "n", "i" }, "<C-f>", builtin.live_grep, {})
 vim.keymap.set("n", "<leader>?", "<Cmd>Telescope<CR>")
 
