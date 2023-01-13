@@ -61,8 +61,8 @@ end)
 
 -- Split resizing with Alt+Shift+nav keys.
 vim.keymap.set("n", "<A-S-h>", "<Cmd>vertical resize -1<CR>")
-vim.keymap.set("n", "<A-S-j>", "<Cmd>resize +1<CR>")
-vim.keymap.set("n", "<A-S-k>", "<Cmd>resize -1<CR>")
+vim.keymap.set("n", "<A-S-j>", "<Cmd>resize -1<CR>")
+vim.keymap.set("n", "<A-S-k>", "<Cmd>resize +1<CR>")
 vim.keymap.set("n", "<A-S-l>", "<Cmd>vertical resize +1<CR>")
 
 -- theprimagen's awesome visual move text keymap.
