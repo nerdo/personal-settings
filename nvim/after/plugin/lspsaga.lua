@@ -20,10 +20,12 @@ saga.setup({
 
 local nerdo = require("nerdo.functions")
 
-vim.api.nvim_create_autocmd("BufEnter", {
+vim.api.nvim_create_autocmd("FileType", {
 	group = nerdo.augroup,
 	pattern = "lspsagaoutline",
 	callback = function()
-		vim.cmd("NerdoSetLineNrRelative")
+		vim.schedule(function()
+			vim.cmd("NerdoSetLineNrRelative")
+		end)
 	end,
 })
