@@ -152,9 +152,7 @@ local saga_is_present, _ = pcall(require, "lspsaga")
 
 local open_floating_diagnostic = function()
 	if saga_is_present then
-		-- Removed because lspsaga doesn't seem to always show all the diagnostic info properly :(
-		-- vim.cmd("Lspsaga show_cursor_diagnostics")
-		vim.diagnostic.open_float()
+		vim.cmd("Lspsaga show_cursor_diagnostics")
 	else
 		vim.diagnostic.open_float()
 	end
@@ -179,9 +177,7 @@ local on_attach_behaviors = function(bufnr)
 
 	local goto_next_diagnostic = function()
 		if saga_is_present then
-			-- Removed because lspsaga doesn't seem to always show all the diagnostic info properly :(
-			-- vim.cmd("Lspsaga diagnostic_jump_next")
-			vim.diagnostic.goto_next()
+			vim.cmd("Lspsaga diagnostic_jump_next")
 		else
 			vim.diagnostic.goto_next()
 		end
@@ -189,9 +185,7 @@ local on_attach_behaviors = function(bufnr)
 
 	local goto_prev_diagnostic = function()
 		if saga_is_present then
-			-- Removed because lspsaga doesn't seem to always show all the diagnostic info properly :(
-			-- vim.cmd("Lspsaga diagnostic_jump_prev")
-			vim.diagnostic.goto_prev({})
+			vim.cmd("Lspsaga diagnostic_jump_prev")
 		else
 			vim.diagnostic.goto_prev({})
 		end
@@ -249,6 +243,7 @@ local on_attach_behaviors = function(bufnr)
 end
 
 vim.api.nvim_create_autocmd("User", {
+	group = nerdo.augroup,
 	pattern = "TroubleJump",
 	callback = function()
 		vim.schedule(open_floating_diagnostic)

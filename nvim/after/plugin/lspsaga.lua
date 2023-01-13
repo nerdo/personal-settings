@@ -5,11 +5,25 @@ if not present or vim.g.vscode then
 end
 
 saga.setup({
-	border_style = "bold",
-	code_action_lightbulb = {
+	lightbulb = {
 		enable = false,
 	},
-	show_outline = {
+	outline = {
 		win_width = 50,
+		keys = {
+			jump = "<CR>",
+			expand_collapse = "u",
+			quit = "<leader>o",
+		},
 	},
+})
+
+local nerdo = require("nerdo.functions")
+
+vim.api.nvim_create_autocmd("BufEnter", {
+	group = nerdo.augroup,
+	pattern = "lspsagaoutline",
+	callback = function()
+		vim.cmd("NerdoSetLineNrRelative")
+	end,
 })

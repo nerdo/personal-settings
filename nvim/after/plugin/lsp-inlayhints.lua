@@ -20,9 +20,9 @@ inlayhints.setup({
 	},
 })
 
-vim.api.nvim_create_augroup("LspAttach_inlayhints", {})
+local nerdo = require("nerdo.functions")
 vim.api.nvim_create_autocmd("LspAttach", {
-	group = "LspAttach_inlayhints",
+	group = nerdo.augroup,
 	callback = function(args)
 		if not (args.data and args.data.client_id) then
 			return

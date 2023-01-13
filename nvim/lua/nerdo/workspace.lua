@@ -39,6 +39,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
 -- When a session loads, do stuff...
 vim.api.nvim_create_autocmd("SessionLoadPost", {
+	group = nerdo.augroup,
 	pattern = "*",
 	callback = function()
 		if vim.g.nerdo_session_load_trouble then

@@ -142,10 +142,14 @@ editor.get_command_line_paths = function()
 	return paths
 end
 
+-- Create an augroup to associate with my stuff...
+local augroup = vim.api.nvim_create_augroup("Nerdo", {})
+
 local M = {
 	path = path,
 	line_numbers = line_numbers,
 	editor = editor,
+	augroup = augroup,
 }
 
 return M

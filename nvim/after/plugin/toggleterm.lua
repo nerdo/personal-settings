@@ -31,8 +31,11 @@ toggleterm.setup({
 	},
 })
 
+local nerdo = require("nerdo.functions")
+
 -- Set up some keybindings just for the terminal buffer.
 vim.api.nvim_create_autocmd("TermOpen", {
+	group = nerdo.augroup,
 	pattern = "term://*",
 	callback = function()
 		local opts = { buffer = 0 }
