@@ -4,7 +4,7 @@ if not present or vim.g.vscode then
 	return
 end
 
-saga.init_lsp_saga({
+saga.setup({
 	border_style = "bold",
 	code_action_lightbulb = {
 		enable = false,
