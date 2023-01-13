@@ -5,6 +5,8 @@ end
 
 local nerdo = require("nerdo.functions")
 
+local session_filename = ""
+
 -- When vim loads, source the workspace.
 vim.api.nvim_create_autocmd("VimEnter", {
 	once = true,
@@ -19,6 +21,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 		for filename in session_files:gmatch("[^\r\n]+") do
 			-- Get the first file name, source it, and return.
 			vim.api.nvim_command("source " .. filename)
+			session_filename = filename
 			return
 		end
 
@@ -33,5 +36,68 @@ vim.api.nvim_create_autocmd("VimEnter", {
 		end
 	end,
 })
+
+-- When a session loads, do stuff...
+vim.api.nvim_create_autocmd("SessionLoadPost", {
+	pattern = "*",
+	callback = function()
+		if vim.g.nerdo_session_load_trouble then
+			vim.cmd("TroubleToggle")
+			vim.schedule(function()
+				-- I just can't figure out a better way to make this work :(
+				vim.defer_fn(function()
+					vim.cmd("bp")
+				end, 500)
+			end)
+			vim.g.nerdo_session_load_trouble = false
+		end
+	end,
+})
+
+local function mksession(session_file)
+	local trouble_is_present, _ = pcall(require, "trouble")
+	local trouble_is_open = trouble_is_present and nerdo.editor.buffer_filetype_is_open("Trouble")
+
+	if trouble_is_open then
+		-- Close it... Re-open it after the session is saved, because it's trouble to persist!
+		vim.cmd("TroubleClose")
+
+		-- Execute the original mksession command
+		vim.api.nvim_command("mksession! " .. session_file)
+
+		-- Read the current content of the file
+		local file = io.open(session_file, "r")
+		if not file then
+			return
+		end
+		local content = file:read("*all")
+		file:close()
+
+		-- Prepend the text to the beginning of the content
+		local new_content = "lua vim.g.nerdo_session_load_trouble = true\n" .. content
+
+		-- Write the new content to the file
+		file = io.open(session_file, "w")
+		if not file then
+			return
+		end
+		file:write(new_content)
+		file:close()
+
+		vim.cmd("TroubleToggle")
+		vim.cmd("bp")
+	else
+		vim.api.nvim_command("mksession! " .. session_file)
+	end
+end
+
+vim.keymap.set("n", "<leader>S", function()
+	local input_filename = vim.api.nvim_call_function("input", { "Session filename: ", session_filename })
+	if input_filename == nil or input_filename == "" then
+		return
+	end
+	session_filename = input_filename
+	mksession(session_filename)
+end)
 
 vim.g.nerdo_workspace_load_attempted = true
