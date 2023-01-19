@@ -30,3 +30,9 @@ vim.api.nvim_set_hl(0, "TelescopeResultsNormal", { bg = "#434854" })
 vim.api.nvim_set_hl(0, "TelescopeBorder", { fg = "#2d3033", bg = "#2d3033" })
 vim.api.nvim_set_hl(0, "TelescopeSelection", { link = "CursorLine" })
 vim.api.nvim_set_hl(0, "TelescopeTitle", { fg = "#fff36d" })
+
+-- Diagnostics.
+vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { bg = "#651C32" })
+vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn", { bg = "#402f36" })
+vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo", {})
+vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", {})
