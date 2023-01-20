@@ -31,14 +31,15 @@ vim.api.nvim_create_autocmd("BufEnter", {
 			return
 		end
 
-		local file_type = vim.bo.filetype
-		if file_type ~= "Trouble" then
-			return
-		end
-
-		local last_normal_focused_bufnr = nerdo.last_normal_focused_bufnr()
 		vim.schedule(function()
-			vim.cmd("buffer " .. last_normal_focused_bufnr)
+			local file_type = vim.bo.filetype
+			if file_type ~= "Trouble" then
+				return
+			end
+
+			vim.schedule(function()
+				vim.api.nvim_set_current_buf(nerdo.editor.last_normal_focused_bufnr())
+			end)
 		end)
 	end,
 })

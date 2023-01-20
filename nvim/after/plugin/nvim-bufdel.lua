@@ -22,7 +22,7 @@ vim.keymap.set("n", "<leader><BS>", function()
 
 	if trouble_was_open then
 		vim.cmd("TroubleToggle")
-		vim.cmd("bp")
+		vim.api.nvim_set_current_buf(nerdo.editor.last_normal_focused_bufnr())
 	end
 end)
 
@@ -37,6 +37,6 @@ vim.keymap.set("n", "\\<BS>", function()
 
 	if trouble_was_open then
 		vim.cmd("TroubleToggle")
-		vim.cmd("bp")
+		vim.api.nvim_set_current_buf(nerdo.editor.last_normal_focused_bufnr())
 	end
 end)

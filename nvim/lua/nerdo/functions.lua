@@ -145,32 +145,30 @@ editor.get_command_line_paths = function()
 	return paths
 end
 
--- Track the last focused file through bufferline.
+-- Track the last focused file buffer.
 local last_normal_focused_bufnr = 0
 
-local get_last_normal_focused_bufnr = function()
+-- Gets the last "normal" focused buffer number.
+-- That is, the buffer that was entered last that has the "buflisted" option set.
+-- (Plugins usually set the &nobuflisted option on special windows).
+-- This is how bufferline works, according to https://github.com/akinsho/bufferline.nvim/issues/663
+editor.last_normal_focused_bufnr = function()
 	return last_normal_focused_bufnr
 end
 
-local bufferline_present, bufferline = pcall(require, "bufferline")
-
-if bufferline_present then
-	vim.api.nvim_create_autocmd("BufEnter", {
-		group = augroup,
-		pattern = "*",
-		callback = function()
-			local current_bufnr = vim.fn.bufnr()
-			local elements = bufferline.get_elements()
-
-			for _, value in pairs(elements.elements) do
-				if value.id == current_bufnr then
-					last_normal_focused_bufnr = current_bufnr
-					break
-				end
-			end
-		end,
-	})
+local update_last_normal_focused_bufnr = function()
+	local current_bufnr = vim.fn.bufnr()
+	local is_buflisted = vim.api.nvim_buf_get_option(current_bufnr, "buflisted")
+	if is_buflisted then
+		last_normal_focused_bufnr = current_bufnr
+	end
 end
+
+vim.api.nvim_create_autocmd("BufLeave", {
+	group = augroup,
+	pattern = "*",
+	callback = update_last_normal_focused_bufnr,
+})
 
 -- Context variable accessors.
 local trouble_auto_leave = true
@@ -185,7 +183,6 @@ local M = {
 	path = path,
 	line_numbers = line_numbers,
 	editor = editor,
-	last_normal_focused_bufnr = get_last_normal_focused_bufnr,
 	trouble_auto_leave = {
 		set = set_trouble_auto_leave,
 		get = get_trouble_auto_leave,

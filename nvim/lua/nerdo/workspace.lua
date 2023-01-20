@@ -5,6 +5,8 @@ end
 
 local nerdo = require("nerdo.functions")
 
+local trouble_is_present, trouble = pcall(require, "trouble")
+
 local session_filename = ""
 
 -- When vim loads, source the workspace.
@@ -12,50 +14,48 @@ vim.api.nvim_create_autocmd("VimEnter", {
 	once = true,
 	pattern = "*",
 	callback = function()
-		-- Don't try to load the session if an argument was given on the command line
-		if #nerdo.editor.get_command_line_paths() > 0 then
-			return
-		end
+		vim.schedule(function()
+			-- Don't try to load the session if an argument was given on the command line
+			if #nerdo.editor.get_command_line_paths() > 0 then
+				return
+			end
 
-		local session_files = vim.fn.glob(vim.fn.getcwd() .. "/*.nvim")
-		for filename in session_files:gmatch("[^\r\n]+") do
-			-- Get the first file name, source it, and return.
-			vim.api.nvim_command("source " .. filename)
-			session_filename = filename
-			return
-		end
+			local session_files = vim.fn.glob(vim.fn.getcwd() .. "/*.nvim")
+			for filename in session_files:gmatch("[^\r\n]+") do
+				-- If we're here, no workspace was loaded...
+				-- Start some trouble =]
+				if trouble_is_present then
+					vim.api.nvim_create_autocmd("SourcePost", {
+						once = true,
+						pattern = "*",
+						callback = function()
+							vim.schedule(function()
+								if vim.g.nerdo_session_load_trouble then
+									trouble.open()
+								end
+							end)
+						end,
+					})
+				end
 
-		-- If we're here, no workspace was loaded...
-		-- Start some trouble =]
-		local trouble_is_present, _ = pcall(require, "trouble")
-		if trouble_is_present then
-			vim.schedule(function()
-				vim.cmd("Trouble")
-				vim.cmd("buffer 1")
-			end)
-		end
-	end,
-})
+				-- Get the first file name, source it, and return.
+				vim.api.nvim_command("source " .. filename)
+				session_filename = filename
+				return
+			end
 
--- When a session loads, do stuff...
-vim.api.nvim_create_autocmd("SessionLoadPost", {
-	group = nerdo.augroup,
-	pattern = "*",
-	callback = function()
-		if vim.g.nerdo_session_load_trouble then
-			vim.cmd("TroubleToggle")
-			vim.g.nerdo_session_load_trouble = false
-		end
+			-- Not loading a session. I like trouble to be open by default.
+			trouble.open()
+		end)
 	end,
 })
 
 local function mksession(session_file)
-	local trouble_is_present, _ = pcall(require, "trouble")
 	local trouble_is_open = trouble_is_present and nerdo.editor.buffer_filetype_is_open("Trouble")
 
 	if trouble_is_open then
 		-- Close it... Re-open it after the session is saved, because it's trouble to persist!
-		vim.cmd("TroubleClose")
+		trouble.close()
 
 		-- Execute the original mksession command
 		vim.api.nvim_command("mksession! " .. session_file)
@@ -79,8 +79,8 @@ local function mksession(session_file)
 		file:write(new_content)
 		file:close()
 
-		vim.cmd("TroubleToggle")
-		vim.cmd("bp")
+		trouble.open()
+		vim.api.nvim_set_current_buf(nerdo.editor.last_normal_focused_bufnr())
 	else
 		vim.api.nvim_command("mksession! " .. session_file)
 	end
