@@ -35,9 +35,8 @@ vim.keymap.set("n", "<leader>%a", "<Cmd>NerdoShowAbsPath<CR>")
 
 -- Line number functions.
 vim.keymap.set("n", "<leader>3", "<Cmd>NerdoToggleLineNr<CR>") -- A shortcut for toggling line numbers.
-vim.keymap.set("n", "<leader>##", "<Cmd>NerdoToggleLineNr<CR>")
-vim.keymap.set("n", "<leader>#r", "<Cmd>NerdoSetLineNrRelative<CR>")
-vim.keymap.set("n", "<leader>#a", "<Cmd>NerdoSetLineNrAbsolute<CR>")
+vim.keymap.set("n", "<leader>2", "<Cmd>NerdoSetLineNrRelative<CR>")
+vim.keymap.set("n", "<leader>1", "<Cmd>NerdoSetLineNrAbsolute<CR>")
 
 local nerdo = require("nerdo.functions")
 
