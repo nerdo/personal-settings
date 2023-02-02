@@ -34,5 +34,5 @@ vim.api.nvim_set_hl(0, "TelescopeTitle", { fg = "#fff36d" })
 -- Diagnostics.
 vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { bg = "#651C32" })
 vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn", { bg = "#402f36" })
-vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo", {})
-vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", {})
+vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo", { bg = "#044A4E" })
+vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", { bg = "#3D365C" })
