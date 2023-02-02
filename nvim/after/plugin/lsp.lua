@@ -193,9 +193,7 @@ local on_attach_behaviors = function(bufnr)
 
 	if saga_is_present then
 		map("n", "K", "<cmd>Lspsaga hover_doc<CR>")
-		map("n", "<leader>la", "<cmd>Lspsaga show_cursor_diagnostics<CR>")
 		map("n", "<leader>li", open_floating_diagnostic)
-		map("n", "<leader>lr", "<cmd>Lspsaga rename<CR>")
 		map("n", "<leader>lr", "<cmd>Lspsaga rename<CR>")
 
 		-- Things only lspsaga provides...
@@ -203,7 +201,6 @@ local on_attach_behaviors = function(bufnr)
 		map("n", "gh", "<cmd>Lspsaga lsp_finder<CR>")
 	else
 		map("n", "K", lsp("buf.hover()"))
-		map({ "n", "v" }, "<leader>la", lsp("buf.code_action()"))
 		map("n", "<leader>li", diagnostic("open_float()"))
 		map("n", "<leader>lr", lsp("buf.rename()"))
 	end
@@ -213,6 +210,7 @@ local on_attach_behaviors = function(bufnr)
 	map("n", "gi", lsp("buf.implementation()"))
 	map("n", "go", lsp("buf.type_definition()"))
 	map("n", "gr", lsp("buf.references()"))
+	map({ "n", "v" }, "<leader>la", lsp("buf.code_action()"))
 	map("x", "<leader>la", lsp("buf.range_code_action()"))
 	map("n", "<leader>lf", lsp("buf.format({ async = true })"))
 
