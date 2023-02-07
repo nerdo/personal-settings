@@ -36,6 +36,12 @@ return function(use)
 	-- Show symbols in gutter for git changes.
 	use("lewis6991/gitsigns.nvim")
 
+	-- Git tools.
+	use("tpope/vim-fugitive")
+
+	-- Git commit browser.
+	use("junegunn/gv.vim")
+
 	-- Display tabs for buffers.
 	use({ "akinsho/bufferline.nvim", tag = "v3.*", requires = "nvim-tree/nvim-web-devicons" })
 
