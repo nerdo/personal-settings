@@ -4,7 +4,13 @@ if not present or vim.g.vscode then
 	return
 end
 
-telescope.setup()
+telescope.setup({
+	pickers = {
+		find_files = {
+			hidden = true,
+		},
+	},
+})
 
 local builtin = require("telescope.builtin")
 
