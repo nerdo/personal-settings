@@ -3,8 +3,8 @@ return {
 	disable_default_key_bindings = true,
 	adjust_window_size_when_changing_font_size = false,
 	enable_tab_bar = false,
-	window_background_opacity = 0.9,
-	text_background_opacity = 0.95,
+	window_background_opacity = 0.85,
+	text_background_opacity = 1.0,
 	font = wezterm.font_with_fallback({
 		"Dank Mono",
 		"Hack Nerd Font Mono",
@@ -14,6 +14,9 @@ return {
 	font_load_target = "Light",
 	font_size = 18,
 	color_scheme = "Brogrammer",
+	colors = {
+		background = "black",
+	},
 
 	-- make both left and right alt behave in the same, normal, way
 	-- https://wezfurlong.org/wezterm/config/keyboard-concepts.html?highlight=right%20option#macos-left-and-right-option-key
