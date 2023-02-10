@@ -11,7 +11,8 @@ return {
 		"PowerlineExtraSymbols",
 		"Noto Color Emoji",
 	}),
-	font_size = 16,
+	font_load_target = "Light",
+	font_size = 18,
 	color_scheme = "Brogrammer",
 
 	-- make both left and right alt behave in the same, normal, way
