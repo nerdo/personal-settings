@@ -90,9 +90,6 @@ return function(use)
 	use({ "nerdo/trouble.nvim", requires = "kyazdani42/nvim-web-devicons" })
 	-- use({ "folke/trouble.nvim", requires = "kyazdani42/nvim-web-devicons" })
 
-	-- Improved UI for lsp features.
-	use({ "glepnir/lspsaga.nvim", branch = "main" })
-
 	-- Test runner.
 	use({
 		"nvim-neotest/neotest",
