@@ -154,4 +154,7 @@ return function(use)
 
 	-- Align text with spaces easily.
 	use("junegunn/vim-easy-align")
+
+	-- Symbols outline.
+	use("simrat39/symbols-outline.nvim")
 end
