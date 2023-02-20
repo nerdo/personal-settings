@@ -43,7 +43,7 @@ lsp_zero.ensure_installed({
 	"emmet_ls",
 	"jsonls",
 	"yamlls",
-	"sumneko_lua",
+	"lua_ls",
 })
 
 local schemastore_is_present, schemastore = pcall(require, "schemastore")
@@ -72,7 +72,6 @@ local server_options = {
 			},
 		},
 	},
-
 	tsserver = {
 		settings = {
 			typescript = {
@@ -99,7 +98,6 @@ local server_options = {
 			},
 		},
 	},
-
 	sumneko_lua = {
 		settings = {
 			Lua = {
@@ -122,13 +120,11 @@ local server_options = {
 			},
 		},
 	},
-
 	jsonls = {
 		settings = {
 			json = json_settings,
 		},
 	},
-
 	rust_analyzer = {
 		settings = {
 			["rust-analyzer"] = {
