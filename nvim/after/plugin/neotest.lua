@@ -21,7 +21,12 @@ vim.keymap.set("n", "<leader>th", function()
 	neotest.summary.toggle()
 end)
 vim.keymap.set({ "n", "i" }, "<M-t>", function()
+	-- Run single test.
 	neotest.run.run()
+end)
+vim.keymap.set({ "n", "i" }, "<C-t>", function()
+	-- Run entire file.
+	neotest.run.run(vim.fn.expand("%"))
 end)
 vim.keymap.set("n", "<leader>dt", function()
 	neotest.run.run({ strategy = "dap" })
