@@ -293,6 +293,14 @@ cmp.setup(lsp_zero.defaults.cmp_config({
 	}),
 }))
 
+vim.api.nvim_create_autocmd("FileType", {
+	group = nerdo.augroup,
+	pattern = "sql,mysql,plsql",
+	callback = function()
+		cmp.setup.buffer({ sources = { { name = "vim-dadbod-completion" } } })
+	end,
+})
+
 lsp_zero.setup()
 
 -- Configure debug adapter configurations.

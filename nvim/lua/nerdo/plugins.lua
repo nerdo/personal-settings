@@ -157,4 +157,9 @@ return function(use)
 
 	-- Symbols outline.
 	use("simrat39/symbols-outline.nvim")
+
+	-- Database
+	use({ "tpope/vim-dadbod" })
+	use({ "kristijanhusak/vim-dadbod-ui" })
+	use({ "kristijanhusak/vim-dadbod-completion" })
 end
