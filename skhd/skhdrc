@@ -24,11 +24,11 @@ shift + ctrl - k : yabai -m window --warp north
 shift + ctrl - h : yabai -m window --warp west
 shift + ctrl - l : yabai -m window --warp east
 
-# Changing window focus within a space
-alt - j : yabai -m window --focus south
-alt - k : yabai -m window --focus north
-alt - h : yabai -m window --focus west
-alt - l : yabai -m window --focus east
+# Changing window focus within a space, and if no adjacent window exists, move to the next display
+alt - j : yabai -m window --focus south || (yabai -m display --focus south)
+alt - k : yabai -m window --focus north || (yabai -m display --focus north)
+alt - h : yabai -m window --focus west  || (yabai -m display --focus west )
+alt - l : yabai -m window --focus east  || (yabai -m display --focus east )
 
 # Toggle window float.
 shift + cmd - f : yabai -m window --toggle float --grid 4:4:1:1:2:2
