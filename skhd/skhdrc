@@ -1,0 +1,40 @@
+# Apparently order matters here! That means cmd + alt with the same keys need to come before alt keys!
+
+# Move windows to displays
+shift + cmd + ctrl - j : yabai -m window --display south; yabai -m display --focus south
+shift + cmd + ctrl - k : yabai -m window --display north; yabai -m display --focus north
+shift + cmd + ctrl - h : yabai -m window --display west ; yabai -m display --focus west
+shift + cmd + ctrl - l : yabai -m window --display east ; yabai -m display --focus east
+
+# Changing displays.
+cmd + alt - j : yabai -m display --focus south
+cmd + alt - k : yabai -m display --focus north
+cmd + alt - h : yabai -m display --focus west
+cmd + alt - l : yabai -m display --focus east
+
+# Move windows in current space.
+shift + cmd - j : yabai -m window --swap south
+shift + cmd - k : yabai -m window --swap north
+shift + cmd - h : yabai -m window --swap west
+shift + cmd - l : yabai -m window --swap east
+
+# Move and split windows in current space.
+shift + ctrl - j : yabai -m window --warp south
+shift + ctrl - k : yabai -m window --warp north
+shift + ctrl - h : yabai -m window --warp west
+shift + ctrl - l : yabai -m window --warp east
+
+# Changing window focus within a space
+alt - j : yabai -m window --focus south
+alt - k : yabai -m window --focus north
+alt - h : yabai -m window --focus west
+alt - l : yabai -m window --focus east
+
+# Toggle window float.
+shift + cmd - f : yabai -m window --toggle float --grid 4:4:1:1:2:2
+
+# Toggle fullscreen.
+shift + cmd - m : yabai -m window --toggle zoom-fullscreen
+
+# Re-balance windows in current space.
+shift + cmd - b : yabai -m space --balance
