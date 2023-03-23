@@ -10,10 +10,20 @@ function redrawBorder()
 		if global_border ~= nil then
 			global_border:delete()
 		end
-		global_border = hs.drawing.rectangle(hs.geometry.rect(top_left["x"], top_left["y"], size["w"], size["h"]))
-		global_border:setStrokeColor({ ["red"] = 0,["blue"] = 0,["green"] = 1,["alpha"] = 0.8 })
+		-- offset the border to make it take up part of the gap/padding set in yabai
+		offset = 6
+		stroke_width = offset * 2
+		global_border = hs.drawing.rectangle(
+			hs.geometry.rect(
+				top_left["x"] - offset,
+				top_left["y"] - offset,
+				size["w"] + offset * 2,
+				size["h"] + offset * 2
+			)
+		)
+		global_border:setStrokeColor({ ["red"] = 0, ["blue"] = 0, ["green"] = 1, ["alpha"] = 0.8 })
 		global_border:setFill(false)
-		global_border:setStrokeWidth(8)
+		global_border:setStrokeWidth(stroke_width)
 		global_border:show()
 	end
 end
