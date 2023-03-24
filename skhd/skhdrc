@@ -12,11 +12,11 @@ cmd + alt - k : yabai -m display --focus north
 cmd + alt - h : yabai -m display --focus west
 cmd + alt - l : yabai -m display --focus east
 
-# Move windows in current space.
-shift + cmd - j : yabai -m window --swap south
-shift + cmd - k : yabai -m window --swap north
-shift + cmd - h : yabai -m window --swap west
-shift + cmd - l : yabai -m window --swap east
+# Move windows in current space, and if no adjacent slot can be found, move to the next display.
+shift + cmd - j : yabai -m window --swap south || (yabai -m window --display south; yabai -m display --focus south)
+shift + cmd - k : yabai -m window --swap north || (yabai -m window --display north; yabai -m display --focus north)
+shift + cmd - h : yabai -m window --swap west  || (yabai -m window --display west ; yabai -m display --focus west )
+shift + cmd - l : yabai -m window --swap east  || (yabai -m window --display east ; yabai -m display --focus east )
 
 # Move and split windows in current space.
 shift + ctrl - j : yabai -m window --warp south
@@ -24,7 +24,7 @@ shift + ctrl - k : yabai -m window --warp north
 shift + ctrl - h : yabai -m window --warp west
 shift + ctrl - l : yabai -m window --warp east
 
-# Changing window focus within a space, and if no adjacent window exists, move to the next display
+# Changing window focus within a space, and if no adjacent window exists, move to the next display.
 alt - j : yabai -m window --focus south || (yabai -m display --focus south)
 alt - k : yabai -m window --focus north || (yabai -m display --focus north)
 alt - h : yabai -m window --focus west  || (yabai -m display --focus west )
