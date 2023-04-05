@@ -109,6 +109,7 @@ local server_options = {
 					globals = { "vim" },
 				},
 				workspace = {
+					checkThirdParty = false,
 					library = {
 						[vim.fn.expand("$VIMRUNTIME/lua")] = true,
 						[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
