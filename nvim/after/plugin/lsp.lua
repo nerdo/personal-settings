@@ -98,13 +98,12 @@ local server_options = {
 			},
 		},
 	},
-	sumneko_lua = {
+	lua_ls = {
 		settings = {
 			Lua = {
 				hint = {
 					enable = true,
 				},
-
 				-- from nvchad's .config/nvim/lua/plugins/configs/lspconfig.lua
 				diagnostics = {
 					globals = { "vim" },
