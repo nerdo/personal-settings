@@ -10,16 +10,15 @@ if neodev_is_present then
 	neodev.setup({})
 end
 
--- https://github.com/VonHeikemen/lsp-zero.nvim/blob/main/advance-usage.md#the-current-api-is-not-enough
-lsp_zero.preset("lsp-compe")
-
-lsp_zero.set_preferences({
+lsp_zero.preset({
 	suggest_lsp_servers = true,
 	setup_servers_on_start = true,
 	set_lsp_keymaps = false,
 	configure_diagnostics = true,
 	cmp_capabilities = true,
-	manage_nvim_cmp = true,
+	manage_nvim_cmp = {
+		set_sources = "recommended",
+	},
 	call_servers = "local",
 	sign_icons = {
 		error = "✘",
@@ -98,18 +97,18 @@ local server_options = {
 			},
 		},
 	},
-	sumneko_lua = {
+	lua_ls = {
 		settings = {
 			Lua = {
 				hint = {
 					enable = true,
 				},
-
 				-- from nvchad's .config/nvim/lua/plugins/configs/lspconfig.lua
 				diagnostics = {
 					globals = { "vim" },
 				},
 				workspace = {
+					checkThirdParty = false,
 					library = {
 						[vim.fn.expand("$VIMRUNTIME/lua")] = true,
 						[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
@@ -250,31 +249,12 @@ end)
 
 -- Change nvim-cmp settings.
 local cmp = require("cmp")
-
--- Set the priorites of the cmp sources.
-local cmp_sources = {}
-for k, v in pairs(lsp_zero.defaults.cmp_sources()) do
-	if v.name == "nvim_lsp" then
-		v.priority = 4
-	elseif v.name == "luasnip" then
-		v.priority = 3
-	elseif v.name == "path" then
-		v.priority = 1
-	end
-
-	-- Omit buffer from the autocomplete, it's too noisy...
-	if v.name ~= "buffer" then
-		cmp_sources[k] = v
-	end
-end
+local cmp_action = require("lsp-zero").cmp_action()
 
 cmp.setup(lsp_zero.defaults.cmp_config({
-	sources = cmp_sources,
-	completion = {
-		-- Turn autocomplete on.
-		-- autocomplete = true,
-	},
 	mapping = lsp_zero.defaults.cmp_mappings({
+		["<Tab>"] = cmp_action.luasnip_supertab(),
+		["<S-Tab>"] = cmp_action.luasnip_shift_supertab(),
 		["<C-Space>"] = cmp.mapping.complete({}),
 		["<C-j>"] = function(fallback)
 			if cmp.visible() then
