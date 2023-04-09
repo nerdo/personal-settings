@@ -24,7 +24,7 @@ yabai -m config split_ratio                  0.50
 yabai -m config auto_balance                 on
 
 ## mouse settings
-yabai -m config mouse_follows_focus          on
+yabai -m config mouse_follows_focus          off
 
 # move/resize windows by holding alt, clicking, and dragging
 yabai -m config mouse_modifier               alt
