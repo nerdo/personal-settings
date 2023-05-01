@@ -253,23 +253,7 @@ local cmp_action = require("lsp-zero").cmp_action()
 
 cmp.setup(lsp_zero.defaults.cmp_config({
 	mapping = lsp_zero.defaults.cmp_mappings({
-		["<Tab>"] = cmp_action.luasnip_supertab(),
-		["<S-Tab>"] = cmp_action.luasnip_shift_supertab(),
 		["<C-Space>"] = cmp.mapping.complete({}),
-		["<C-j>"] = function(fallback)
-			if cmp.visible() then
-				cmp.select_next_item()
-			else
-				fallback()
-			end
-		end,
-		["<C-k>"] = function(fallback)
-			if cmp.visible() then
-				cmp.select_prev_item()
-			else
-				fallback()
-			end
-		end,
 	}),
 }))
 
