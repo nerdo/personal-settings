@@ -43,7 +43,6 @@ lsp_zero.ensure_installed({
 	"jsonls",
 	"yamlls",
 	"lua_ls",
-	"rubocop",
 })
 
 local schemastore_is_present, schemastore = pcall(require, "schemastore")
