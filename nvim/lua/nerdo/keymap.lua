@@ -63,3 +63,7 @@ vim.keymap.set("n", "<A-S-l>", "<Cmd>vertical resize +1<CR>")
 -- theprimagen's awesome visual move text keymap.
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+
+-- nerdo's keymaps
+vim.keymap.set("i", "<F9>", "<Esc>I")
+vim.keymap.set("i", "<F10>", "<Esc>A")

@@ -46,6 +46,9 @@ local sources = {
 
 	-- Rust
 	b.formatting.rustfmt,
+
+	-- Ruby
+	b.formatting.rubocop,
 }
 
 null_ls.setup({
