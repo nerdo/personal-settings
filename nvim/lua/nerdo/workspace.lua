@@ -44,8 +44,10 @@ vim.api.nvim_create_autocmd("VimEnter", {
 				return
 			end
 
-			-- Not loading a session. I like trouble to be open by default.
-			trouble.open()
+			if trouble_is_present then
+				-- Not loading a session. I like trouble to be open by default.
+				trouble.open()
+			end
 		end)
 	end,
 })
