@@ -36,3 +36,18 @@ configs.setup({
 		additional_vim_regex_highlighting = false,
 	},
 })
+
+-- Use Treesitter for code folding
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+
+-- Workaround for issue opening files with Telescope.
+-- https://github.com/nvim-telescope/telescope.nvim/issues/699#issuecomment-1448928969
+-- zx updates folds, zR expands all folds so the file looks "normal" when opened.
+local telescope_is_present = pcall(require, "telescope")
+if telescope_is_present then
+	vim.api.nvim_create_autocmd({ "BufEnter" }, {
+		pattern = { "*" },
+		command = "normal zx zR",
+	})
+end
