@@ -87,6 +87,8 @@ return function(use)
 	use("folke/neodev.nvim")
 
 	-- LSP diagnostic info.
+	use({ "nerdo/trouble.nvim", requires = "kyazdani42/nvim-web-devicons" })
+	-- use({ "folke/trouble.nvim", requires = "kyazdani42/nvim-web-devicons" })
 
 	-- Test runner.
 	use({
