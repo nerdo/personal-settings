@@ -1,4 +1,3 @@
-require("nerdo.profiling")
 require("nerdo.functions")
 require("nerdo.keymap")
 require("nerdo.options")
