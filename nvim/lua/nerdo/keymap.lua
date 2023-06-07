@@ -13,29 +13,31 @@ local function save_buffer()
 	end
 end
 
-vim.keymap.set("n", "<leader>w", save_buffer)
-vim.keymap.set("n", "<leader>;", save_buffer)
+local opts = { silent = true }
+
+vim.keymap.set("n", "<leader>w", save_buffer, opts)
+vim.keymap.set("n", "<leader>;", save_buffer, opts)
 
 -- Kill search highlights.
-vim.keymap.set("n", "<leader>h", ":noh")
+vim.keymap.set("n", "<leader>/", ":noh<cr>", opts)
 
 -- New buffer.
-vim.keymap.set("n", "<leader>b", "<Cmd>enew<CR>")
+vim.keymap.set("n", "<leader>b", "<Cmd>enew<CR>", opts)
 
 -- Tab through buffers.
-vim.keymap.set("n", "<Tab>", "<Cmd>bn<CR>")
-vim.keymap.set("n", "<S-Tab>", "<Cmd>bp<CR>")
+vim.keymap.set("n", "<Tab>", "<Cmd>bn<CR>", opts)
+vim.keymap.set("n", "<S-Tab>", "<Cmd>bp<CR>", opts)
 
 -- Path functions.
-vim.keymap.set("n", "<leader>yr", "<Cmd>NerdoCpRelPath<CR>")
-vim.keymap.set("n", "<leader>ya", "<Cmd>NerdoCpAbsPath<CR>")
-vim.keymap.set("n", "<leader>%r", "<Cmd>NerdoShowRelPath<CR>")
-vim.keymap.set("n", "<leader>%a", "<Cmd>NerdoShowAbsPath<CR>")
+vim.keymap.set("n", "<leader>yr", "<Cmd>NerdoCpRelPath<CR>", opts)
+vim.keymap.set("n", "<leader>ya", "<Cmd>NerdoCpAbsPath<CR>", opts)
+vim.keymap.set("n", "<leader>%r", "<Cmd>NerdoShowRelPath<CR>", opts)
+vim.keymap.set("n", "<leader>%a", "<Cmd>NerdoShowAbsPath<CR>", opts)
 
 -- Line number functions.
-vim.keymap.set("n", "<leader>3", "<Cmd>NerdoToggleLineNr<CR>") -- A shortcut for toggling line numbers.
-vim.keymap.set("n", "<leader>2", "<Cmd>NerdoSetLineNrRelative<CR>")
-vim.keymap.set("n", "<leader>1", "<Cmd>NerdoSetLineNrAbsolute<CR>")
+vim.keymap.set("n", "<leader>3", "<Cmd>NerdoToggleLineNr<CR>", opts) -- A shortcut for toggling line numbers.
+vim.keymap.set("n", "<leader>2", "<Cmd>NerdoSetLineNrRelative<CR>", opts)
+vim.keymap.set("n", "<leader>1", "<Cmd>NerdoSetLineNrAbsolute<CR>", opts)
 
 local nerdo = require("nerdo.functions")
 
@@ -58,15 +60,15 @@ vim.keymap.set("n", "<A-l>", function()
 end)
 
 -- Split resizing with Alt+Shift+nav keys.
-vim.keymap.set("n", "<A-S-h>", "<Cmd>vertical resize -1<CR>")
-vim.keymap.set("n", "<A-S-j>", "<Cmd>resize -1<CR>")
-vim.keymap.set("n", "<A-S-k>", "<Cmd>resize +1<CR>")
-vim.keymap.set("n", "<A-S-l>", "<Cmd>vertical resize +1<CR>")
+vim.keymap.set("n", "<A-S-h>", "<Cmd>vertical resize -1<CR>", opts)
+vim.keymap.set("n", "<A-S-j>", "<Cmd>resize -1<CR>", opts)
+vim.keymap.set("n", "<A-S-k>", "<Cmd>resize +1<CR>", opts)
+vim.keymap.set("n", "<A-S-l>", "<Cmd>vertical resize +1<CR>", opts)
 
 -- theprimagen's awesome visual move text keymap.
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", opts)
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", opts)
 
 -- nerdo's keymaps
-vim.keymap.set("i", "<F9>", "<Esc>I")
-vim.keymap.set("i", "<F10>", "<Esc>A")
+vim.keymap.set("i", "<F9>", "<Esc>I", opts)
+vim.keymap.set("i", "<F10>", "<Esc>A", opts)
