@@ -16,6 +16,9 @@ end
 vim.keymap.set("n", "<leader>w", save_buffer)
 vim.keymap.set("n", "<leader>;", save_buffer)
 
+-- Kill search highlights.
+vim.keymap.set("n", "<leader>h", ":noh")
+
 -- New buffer.
 vim.keymap.set("n", "<leader>b", "<Cmd>enew<CR>")
 

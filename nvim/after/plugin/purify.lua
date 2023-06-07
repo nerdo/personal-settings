@@ -33,3 +33,6 @@ vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { bg = "#651C32" })
 vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn", { bg = "#402f36" })
 vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo", { bg = "#044A4E" })
 vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", { bg = "#3D365C" })
+
+-- Folding.
+vim.api.nvim_set_hl(0, "Folded", { bg = "#3D365C" })

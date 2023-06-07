@@ -37,7 +37,3 @@ configs.setup({
 		additional_vim_regex_highlighting = false,
 	},
 })
-
--- Use Treesitter for code folding
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"

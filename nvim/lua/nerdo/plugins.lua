@@ -62,6 +62,16 @@ return {
 		dependencies = { "nvim-treesitter" },
 	},
 
+	-- Better code folding.
+	{ "kevinhwang91/nvim-ufo", dependencies = "kevinhwang91/promise-async" },
+
+	-- Split/join lines.
+	{
+		"Wansmer/treesj",
+		keys = { "<space>m", "<space>j", "<space>s" },
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+	},
+
 	-- Show symbols in gutter for git changes.
 	{ "lewis6991/gitsigns.nvim" },
 
