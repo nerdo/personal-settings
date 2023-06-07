@@ -9,6 +9,11 @@ vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decr
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
+-- https://github.com/kevinhwang91/nvim-ufo/issues/4
+-- Turn off the fold column, because the numbers can't be disabled right now and they're annoying.
+vim.o.foldcolumn = "0"
+vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
+
 ufo.setup({
 	provider_selector = function(bufnr, filetype, buftype)
 		return { "treesitter", "indent" }
