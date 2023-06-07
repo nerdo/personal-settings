@@ -1,4 +1,5 @@
 local present, configs = pcall(require, "nvim-treesitter.configs")
+local nerdo = require("nerdo.functions")
 
 if not present or vim.g.vscode then
 	return
