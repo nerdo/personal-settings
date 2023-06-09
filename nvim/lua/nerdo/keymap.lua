@@ -15,8 +15,16 @@ end
 
 local opts = { silent = true }
 
+-- Save file.
 vim.keymap.set("n", "<leader>w", save_buffer, opts)
 vim.keymap.set("n", "<leader>;", save_buffer, opts)
+
+-- Close buffer.
+vim.keymap.set("n", "<leader>c", function()
+	-- https://github.com/neovim/neovim/issues/2434#issuecomment-93434827
+	vim.cmd("set bufhidden=delete")
+	vim.cmd("bnext")
+end, opts)
 
 -- Kill search highlights.
 vim.keymap.set("n", "<leader>/", ":noh<cr>", opts)
