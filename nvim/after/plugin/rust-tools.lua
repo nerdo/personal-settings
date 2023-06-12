@@ -42,6 +42,7 @@ rt.setup({
 			auto = inlay_hints_enabled,
 			parameter_hints_prefix = "<- ",
 			other_hints_prefix = "=> ",
+			highlight = "LspInlayHint",
 		},
 	},
 })
