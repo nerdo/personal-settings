@@ -36,3 +36,6 @@ vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", { bg = "#3D365C" })
 
 -- Folding.
 vim.api.nvim_set_hl(0, "Folded", { bg = "#3D365C" })
+
+-- Inlay Hints.
+vim.api.nvim_set_hl(0, "LspInlayHint", { bg = "#371f54", fg = "#dba6f7", bold = true })

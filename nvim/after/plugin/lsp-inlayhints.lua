@@ -38,8 +38,3 @@ vim.api.nvim_create_autocmd("LspAttach", {
 vim.keymap.set("n", "<leader>ih", function()
 	inlayhints.toggle()
 end)
-
--- Highlight color.
--- https://colorcodes.io is a great starting point...
--- Lavender on a brighter shade of Midnight Purple...
-vim.api.nvim_set_hl(0, "LspInlayHint", { bg = "#371f54", fg = "#dba6f7", bold = true })
