@@ -139,13 +139,13 @@ return {
 			-- for formatting code
 			"jose-elias-alvarez/null-ls.nvim",
 
-			-- Inlay hints for type/metadata.
-			"lvimuser/lsp-inlayhints.nvim",
-
 			-- Completion for neovim lua.
 			"folke/neodev.nvim",
 		},
 	},
+
+	-- Rust tools
+	{ "simrat39/rust-tools.nvim" },
 
 	-- Test runner.
 	{
