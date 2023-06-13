@@ -12,6 +12,7 @@ configs.setup({
 		"typescript",
 		"go",
 		"json",
+		"http",
 		"css",
 		"yaml",
 		"c",

@@ -150,6 +150,14 @@ return {
 		},
 	},
 
+	-- REST tools (Postman alternative).
+	{
+		"rest-nvim/rest.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+	},
+
 	-- Rust tools.
 	{ "simrat39/rust-tools.nvim" },
 
