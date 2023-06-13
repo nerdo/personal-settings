@@ -1,5 +1,7 @@
--- Centers the cursor on the screen.
-vim.opt.scrolloff = 999
+-- Centers the cursor on the screen (when not using vscode)
+if not vim.g.vscode then
+	vim.opt.scrolloff = 999
+end
 
 -- Sets relative line numbering.
 vim.opt.number = true
