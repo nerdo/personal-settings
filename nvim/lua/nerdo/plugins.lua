@@ -110,9 +110,6 @@ return {
 	{ "mfussenegger/nvim-dap" },
 	{ "rcarriga/nvim-dap-ui", dependencies = "mfussenegger/nvim-dap" },
 
-	-- LSP diagnostic info.
-	{ "nerdo/trouble.nvim", dependencies = "nvim-tree/nvim-web-devicons" },
-
 	-- LSPs.
 	{
 		"VonHeikemen/lsp-zero.nvim",

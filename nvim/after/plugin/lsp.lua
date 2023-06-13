@@ -10,22 +10,25 @@ if neodev_is_present then
 	neodev.setup({})
 end
 
+local saga_is_present, _ = pcall(require, "lspsaga")
+
 lsp_zero.preset({
 	suggest_lsp_servers = true,
 	setup_servers_on_start = true,
 	set_lsp_keymaps = false,
-	configure_diagnostics = true,
+	configure_diagnostics = not saga_is_present,
 	cmp_capabilities = true,
 	manage_nvim_cmp = {
 		set_sources = "recommended",
 	},
 	call_servers = "local",
-	sign_icons = {
-		error = "✘",
-		warn = "▲",
-		hint = "⚑",
-		info = "",
-	},
+})
+
+lsp_zero.set_sign_icons({
+	error = "✘",
+	warn = "▲",
+	hint = "⚑",
+	info = "»",
 })
 
 lsp_zero.ensure_installed({
@@ -143,7 +146,13 @@ end
 local trouble_is_present, trouble = pcall(require, "trouble")
 local nerdo = require("nerdo.functions")
 
-local saga_is_present, _ = pcall(require, "lspsaga")
+if saga_is_present then
+	-- Turn off diagnostic floating text.
+	-- LSP saga keymaps are more useful and less invasive.
+	vim.diagnostic.config({
+		virtual_text = false,
+	})
+end
 
 local open_floating_diagnostic = function()
 	if saga_is_present then
@@ -193,6 +202,11 @@ local on_attach_behaviors = function(bufnr)
 		map("n", "<leader>lr", "<cmd>Lspsaga rename<CR>")
 
 		-- Things only lspsaga provides...
+
+		-- Show diagnostics
+		map("n", "<leader>!", "<cmd>Lspsaga show_workspace_diagnostics<CR>")
+		map("n", "<leader>%!", "<cmd>Lspsaga show_buffer_diagnostics<CR>")
+		map("n", "<leader><leader>", "<cmd>Lspsaga show_line_diagnostics<CR>")
 
 		-- Find references.
 		map("n", "gh", "<cmd>Lspsaga lsp_finder<CR>")
