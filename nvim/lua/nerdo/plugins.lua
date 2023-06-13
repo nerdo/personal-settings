@@ -77,7 +77,7 @@ return {
 	{ "nvim-lualine/lualine.nvim", dependencies = "nvim-tree/nvim-web-devicons" },
 
 	-- Terminal.
-	{ "akinsho/toggleterm.nvim", version = "*" },
+	{ "chengzeyi/multiterm.vim" },
 
 	-- Leap to specific positions in text.
 	{ "ggandor/leap.nvim" },
