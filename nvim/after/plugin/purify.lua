@@ -19,6 +19,12 @@ vim.api.nvim_set_hl(0, "TSConstructor", { fg = "#25888E" })
 vim.api.nvim_set_hl(0, "QuickScopePrimary", { fg = "#afff5f", bold = true, ctermfg = 155 })
 vim.api.nvim_set_hl(0, "QuickScopeSecondary", { fg = "#5fffff", bold = true, ctermfg = 81 })
 
+-- Floating windows.
+vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#2d3033", bg = "#2d3033" })
+vim.api.nvim_set_hl(0, "FloatTitle", { bg = "#2d3033" })
+vim.api.nvim_set_hl(0, "Float", { bg = "#2d3033" })
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#2d3033" })
+
 -- Telescope.
 vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "#2d3033" })
 vim.api.nvim_set_hl(0, "TelescopePreviewNormal", { bg = "#292c33" })
@@ -39,3 +45,9 @@ vim.api.nvim_set_hl(0, "Folded", { bg = "#3D365C" })
 
 -- Inlay Hints.
 vim.api.nvim_set_hl(0, "LspInlayHint", { bg = "#371f54", fg = "#dba6f7", bold = true })
+
+-- LSP Saga.
+vim.api.nvim_set_hl(0, "SagaNormal", { link = "Float" })
+vim.api.nvim_set_hl(0, "TitleString", { link = "FloatTitle" })
+vim.api.nvim_set_hl(0, "TitleIcon", { link = "FloatTitle" })
+vim.api.nvim_set_hl(0, "RenameNormal", { link = "Float" })

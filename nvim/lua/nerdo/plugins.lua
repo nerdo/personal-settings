@@ -113,7 +113,7 @@ return {
 	-- LSP diagnostic info.
 	{ "nerdo/trouble.nvim", dependencies = "nvim-tree/nvim-web-devicons" },
 
-	-- LSPs
+	-- LSPs.
 	{
 		"VonHeikemen/lsp-zero.nvim",
 		dependencies = {
@@ -144,7 +144,16 @@ return {
 		},
 	},
 
-	-- Rust tools
+	-- LSP saga.
+	{
+		"glepnir/lspsaga.nvim",
+		dependencies = {
+			"nvim-tree/nvim-web-devicons",
+			"nvim-treesitter/nvim-treesitter",
+		},
+	},
+
+	-- Rust tools.
 	{ "simrat39/rust-tools.nvim" },
 
 	-- Test runner.

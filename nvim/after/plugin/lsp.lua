@@ -187,13 +187,22 @@ local on_attach_behaviors = function(bufnr)
 	end
 
 	if saga_is_present then
+		-- Replace some default LSP functionality with lsp saga.
 		map("n", "K", "<cmd>Lspsaga hover_doc<CR>")
 		map("n", "<leader>li", open_floating_diagnostic)
 		map("n", "<leader>lr", "<cmd>Lspsaga rename<CR>")
 
 		-- Things only lspsaga provides...
-		map("n", "<leader>o", "<cmd>Lspsaga outline<CR>")
+
+		-- Find references.
 		map("n", "gh", "<cmd>Lspsaga lsp_finder<CR>")
+
+		-- Peek definition.
+		map("n", "gp", "<cmd>Lspsaga peek_definition<CR>")
+
+		-- Call hierarchy.
+		map("n", "<leader>ki", "<cmd>Lspsaga incoming_calls<CR>")
+		map("n", "<leader>ko", "<cmd>Lspsaga outgoing_calls<CR>")
 	else
 		map("n", "K", lsp("buf.hover()"))
 		map("n", "<leader>li", diagnostic("open_float()"))
