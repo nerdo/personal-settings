@@ -16,6 +16,16 @@ lspsaga.setup({
 	hover = {
 		open_browser = "!firefox",
 	},
+	code_action = {
+		keys = {
+			quit = { "q", "<esc>", "<C-c>" },
+		},
+	},
+	diagnostic = {
+		keys = {
+			quit = { "q", "<esc>", "<C-c>" },
+		},
+	},
 	ui = {
 		border = "solid",
 	},
