@@ -158,6 +158,14 @@ return {
 		},
 	},
 
+	-- Database tools.
+	{
+		"kristijanhusak/vim-dadbod-ui",
+		dependencies = {
+			"tpope/vim-dadbod",
+		},
+	},
+
 	-- Rust tools.
 	{ "simrat39/rust-tools.nvim" },
 
