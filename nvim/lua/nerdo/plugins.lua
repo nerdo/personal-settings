@@ -82,9 +82,6 @@ return {
 	-- Leap to specific positions in text.
 	{ "ggandor/leap.nvim" },
 
-	-- Show indent lines.
-	{ "lukas-reineke/indent-blankline.nvim" },
-
 	-- Automatically close html/jsx tags.
 	{ "windwp/nvim-ts-autotag" },
 
@@ -163,6 +160,7 @@ return {
 		"kristijanhusak/vim-dadbod-ui",
 		dependencies = {
 			"tpope/vim-dadbod",
+			"kristijanhusak/vim-dadbod-completion",
 		},
 	},
 
