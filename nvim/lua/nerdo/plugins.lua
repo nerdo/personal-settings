@@ -19,7 +19,11 @@ return {
 	},
 
 	-- File explorer.
-	{ "justinmk/vim-dirvish" },
+	{
+		"stevearc/oil.nvim",
+		opts = {},
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+	},
 
 	-- Automatic detection of tab size.
 	{ "Darazaki/indent-o-matic" },
