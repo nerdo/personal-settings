@@ -25,6 +25,7 @@ vim.keymap.set("n", "<leader>c", function()
 	vim.cmd("set bufhidden=delete")
 	vim.cmd("bnext")
 end, opts)
+vim.keymap.set("n", "<leader>C", "<Cmd>bd!<CR>")
 
 -- Kill search highlights.
 vim.keymap.set("n", "<leader>/", ":noh<cr>", opts)
