@@ -28,9 +28,6 @@ return {
 	-- Automatic detection of tab size.
 	{ "Darazaki/indent-o-matic" },
 
-	-- Git info in file explorer.
-	{ "kristijanhusak/vim-dirvish-git" },
-
 	-- Replace UI for messages, cmdline, popupmenu.
 	{
 		"folke/noice.nvim",
@@ -38,7 +35,12 @@ return {
 		dependencies = "MunifTanjim/nui.nvim",
 	},
 
-	-- Telescope
+	-- Perl compatible regular expressions.
+	{
+		"othree/eregex.vim",
+	},
+
+	-- Telescope.
 	{
 		"nvim-telescope/telescope.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
