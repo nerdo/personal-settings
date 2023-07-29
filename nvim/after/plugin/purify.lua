@@ -2,7 +2,7 @@
 -- https://colorcodes.io is a great starting point...
 
 -- Set cursor line colors.
-vim.api.nvim_set_hl(0, "CursorLine", { ctermbg = "DarkBlue", bg = "#162F5A" })
+vim.api.nvim_set_hl(0, "CursorLine", { ctermbg = "DarkBlue", bg = "#051A3D" })
 vim.api.nvim_set_hl(0, "CursorLineNr", { ctermfg = "yellow", fg = "yellow", ctermbg = "DarkBlue", bg = "#0841A1" })
 
 -- Set gutter line number colors.
@@ -10,7 +10,10 @@ vim.api.nvim_set_hl(0, "LineNrAbove", { ctermfg = "red", fg = "#C46EA2" })
 vim.api.nvim_set_hl(0, "LineNrBelow", { ctermfg = "green", fg = "#6EC48B" })
 
 -- Set visual highlight.
-vim.api.nvim_set_hl(0, "Visual", { ctermbg = "Grey", bg = "#0b3b3d" })
+vim.api.nvim_set_hl(0, "Visual", { ctermbg = "Grey", bg = "#092E6C" })
+
+-- Set comment color.
+vim.api.nvim_set_hl(0, "Comment", { fg = "#4E4936" })
 
 -- Set highlight group for importing TS types for a nice visual distinction.
 vim.api.nvim_set_hl(0, "TSConstructor", { fg = "#25888E" })
@@ -44,7 +47,7 @@ vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", { bg = "#3D365C" })
 vim.api.nvim_set_hl(0, "Folded", { bg = "#3D365C" })
 
 -- Inlay Hints.
-vim.api.nvim_set_hl(0, "LspInlayHint", { bg = "#371f54", fg = "#dba6f7", bold = true })
+vim.api.nvim_set_hl(0, "LspInlayHint", { fg = "#eec400", italic = true })
 
 -- LSP Saga.
 vim.api.nvim_set_hl(0, "SagaNormal", { link = "Float" })
