@@ -191,14 +191,19 @@ local open_floating_diagnostic = function()
 end
 
 -- Keymaps
--- local lsp_util = require("nvim.utils.lsp")
 local on_attach_behaviors = function(event)
 	-- local client = lsp_util.get_client(event)
 	local bufnr = event.buf
 
-	-- if client.server_capabilities.inlayHintProvider then
-	-- 	vim.lsp.buf.inlay_hint(0, true)
-	-- end
+	-- Inlay hint setup.
+	if vim.lsp.inlay_hint then
+		local inlay_hints_enabled = true
+		vim.lsp.inlay_hint(bufnr, true)
+		vim.keymap.set("n", "<leader>ih", function()
+			inlay_hints_enabled = not inlay_hints_enabled
+			vim.lsp.inlay_hint(bufnr, inlay_hints_enabled)
+		end, { buffer = bufnr })
+	end
 
 	-- LSP keymaps.
 	local fmt = function(cmd)

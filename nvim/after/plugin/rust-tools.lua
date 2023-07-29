@@ -31,6 +31,10 @@ rt.setup({
 				else
 					rt.inlay_hints.disable()
 				end
+
+				if vim.lsp.inlay_hint then
+					vim.lsp.inlay_hint(bufnr, inlay_hints_enabled)
+				end
 			end, { buffer = bufnr })
 		end,
 	},
