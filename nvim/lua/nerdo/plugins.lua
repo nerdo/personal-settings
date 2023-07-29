@@ -38,6 +38,10 @@ return {
 	-- Perl compatible regular expressions.
 	{
 		"othree/eregex.vim",
+		init = function()
+			vim.g.eregex_default_enable = false
+			vim.g.eregex_force_case = true
+		end
 	},
 
 	-- Telescope.
