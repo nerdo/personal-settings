@@ -254,10 +254,14 @@ local on_attach_behaviors = function(event)
 		-- Call hierarchy.
 		map("n", "<leader>ki", "<cmd>Lspsaga incoming_calls<CR>")
 		map("n", "<leader>ko", "<cmd>Lspsaga outgoing_calls<CR>")
+
+		-- Code ation.
+		map({ "n", "v" }, "<leader>la", "<cmd>Lspsaga code_action")
 	else
 		map("n", "K", lsp("buf.hover()"))
 		map("n", "<leader>li", diagnostic("open_float()"))
 		map("n", "<leader>lr", lsp("buf.rename()"))
+		map({ "n", "v" }, "<leader>la", lsp("buf.code_action()"))
 	end
 
 	map("n", "gd", lsp("buf.definition()"))
@@ -265,7 +269,6 @@ local on_attach_behaviors = function(event)
 	map("n", "gi", lsp("buf.implementation()"))
 	map("n", "go", lsp("buf.type_definition()"))
 	map("n", "gr", lsp("buf.references()"))
-	map({ "n", "v" }, "<leader>la", lsp("buf.code_action()"))
 	map("x", "<leader>la", lsp("buf.range_code_action()"))
 	map("n", "<leader>lf", lsp("buf.format({ async = true })"))
 
