@@ -1,8 +1,25 @@
-require("noice").setup({
+local present, noice = pcall(require, "noice")
+
+if not present then
+	return
+end
+
+local lsp_signature_is_present, _ = pcall(require, "lsp_signature")
+
+local signature_enabled           = true
+if lsp_signature_is_present then
+	signature_enabled = false
+end
+
+noice.setup({
 	cmdline = {
 		view = "cmdline",
 	},
 	lsp = {
+		signature = {
+			enabled = signature_enabled
+		},
+
 		-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
 		override = {
 			["vim.lsp.util.convert_input_to_markdown_lines"] = true,

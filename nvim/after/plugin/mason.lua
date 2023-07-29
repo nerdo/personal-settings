@@ -28,6 +28,8 @@ mason.setup({})
 -- nvim-cmp settings.
 local cmp = require("cmp")
 
+local saga_is_present = false
+
 cmp.setup({
 	snippet = {
 		-- REQUIRED - you must specify a snippet engine
@@ -189,7 +191,15 @@ local open_floating_diagnostic = function()
 end
 
 -- Keymaps
-local on_attach_behaviors = function(bufnr)
+-- local lsp_util = require("nvim.utils.lsp")
+local on_attach_behaviors = function(event)
+	-- local client = lsp_util.get_client(event)
+	local bufnr = event.buf
+
+	-- if client.server_capabilities.inlayHintProvider then
+	-- 	vim.lsp.buf.inlay_hint(0, true)
+	-- end
+
 	-- LSP keymaps.
 	local fmt = function(cmd)
 		return function(str)
@@ -297,7 +307,7 @@ end
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("NerdoLspConfig", {}),
 	callback = function(event)
-		on_attach_behaviors(event.buf)
+		on_attach_behaviors(event)
 	end,
 })
 

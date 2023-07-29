@@ -133,6 +133,12 @@ return {
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-nvim-lua",
 
+			-- Signature autocompletion.
+			{
+				"ray-x/lsp_signature.nvim",
+				event = "VeryLazy",
+			},
+
 			-- Snippets
 			"L3MON4D3/LuaSnip",
 			"rafamadriz/friendly-snippets",
