@@ -20,6 +20,4 @@ vim.keymap.set({ "n", "i" }, "<C-f>", builtin.live_grep, {})
 vim.keymap.set({ "n", "i" }, "<A-f>", builtin.live_grep, {})
 vim.keymap.set("n", "<leader>?", "<Cmd>Telescope<CR>")
 
-if pcall(require, "telescope._extensions.ui-select") then
-	telescope.load_extension("ui-select")
-end
+telescope.load_extension("fzf")

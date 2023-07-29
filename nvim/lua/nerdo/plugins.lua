@@ -43,7 +43,10 @@ return {
 	-- Telescope.
 	{
 		"nvim-telescope/telescope.nvim",
-		dependencies = { "nvim-lua/plenary.nvim" },
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+		},
 	},
 
 	-- Abstract syntax tree that speeds up a lot of neovim operations.
@@ -59,7 +62,7 @@ return {
 	},
 
 	-- Better code folding.
-	{ "kevinhwang91/nvim-ufo", dependencies = "kevinhwang91/promise-async" },
+	{ "kevinhwang91/nvim-ufo",  dependencies = "kevinhwang91/promise-async" },
 
 	-- Split/join lines.
 	{
@@ -80,7 +83,7 @@ return {
 
 	-- Status line.
 	-- Note: for some reason this wipes out the NVIM splash screen buffer.
-	{ "nvim-lualine/lualine.nvim", dependencies = "nvim-tree/nvim-web-devicons" },
+	{ "nvim-lualine/lualine.nvim",    dependencies = "nvim-tree/nvim-web-devicons" },
 
 	-- Terminal.
 	{ "chengzeyi/multiterm.vim" },
@@ -111,16 +114,16 @@ return {
 
 	-- Debug adapter.
 	{ "mfussenegger/nvim-dap" },
-	{ "rcarriga/nvim-dap-ui", dependencies = "mfussenegger/nvim-dap" },
+	{ "rcarriga/nvim-dap-ui",         dependencies = "mfussenegger/nvim-dap" },
 
 	-- LSPs.
+	-- Mason LSP/DAP/linter/formatter package manager.
 	{
-		"VonHeikemen/lsp-zero.nvim",
+		"williamboman/mason.nvim",
+		build = ":MasonUpdate", -- :MasonUpdate updates registry contents
 		dependencies = {
-			-- LSP Support
-			"neovim/nvim-lspconfig",
-			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
+			"neovim/nvim-lspconfig",
 
 			-- Autocompletion
 			"hrsh7th/nvim-cmp",
@@ -134,22 +137,8 @@ return {
 			"L3MON4D3/LuaSnip",
 			"rafamadriz/friendly-snippets",
 
-			-- The rest are my own LSP requirements (NOT required for lsp-zero)
-
-			-- for formatting code
-			"jose-elias-alvarez/null-ls.nvim",
-
 			-- Completion for neovim lua.
 			"folke/neodev.nvim",
-		},
-	},
-
-	-- LSP saga.
-	{
-		"glepnir/lspsaga.nvim",
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-			"nvim-treesitter/nvim-treesitter",
 		},
 	},
 

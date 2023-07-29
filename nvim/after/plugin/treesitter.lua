@@ -44,7 +44,6 @@ configs.setup({
 				s = stats.size
 			end
 
-			print("treesitter filesize detected = " .. s .. ", max = " .. max_filesize)
 			if ok and stats and stats.size > max_filesize then
 				return true
 			end
