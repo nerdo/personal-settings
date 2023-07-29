@@ -4,6 +4,7 @@ if not present then
 	return
 end
 
+local nerdo = require("nerdo.functions")
 local mason_registry = require("mason-registry")
 local codelldb = mason_registry.get_package("codelldb")
 local extension_path = codelldb:get_install_path() .. "/extension/"
@@ -32,7 +33,7 @@ rt.setup({
 					rt.inlay_hints.disable()
 				end
 
-				if vim.lsp.inlay_hint then
+				if nerdo.active_lsp_has_inlay_hint_provider() and vim.lsp.inlay_hint then
 					vim.lsp.inlay_hint(bufnr, inlay_hints_enabled)
 				end
 			end, { buffer = bufnr })

@@ -189,11 +189,10 @@ end
 
 -- Keymaps
 local on_attach_behaviors = function(event)
-	-- local client = lsp_util.get_client(event)
 	local bufnr = event.buf
 
 	-- Inlay hint setup.
-	if vim.lsp.inlay_hint then
+	if nerdo.active_lsp_has_inlay_hint_provider() and vim.lsp.inlay_hint then
 		local inlay_hints_enabled = true
 		vim.lsp.inlay_hint(bufnr, true)
 		vim.keymap.set("n", "<leader>ih", function()

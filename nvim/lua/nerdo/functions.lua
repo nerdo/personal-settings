@@ -179,6 +179,17 @@ local get_trouble_auto_leave = function()
 	return trouble_auto_leave
 end
 
+local active_lsp_has_inlay_hint_provider = function()
+	local active_clients = vim.lsp.get_active_clients()
+	for _, client in pairs(active_clients) do
+		if client.server_capabilities.inlayHintProvider then
+			return true
+		end
+	end
+
+	return false
+end
+
 local M = {
 	path = path,
 	line_numbers = line_numbers,
@@ -188,6 +199,7 @@ local M = {
 		get = get_trouble_auto_leave,
 	},
 	augroup = augroup,
+	active_lsp_has_inlay_hint_provider = active_lsp_has_inlay_hint_provider,
 }
 
 return M
