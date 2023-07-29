@@ -28,7 +28,7 @@ mason.setup({})
 -- nvim-cmp settings.
 local cmp = require("cmp")
 
-local saga_is_present = false
+local saga_is_present, _ = pcall(require, "lspsaga")
 
 cmp.setup({
 	snippet = {
@@ -152,12 +152,9 @@ lspconfig.lua_ls.setup({
 	},
 })
 
--- lspconfig.jsonls.setup({
--- 	capabilities = capabilities,
--- 	settings = {
--- 		json = json_settings,
--- 	},
--- })
+lspconfig.jsonls.setup({
+	capabilities = capabilities,
+})
 
 lspconfig.rust_analyzer.setup({
 	capabilities = capabilities,
