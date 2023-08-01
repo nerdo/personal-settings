@@ -4,6 +4,8 @@ if not present then
 	return
 end
 
+mason.setup({})
+
 require("mason-lspconfig").setup({
 	ensure_installed = {
 		"gopls",
@@ -22,8 +24,6 @@ require("mason-lspconfig").setup({
 		"lua_ls",
 	},
 })
-
-mason.setup({})
 
 -- nvim-cmp settings.
 local cmp = require("cmp")
