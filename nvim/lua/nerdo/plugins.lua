@@ -18,6 +18,9 @@ return {
 		end,
 	},
 
+	-- Extend/create a/i textobjects.
+	{ 'echasnovski/mini.nvim',  version = false },
+
 	-- File explorer.
 	{
 		"stevearc/oil.nvim",
