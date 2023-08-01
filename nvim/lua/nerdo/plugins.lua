@@ -154,6 +154,13 @@ return {
 
 			-- Completion for neovim lua.
 			"folke/neodev.nvim",
+
+			-- LSP progress.
+			{
+				"j-hui/fidget.nvim",
+				tag = "legacy",
+				event = "LspAttach",
+			},
 		},
 	},
 
