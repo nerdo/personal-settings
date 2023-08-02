@@ -4,5 +4,8 @@ if not present then
 	return
 end
 
-notify.setup({})
+notify.setup({
+	background_colour = "#00000000"
+})
+
 vim.notify = notify
