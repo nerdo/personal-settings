@@ -7,8 +7,7 @@ end
 lspsaga.setup({
 	finder = {
 		keys = {
-			jump_to = "<leader><leader>",
-			expand_or_jump = "<CR>",
+			toggle_or_open = "<CR>",
 			vsplit = "|",
 			split = "-",
 			quit = { "q", "<esc>", "<C-c>" },
@@ -19,9 +18,6 @@ lspsaga.setup({
 			quit = { "q", "<esc>", "<C-c>" },
 		}
 	},
-	hover = {
-		open_browser = "!firefox",
-	},
 	code_action = {
 		keys = {
 			quit = { "q", "<esc>", "<C-c>" },
@@ -31,6 +27,9 @@ lspsaga.setup({
 		keys = {
 			quit = { "q", "<esc>", "<C-c>" },
 		},
+	},
+	hover = {
+		open_browser = "!firefox",
 	},
 	ui = {
 		border = "solid",
