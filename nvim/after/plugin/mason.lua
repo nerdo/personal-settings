@@ -6,7 +6,8 @@ end
 
 mason.setup({})
 
-require("mason-lspconfig").setup({
+local mason_lspconfig = require("mason-lspconfig")
+mason_lspconfig.setup({
 	ensure_installed = {
 		"gopls",
 		"rust_analyzer",
@@ -24,7 +25,19 @@ require("mason-lspconfig").setup({
 		"lua_ls",
 	},
 })
-
+mason_lspconfig.setup_handlers {
+	-- The first entry (without a key) will be the default handler
+	-- and will be called for each installed server that doesn't have
+	-- a dedicated handler.
+	function(server_name) -- default handler (optional)
+		require("lspconfig")[server_name].setup {}
+	end,
+	-- Next, you can provide a dedicated handler for specific servers.
+	-- For example, a handler override for the `rust_analyzer`:
+	-- ["rust_analyzer"] = function()
+	-- 	require("rust-tools").setup {}
+	-- end
+}
 -- nvim-cmp settings.
 local cmp = require("cmp")
 
@@ -246,7 +259,7 @@ local on_attach_behaviors = function(event)
 		map("n", "<leader><leader>", "<cmd>Lspsaga show_line_diagnostics<CR>")
 
 		-- Find references.
-		map("n", "gh", "<cmd>Lspsaga lsp_finder<CR>")
+		map("n", "gh", "<cmd>Lspsaga finder<CR>")
 
 		-- Peek definition.
 		map("n", "gp", "<cmd>Lspsaga peek_definition<CR>")
@@ -256,7 +269,7 @@ local on_attach_behaviors = function(event)
 		map("n", "<leader>ko", "<cmd>Lspsaga outgoing_calls<CR>")
 
 		-- Code ation.
-		map({ "n", "v" }, "<leader>la", "<cmd>Lspsaga code_action")
+		map({ "n", "v" }, "<leader>la", "<cmd>Lspsaga code_action<CR>")
 	else
 		map("n", "K", lsp("buf.hover()"))
 		map("n", "<leader>li", diagnostic("open_float()"))
