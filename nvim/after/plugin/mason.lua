@@ -212,6 +212,10 @@ local on_attach_behaviors = function(event)
 			inlay_hints_enabled = not inlay_hints_enabled
 			vim.lsp.inlay_hint(bufnr, inlay_hints_enabled)
 		end, { buffer = bufnr })
+	else
+		vim.keymap.set("n", "<leader>ih", function()
+			vim.notify("Inlay hints are not supported by this LSP.")
+		end, { buffer = bufnr })
 	end
 
 	-- LSP keymaps.
