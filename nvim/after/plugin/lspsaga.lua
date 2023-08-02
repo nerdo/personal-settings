@@ -11,7 +11,13 @@ lspsaga.setup({
 			expand_or_jump = "<CR>",
 			vsplit = "|",
 			split = "-",
+			quit = { "q", "<esc>", "<C-c>" },
 		},
+	},
+	rename = {
+		keys = {
+			quit = { "q", "<esc>", "<C-c>" },
+		}
 	},
 	hover = {
 		open_browser = "!firefox",
@@ -31,4 +37,4 @@ lspsaga.setup({
 	},
 })
 
--- Keymaps are set in lsp.
+-- Keymaps are set in mason.
