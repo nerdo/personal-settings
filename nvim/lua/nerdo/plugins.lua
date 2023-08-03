@@ -145,6 +145,7 @@ return {
 			-- Signature autocompletion.
 			{
 				"ray-x/lsp_signature.nvim",
+				enabled = false,
 				event = "VeryLazy",
 			},
 
