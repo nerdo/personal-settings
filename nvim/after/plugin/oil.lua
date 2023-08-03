@@ -4,7 +4,11 @@ if not present then
 	return
 end
 
-oil.setup()
+oil.setup({
+	view_options = {
+		show_hidden = true
+	}
+})
 
 -- Set keybindings
 vim.keymap.set("n", "-", "<Cmd>Oil<CR>")
