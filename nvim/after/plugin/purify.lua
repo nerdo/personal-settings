@@ -1,7 +1,8 @@
 -- :so $VIMRUNTIME/syntax/hitest.vim
 -- https://colorcodes.io is a great starting point...
 
--- Set cursor line colors.
+-- Set cursor colors.
+vim.api.nvim_set_hl(0, "Cursor", { ctermbg = "DarkGreen", bg = "#ccd91a", fg = "#000000" })
 vim.api.nvim_set_hl(0, "CursorLine", { ctermbg = "DarkBlue", bg = "#051A3D" })
 vim.api.nvim_set_hl(0, "CursorLineNr", { ctermfg = "yellow", fg = "yellow", ctermbg = "DarkBlue", bg = "#0841A1" })
 

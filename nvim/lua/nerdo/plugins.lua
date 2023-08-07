@@ -165,7 +165,7 @@ return {
 		},
 	},
 
-	-- LSP saga.
+	-- LSP saga (enhanced LSP functionality).
 	{
 		'nvimdev/lspsaga.nvim',
 		dependencies = {
