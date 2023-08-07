@@ -27,6 +27,9 @@ vim.keymap.set("n", "<leader>c", function()
 end, opts)
 vim.keymap.set("n", "<leader>C", "<Cmd>bd!<CR>")
 
+-- Paste and keep register contents.
+vim.keymap.set("x", "p", "\"_dP")
+
 -- Kill search highlights.
 vim.keymap.set("n", "<leader>/", ":noh<cr>", opts)
 
