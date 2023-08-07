@@ -15,6 +15,8 @@ return {
 	color_scheme = "Brogrammer",
 	colors = {
 		background = "black",
+		cursor_bg = "#ccd91a",
+		cursor_fg = "#000000",
 	},
 	-- make both left and right alt behave in the same, normal, way
 	-- https://wezfurlong.org/wezterm/config/keyboard-concepts.html?highlight=right%20option#macos-left-and-right-option-key
@@ -22,17 +24,17 @@ return {
 	send_composed_key_when_right_alt_is_pressed = false,
 	keys = {
 		{ key = "v", mods = "CTRL|SHIFT", action = wezterm.action({ PasteFrom = "Clipboard" }) },
-		{ key = "=", mods = "CTRL", action = "IncreaseFontSize" },
-		{ key = "-", mods = "CTRL", action = "DecreaseFontSize" },
-		{ key = "0", mods = "CTRL", action = "ResetFontSize" },
+		{ key = "=", mods = "CTRL",       action = "IncreaseFontSize" },
+		{ key = "-", mods = "CTRL",       action = "DecreaseFontSize" },
+		{ key = "0", mods = "CTRL",       action = "ResetFontSize" },
 
 		-- MacOS keybindings
-		{ key = "c", mods = "CMD", action = wezterm.action.CopyTo("ClipboardAndPrimarySelection") },
-		{ key = "v", mods = "CMD", action = wezterm.action.PasteFrom("Clipboard") },
-		{ key = "m", mods = "CMD", action = "Hide" },
-		{ key = "q", mods = "CMD", action = "QuitApplication" },
-		{ key = "0", mods = "CMD", action = "ResetFontSize" },
-		{ key = "=", mods = "CMD", action = "IncreaseFontSize" },
-		{ key = "-", mods = "CMD", action = "DecreaseFontSize" },
+		{ key = "c", mods = "CMD",        action = wezterm.action.CopyTo("ClipboardAndPrimarySelection") },
+		{ key = "v", mods = "CMD",        action = wezterm.action.PasteFrom("Clipboard") },
+		{ key = "m", mods = "CMD",        action = "Hide" },
+		{ key = "q", mods = "CMD",        action = "QuitApplication" },
+		{ key = "0", mods = "CMD",        action = "ResetFontSize" },
+		{ key = "=", mods = "CMD",        action = "IncreaseFontSize" },
+		{ key = "-", mods = "CMD",        action = "DecreaseFontSize" },
 	},
 }
