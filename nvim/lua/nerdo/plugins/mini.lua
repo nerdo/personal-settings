@@ -1,5 +1,5 @@
 -- Extend/create a/i textobjects.
 return {
-	'echasnovski/mini.nvim',
+	'echasnovski/mini.ai',
 	version = false,
 }
