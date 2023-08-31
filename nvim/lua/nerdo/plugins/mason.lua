@@ -65,7 +65,7 @@ return {
 			-- Next, you can provide a dedicated handler for specific servers.
 			-- For example, a handler override for the `rust_analyzer`:
 			["rust_analyzer"] = function()
-				require("rust-tools").setup {}
+				require("nerdo.plugins.rust-tools").config()
 			end
 		}
 		-- nvim-cmp settings.
