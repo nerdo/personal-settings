@@ -224,8 +224,7 @@ return {
 
 		local open_floating_diagnostic = function()
 			if saga_is_present then
-				-- vim.cmd("Lspsaga show_cursor_diagnostics")
-				vim.diagnostic.open_float()
+				vim.cmd("Lspsaga show_cursor_diagnostics")
 			else
 				vim.diagnostic.open_float()
 			end
@@ -276,8 +275,7 @@ return {
 
 			local goto_next_diagnostic = function()
 				if saga_is_present then
-					-- vim.cmd("Lspsaga diagnostic_jump_next")
-					vim.diagnostic.goto_next()
+					vim.cmd("Lspsaga diagnostic_jump_next")
 				else
 					vim.diagnostic.goto_next()
 				end
@@ -285,8 +283,7 @@ return {
 
 			local goto_prev_diagnostic = function()
 				if saga_is_present then
-					-- vim.cmd("Lspsaga diagnostic_jump_prev")
-					vim.diagnostic.goto_prev({})
+					vim.cmd("Lspsaga diagnostic_jump_prev")
 				else
 					vim.diagnostic.goto_prev({})
 				end
