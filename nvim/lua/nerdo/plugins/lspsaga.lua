@@ -28,6 +28,8 @@ return {
 				},
 			},
 			diagnostic = {
+				show_code_action = false,
+				jump_num_shortcut = false,
 				keys = {
 					quit = { "q", "<esc>", "<C-c>" },
 				},
