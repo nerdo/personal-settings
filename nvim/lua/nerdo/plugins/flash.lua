@@ -10,13 +10,7 @@ return {
 			"s",
 			mode = { "n", "o", "x" },
 			function()
-				require("flash").jump({
-					search = {
-						mode = function(str)
-							return "\\<" .. str
-						end,
-					},
-				})
+				require("flash").jump()
 			end,
 			desc = "Flash",
 		},
