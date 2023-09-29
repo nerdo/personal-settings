@@ -1,6 +1,7 @@
 -- Symbols outline.
 return {
 	"simrat39/symbols-outline.nvim",
+	enabled = false,
 	config = function()
 		local symbols_outline = require("symbols-outline")
 
