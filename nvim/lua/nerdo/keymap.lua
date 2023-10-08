@@ -20,12 +20,12 @@ vim.keymap.set("n", "<leader>w", save_buffer, opts)
 vim.keymap.set("n", "<leader>;", save_buffer, opts)
 
 -- Close buffer.
-vim.keymap.set("n", "<leader>c", function()
+vim.keymap.set("n", "<leader>c", "<Cmd>bd!<CR>")
+vim.keymap.set("n", "<leader>C", function()
 	-- https://github.com/neovim/neovim/issues/2434#issuecomment-93434827
 	vim.cmd("set bufhidden=delete")
 	vim.cmd("bnext")
 end, opts)
-vim.keymap.set("n", "<leader>C", "<Cmd>bd!<CR>")
 
 -- Paste and keep register contents.
 vim.keymap.set("x", "p", "\"_dP")
