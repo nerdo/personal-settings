@@ -15,6 +15,10 @@ end
 
 local opts = { silent = true }
 
+-- Quitting
+vim.keymap.set("n", "XQ", "<Cmd>qa!<CR>", opts)
+vim.keymap.set("n", "XX", "<Cmd>wqa<CR>", opts)
+
 -- Save file.
 vim.keymap.set("n", "<leader>w", save_buffer, opts)
 vim.keymap.set("n", "<leader>;", save_buffer, opts)
