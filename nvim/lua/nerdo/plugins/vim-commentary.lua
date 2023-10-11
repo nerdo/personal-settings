@@ -20,5 +20,5 @@ return {
 			pattern = "php",
 			command = "setlocal commentstring=//\\ %s",
 		})
-	end
+	end,
 }

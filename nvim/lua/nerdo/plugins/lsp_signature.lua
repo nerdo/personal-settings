@@ -7,7 +7,9 @@ return {
 		local sig = require("lsp_signature")
 
 		sig.setup({
-			hint_inline = function() return true end
+			hint_inline = function()
+				return true
+			end,
 		})
-	end
+	end,
 }

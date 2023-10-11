@@ -23,5 +23,5 @@ return {
 				dapui.close()
 			end
 		end
-	end
+	end,
 }

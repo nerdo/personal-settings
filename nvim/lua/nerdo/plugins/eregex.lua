@@ -4,5 +4,5 @@ return {
 	init = function()
 		vim.g.eregex_default_enable = false
 		vim.g.eregex_force_case = true
-	end
+	end,
 }

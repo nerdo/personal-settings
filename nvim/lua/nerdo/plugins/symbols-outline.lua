@@ -16,5 +16,5 @@ return {
 		})
 
 		vim.keymap.set("n", "<leader>o", ":SymbolsOutline<CR>", {})
-	end
+	end,
 }

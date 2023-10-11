@@ -11,5 +11,5 @@ return {
 				theme = "ayu_dark",
 			},
 		})
-	end
+	end,
 }

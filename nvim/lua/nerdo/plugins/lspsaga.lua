@@ -1,9 +1,9 @@
 -- LSP saga (enhanced LSP functionality).
 return {
-	'nvimdev/lspsaga.nvim',
+	"nvimdev/lspsaga.nvim",
 	dependencies = {
-		'nvim-treesitter/nvim-treesitter',
-		'nvim-tree/nvim-web-devicons',
+		"nvim-treesitter/nvim-treesitter",
+		"nvim-tree/nvim-web-devicons",
 	},
 	config = function()
 		local lspsaga = require("lspsaga")
@@ -20,7 +20,7 @@ return {
 			rename = {
 				keys = {
 					quit = { "q", "<esc>", "<C-c>" },
-				}
+				},
 			},
 			code_action = {
 				keys = {
@@ -43,5 +43,5 @@ return {
 		})
 
 		-- Keymaps are set in mason.
-	end
+	end,
 }

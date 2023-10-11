@@ -42,5 +42,5 @@ return {
 		vim.keymap.set({ "n", "i", "v" }, "<F2>", ":2Multiterm<CR>", { silent = true })
 		vim.keymap.set({ "n", "i", "v" }, "<F3>", ":3Multiterm<CR>", { silent = true })
 		vim.keymap.set({ "n", "i", "v" }, "<F4>", ":4Multiterm<CR>", { silent = true })
-	end
+	end,
 }

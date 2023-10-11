@@ -85,7 +85,7 @@ return {
 			end
 
 			local codelldb_settings =
-			    get_codelldb_adapter_settings(vim.fn.stdpath("data") .. "/mason/packages/codelldb/extension/")
+				get_codelldb_adapter_settings(vim.fn.stdpath("data") .. "/mason/packages/codelldb/extension/")
 
 			-- Configure codelldb adapter for rust.
 			dap.adapters.rust = {
@@ -103,5 +103,5 @@ return {
 				port = "${port}",
 			}
 		end
-	end
+	end,
 }

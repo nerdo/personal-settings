@@ -6,9 +6,9 @@ return {
 	opts = {
 		modes = {
 			search = {
-				enabled = false
-			}
-		}
+				enabled = false,
+			},
+		},
 	},
 	-- stylua: ignore
 	keys = {

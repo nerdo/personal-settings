@@ -1,1 +1,1 @@
-require('nerdo.gui.neovide')
+require("nerdo.gui.neovide")

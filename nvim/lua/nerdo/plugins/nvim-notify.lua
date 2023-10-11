@@ -4,7 +4,7 @@ return {
 		local notify = require("notify")
 
 		notify.setup({
-			background_colour = "#00000000"
+			background_colour = "#00000000",
 		})
 
 		vim.notify = notify

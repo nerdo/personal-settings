@@ -28,7 +28,7 @@ vim.keymap.set("n", "<leader>C", function()
 end, opts)
 
 -- Paste and keep register contents.
-vim.keymap.set("x", "p", "\"_dP")
+vim.keymap.set("x", "p", '"_dP')
 
 -- Kill search highlights.
 vim.keymap.set("n", "<leader>/", ":noh<cr>", opts)

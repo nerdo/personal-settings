@@ -5,10 +5,10 @@ return {
 	event = "VeryLazy",
 	dependencies = "MunifTanjim/nui.nvim",
 	config = function()
-		local noice                       = require("noice")
+		local noice = require("noice")
 		local lsp_signature_is_present, _ = pcall(require, "lsp_signature")
 
-		local signature_enabled           = true
+		local signature_enabled = true
 		if lsp_signature_is_present then
 			signature_enabled = false
 		end
@@ -19,7 +19,7 @@ return {
 			},
 			lsp = {
 				signature = {
-					enabled = signature_enabled
+					enabled = signature_enabled,
 				},
 
 				-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
