@@ -26,6 +26,10 @@ vim.opt.termguicolors = true
 -- Turn off the mouse.
 vim.opt.mouse = ""
 
--- Default tabstop/shift width
+-- Default tabstop/shift width.
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
+
+-- Create splits to the right and below by default.
+vim.opt.splitright = true
+vim.opt.splitbelow = true
