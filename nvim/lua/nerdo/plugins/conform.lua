@@ -6,6 +6,13 @@ return {
 		local conform = require("conform")
 		local prettier = { "prettierd", "prettier" }
 		local webdev = { prettier, "rustywind" }
+
+		-- Modify phpcbf to set the php.ini display_errors value to off.
+		-- Without it I was getting some warnings/errors that were polluting my code on format.
+		conform.formatters.phpcbf.args = function(ctx)
+			return { "-d", "display_errors", "off", "-q", "--stdin-path=" .. ctx.filename, "-" }
+		end
+
 		conform.setup({
 			formatters_by_ft = {
 				lua = { "stylua" },
@@ -20,7 +27,7 @@ return {
 				markdown = { prettier },
 				ruby = { "robocup" },
 				rust = { "rustfmt" },
-				php = { "php_cs_fixer" },
+				php = { "phpcbf" },
 			},
 			format_on_save = {
 				lsp_fallback = true,
