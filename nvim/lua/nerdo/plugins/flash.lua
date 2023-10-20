@@ -8,6 +8,9 @@ return {
 			search = {
 				enabled = false,
 			},
+			char = {
+				enabled = false,
+			},
 		},
 	},
 	-- stylua: ignore
@@ -27,7 +30,7 @@ return {
 			desc = "Flash Treesitter",
 		},
 		{
-			"r",
+			"o",
 			mode = "o",
 			function() require("flash").remote() end,
 			desc = "Remote Flash",
