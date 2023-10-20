@@ -1,9 +1,13 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
+	dependencies = {
+		"nvim-treesitter/nvim-treesitter-textobjects",
+	},
+	event = { "BufReadPre", "BufNewFile" },
 	build = ":TSUpdate",
-	enabled = function()
-		return not vim.g.vscode
-	end,
+	-- enabled = function()
+	-- 	return not vim.g.vscode
+	-- end,
 	config = function()
 		local configs = require("nvim-treesitter.configs")
 
@@ -12,6 +16,11 @@ return {
 			ensure_installed = {
 				"javascript",
 				"typescript",
+				"tsx",
+				"bash",
+				"dockerfile",
+				"gitignore",
+				"query",
 				"go",
 				"json",
 				"http",
@@ -33,6 +42,9 @@ return {
 
 			---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
 			-- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+
+			-- better indentation with =
+			indent = { enable = true },
 
 			highlight = {
 				-- `false` will disable the whole extension
@@ -56,6 +68,16 @@ return {
 				-- Using this option may slow down your editor, and you may see some duplicate highlights.
 				-- Instead of true it can also be a list of languages
 				additional_vim_regex_highlighting = false,
+			},
+
+			incremental_selection = {
+				enable = true,
+				keymaps = {
+					init_selection = "<C-space>",
+					node_incremental = "<C-space>",
+					scope_incremental = false,
+					node_decremental = "<bs>",
+				},
 			},
 		})
 	end,
