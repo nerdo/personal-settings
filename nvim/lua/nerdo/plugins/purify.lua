@@ -1,6 +1,7 @@
 -- Theme.
 return {
 	"kyoz/purify",
+	enabled = false,
 	lazy = false,
 	priority = 1000,
 	config = function(plugin)
@@ -18,15 +19,15 @@ return {
 		-- Set cursor colors.
 		vim.api.nvim_set_hl(0, "Cursor", { ctermbg = "DarkGreen", bg = "#ccd91a", fg = "#000000" })
 		vim.api.nvim_set_hl(0, "CursorLine", { ctermbg = "DarkBlue", bg = "#051A3D" })
+
+		-- Set gutter line number colors.
+		vim.api.nvim_set_hl(0, "LineNrAbove", { ctermfg = "red", fg = "#C46EA2" })
+		vim.api.nvim_set_hl(0, "LineNrBelow", { ctermfg = "green", fg = "#6EC48B" })
 		vim.api.nvim_set_hl(
 			0,
 			"CursorLineNr",
 			{ ctermfg = "yellow", fg = "yellow", ctermbg = "DarkBlue", bg = "#0841A1" }
 		)
-
-		-- Set gutter line number colors.
-		vim.api.nvim_set_hl(0, "LineNrAbove", { ctermfg = "red", fg = "#C46EA2" })
-		vim.api.nvim_set_hl(0, "LineNrBelow", { ctermfg = "green", fg = "#6EC48B" })
 
 		-- Set visual highlight.
 		vim.api.nvim_set_hl(0, "Visual", { ctermbg = "Grey", bg = "#092E6C" })

@@ -11,14 +11,16 @@ return {
 		bufferline.setup({
 			options = {
 				indicator = {
-					-- It kind of resembles a chat bubble... I like it !
-					icon = "◢█",
+					icon = "█",
 				},
 				separator_style = { " ", " " },
 			},
 
 			-- :help bufferline-highlights
 			highlights = {
+				fill = {
+					bg = "#0f161a",
+				},
 				indicator_selected = {
 					fg = selected_bg,
 				},
