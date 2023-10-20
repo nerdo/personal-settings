@@ -64,6 +64,8 @@ return {
 						["]s"] = { query = "@class.outer", desc = "Next struct/class definition start." },
 						["]i"] = { query = "@conditional.outer", desc = "Next conditional start." },
 						["]l"] = { query = "@loop.outer", desc = "Next loop start." },
+						["]p"] = { query = "@parameter.outer", desc = "Next parameter start." },
+						["]="] = { query = "@assignment.outer", desc = "Next assignment start." },
 					},
 
 					goto_next_end = {
@@ -72,6 +74,8 @@ return {
 						["]S"] = { query = "@class.inner", desc = "Next struct/class definition end." },
 						["]I"] = { query = "@conditional.inner", desc = "Next conditional end." },
 						["]L"] = { query = "@loop.inner", desc = "Next loop end." },
+						["]P"] = { query = "@parameter.inner", desc = "Next parameter start." },
+						["]="] = { query = "@assignment.inner", desc = "Next assignment start." },
 					},
 
 					goto_previous_start = {
@@ -80,6 +84,8 @@ return {
 						["[s"] = { query = "@class.outer", desc = "Prev struct/class definition start." },
 						["[i"] = { query = "@conditional.outer", desc = "Prev conditional start." },
 						["[l"] = { query = "@loop.outer", desc = "Prev loop start." },
+						["[p"] = { query = "@parameter.outer", desc = "Prev parameter start." },
+						["[="] = { query = "@assignment.outer", desc = "Prev assignment start." },
 					},
 
 					goto_previous_end = {
@@ -88,6 +94,8 @@ return {
 						["[S"] = { query = "@class.inner", desc = "Prev struct/class definition end." },
 						["[I"] = { query = "@conditional.inner", desc = "Prev conditional end." },
 						["[L"] = { query = "@loop.inner", desc = "Prev loop end." },
+						["[P"] = { query = "@parameter.inner", desc = "Prev parameter end." },
+						["[="] = { query = "@assignment.inner", desc = "Prev assignment end." },
 					},
 				},
 			},
