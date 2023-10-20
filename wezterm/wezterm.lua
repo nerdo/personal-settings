@@ -13,8 +13,8 @@ return {
 	line_height = 1.5,
 	color_scheme = "Argonaut",
 	colors = {
-		cursor_bg = "#ff0000",
-		cursor_fg = "#fafafa",
+		cursor_bg = "#800500",
+		cursor_fg = "#eacecd",
 	},
 	-- make both left and right alt behave in the same, normal, way
 	-- https://wezfurlong.org/wezterm/config/keyboard-concepts.html?highlight=right%20option#macos-left-and-right-option-key
