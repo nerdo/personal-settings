@@ -10,7 +10,7 @@ return {
 		"Noto Color Emoji",
 	}),
 	font_size = 16,
-	line_height = 1.5,
+	line_height = 1.6,
 	color_scheme = "Argonaut",
 	colors = {
 		cursor_bg = "#800500",
