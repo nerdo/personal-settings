@@ -4,7 +4,10 @@ return {
 	adjust_window_size_when_changing_font_size = false,
 	enable_tab_bar = false,
 	font = wezterm.font_with_fallback({
-		"Cascadia Code",
+		{
+			family = "Cascadia Code",
+			harfbuzz_features = { "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "zero", "onum" },
+		},
 		"Hack Nerd Font Mono",
 		"PowerlineExtraSymbols",
 		"Noto Color Emoji",
