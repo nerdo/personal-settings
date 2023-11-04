@@ -10,6 +10,6 @@
 Symlink the configurations to what's in the repo.
 
 ```
-ln -s ~/.zshrc ~/personal/settings/zsh/zshrc
-ln -s ~/.p10k.zsh ~/personal/settings/zsh/p10k.zsh
+ln -s ~/personal/settings/zsh/zshrc ~/.zshrc
+ln -s ~/personal/settings/zsh/p10k.zsh ~/.p10k.zsh 
 ```
