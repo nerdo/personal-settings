@@ -238,7 +238,7 @@ return {
 			local set_inlay_hint = function(enable)
 				if nerdo.active_lsp_has_inlay_hint_provider() then
 					inlay_hints_enabled = enable
-					vim.lsp.inlay_hint(bufnr, enable)
+					vim.lsp.inlay_hint.enable(bufnr, enable)
 				else
 					vim.notify("Inlay hints are not supported by this LSP.")
 				end
