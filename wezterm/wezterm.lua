@@ -5,12 +5,10 @@ return {
 	enable_tab_bar = false,
 	font = wezterm.font_with_fallback({
 		{
-			family = "Cascadia Code",
-			harfbuzz_features = { "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "zero", "onum" },
+			family = "CaskaydiaCove Nerd Font Mono",
+			-- family = "MesloLGS NF",
+			-- harfbuzz_features = { "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "zero", "onum" },
 		},
-		"Hack Nerd Font Mono",
-		"PowerlineExtraSymbols",
-		"Noto Color Emoji",
 	}),
 	font_size = 16,
 	line_height = 1.6,
