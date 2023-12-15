@@ -34,7 +34,7 @@ return {
 						end
 
 						if nerdo.active_lsp_has_inlay_hint_provider() and vim.lsp.inlay_hint then
-							vim.lsp.inlay_hint(bufnr, inlay_hints_enabled)
+							vim.lsp.inlay_hint.enable(bufnr, inlay_hints_enabled)
 						end
 					end, { buffer = bufnr })
 				end,
