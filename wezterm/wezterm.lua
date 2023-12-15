@@ -7,8 +7,7 @@ return {
 	font = wezterm.font_with_fallback({
 		{
 			family = "CaskaydiaCove Nerd Font Mono",
-			-- family = "MesloLGS NF",
-			-- harfbuzz_features = { "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "zero", "onum" },
+			harfbuzz_features = { "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "zero", "onum" },
 		},
 	}),
 	font_size = 16,
