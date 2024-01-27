@@ -3,12 +3,8 @@ return {
 	disable_default_key_bindings = true,
 	adjust_window_size_when_changing_font_size = false,
 	enable_tab_bar = false,
-	font = wezterm.font_with_fallback({
-		{
-			family = "CaskaydiaCove Nerd Font Mono",
-			harfbuzz_features = { "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "zero", "onum" },
-		},
-	}),
+	front_end = "OpenGL",
+	font = wezterm.font("CaskaydiaCove Nerd Font Mono"),
 	font_size = 16,
 	line_height = 1.6,
 	color_scheme = "Argonaut",
