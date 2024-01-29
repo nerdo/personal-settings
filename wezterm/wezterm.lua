@@ -4,6 +4,7 @@ return {
 	adjust_window_size_when_changing_font_size = false,
 	enable_tab_bar = false,
 	front_end = "OpenGL",
+	freetype_load_flags = "NO_HINTING",
 	font = wezterm.font("CaskaydiaCove Nerd Font Mono"),
 	font_size = 16,
 	line_height = 1.6,
