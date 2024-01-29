@@ -8,32 +8,20 @@ return {
 		"neovim/nvim-lspconfig",
 
 		-- Autocompletion
-		"hrsh7th/nvim-cmp",
+		"hrsh7th/cmp-nvim-lsp",
 		"hrsh7th/cmp-buffer",
 		"hrsh7th/cmp-path",
-		"saadparwaiz1/cmp_luasnip",
-		"hrsh7th/cmp-nvim-lsp",
-		"hrsh7th/cmp-nvim-lua",
-
-		"ray-x/lsp_signature.nvim",
-
-		-- Snippets
-		"L3MON4D3/LuaSnip",
-		"rafamadriz/friendly-snippets",
+		"hrsh7th/cmp-cmdline",
+		"hrsh7th/nvim-cmp",
 
 		-- Completion for neovim lua.
 		"folke/neodev.nvim",
-
-		-- LSP progress.
-		{
-			"j-hui/fidget.nvim",
-			tag = "legacy",
-			event = "LspAttach",
-		},
 	},
 	config = function()
-		local mason = require("mason")
+		local neodev = require("neodev")
+		neodev.setup({})
 
+		local mason = require("mason")
 		mason.setup({})
 
 		local mason_lspconfig = require("mason-lspconfig")
@@ -69,65 +57,63 @@ return {
 			end,
 		})
 		-- nvim-cmp settings.
-		local cmp = require("cmp")
-
+		local cmp_is_present, cmp = pcall(require, "cmp")
 		local saga_is_present, _ = pcall(require, "lspsaga")
 
-		cmp.setup({
-			snippet = {
-				-- REQUIRED - you must specify a snippet engine
-				expand = function(args)
-					require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
-				end,
-			},
-			mapping = cmp.mapping.preset.insert({
-				["<C-u>"] = cmp.mapping.scroll_docs(-4),
-				["<C-d>"] = cmp.mapping.scroll_docs(4),
-				["<C-Space>"] = cmp.mapping.complete(),
-				["<C-e>"] = cmp.mapping.abort(),
-				["<C-y>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-			}),
-			sources = cmp.config.sources({
-				{ name = "nvim_lsp" },
-				{ name = "luasnip" }, -- For luasnip users.
-			}, {
-				{ name = "buffer" },
-			}),
-		})
+		if cmp_is_present then
+			cmp.setup({
+				snippet = {
+					-- REQUIRED - you must specify a snippet engine
+					expand = function(args)
+						require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
+					end,
+				},
+				mapping = cmp.mapping.preset.insert({
+					["<C-u>"] = cmp.mapping.scroll_docs(-4),
+					["<C-d>"] = cmp.mapping.scroll_docs(4),
+					["<C-Space>"] = cmp.mapping.complete(),
+					["<C-e>"] = cmp.mapping.abort(),
+					["<C-y>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+				}),
+				sources = cmp.config.sources({
+					{ name = "nvim_lsp" },
+					{ name = "luasnip" }, -- For luasnip users.
+				}, {
+					{ name = "buffer" },
+				}),
+			})
 
-		-- Set configuration for specific filetype.
-		cmp.setup.filetype("gitcommit", {
-			sources = cmp.config.sources({
-				{ name = "git" }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
-			}, {
-				{ name = "buffer" },
-			}),
-		})
+			-- Set configuration for specific filetype.
+			cmp.setup.filetype("gitcommit", {
+				sources = cmp.config.sources({
+					{ name = "git" }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
+				}, {
+					{ name = "buffer" },
+				}),
+			})
 
-		-- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
-		cmp.setup.cmdline({ "/", "?" }, {
-			mapping = cmp.mapping.preset.cmdline(),
-			sources = {
-				{ name = "buffer" },
-			},
-		})
+			-- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+			cmp.setup.cmdline({ "/", "?" }, {
+				mapping = cmp.mapping.preset.cmdline(),
+				sources = {
+					{ name = "buffer" },
+				},
+			})
 
-		-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-		cmp.setup.cmdline(":", {
-			mapping = cmp.mapping.preset.cmdline(),
-			sources = cmp.config.sources({
-				{ name = "path" },
-			}, {
-				{ name = "cmdline" },
-			}),
-		})
-
-		local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+			cmp.setup.cmdline(":", {
+				mapping = cmp.mapping.preset.cmdline(),
+				sources = cmp.config.sources({
+					{ name = "path" },
+				}, {
+					{ name = "cmdline" },
+				}),
+			})
+		end
 
 		local lspconfig = require("lspconfig")
 
 		lspconfig.gopls.setup({
-			capabilities = capabilities,
 			settings = {
 				gopls = {
 					hints = {
@@ -144,12 +130,11 @@ return {
 		})
 
 		lspconfig.tsserver.setup({
-			capabilities = capabilities,
 			settings = {
 				typescript = {
 					inlayHints = {
 						includeInlayParameterNameHints = "all",
-						includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+						includeInlayParameterNameHintsWhenArgumentMatchesName = true,
 						includeInlayFunctionParameterTypeHints = true,
 						includeInlayVariableTypeHints = true,
 						includeInlayPropertyDeclarationTypeHints = true,
@@ -160,7 +145,7 @@ return {
 				javascript = {
 					inlayHints = {
 						includeInlayParameterNameHints = "all",
-						includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+						includeInlayParameterNameHintsWhenArgumentMatchesName = true,
 						includeInlayFunctionParameterTypeHints = true,
 						includeInlayVariableTypeHints = true,
 						includeInlayPropertyDeclarationTypeHints = true,
@@ -172,7 +157,6 @@ return {
 		})
 
 		lspconfig.lua_ls.setup({
-			capabilities = capabilities,
 			settings = {
 				Lua = {
 					hint = {
@@ -195,12 +179,9 @@ return {
 			},
 		})
 
-		lspconfig.jsonls.setup({
-			capabilities = capabilities,
-		})
+		lspconfig.jsonls.setup({})
 
 		lspconfig.rust_analyzer.setup({
-			capabilities = capabilities,
 			settings = {
 				["rust-analyzer"] = {
 					checkOnSave = {
@@ -247,7 +228,7 @@ return {
 			-- Inlay hint setup.
 			if vim.lsp.inlay_hint then
 				if nerdo.active_lsp_has_inlay_hint_provider() then
-					set_inlay_hint(true)
+					set_inlay_hint(false)
 				end
 				vim.keymap.set("n", "<leader>ih", function()
 					set_inlay_hint(not inlay_hints_enabled)
