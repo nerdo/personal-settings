@@ -15,7 +15,6 @@ yabai -m config split_ratio                  0.50
 
 ## mouse settings
 yabai -m config mouse_follows_focus          off
-yabai -m config focus_follows_mouse          autofocus
 
 # move/resize windows by holding alt, clicking, and dragging
 yabai -m config mouse_modifier               alt
@@ -30,4 +29,4 @@ yabai -m rule --add app="^Karabiner-Elements$" manage=off
 # disable certain types of windows
 yabai -m rule --add subrole="Dialog|Floating" manage=off
 
-borders active_color=0xffff0000 width=10.0 &
+borders active_color=0xffff0000 width=15.0 &
