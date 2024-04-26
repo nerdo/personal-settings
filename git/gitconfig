@@ -1,0 +1,33 @@
+[user]
+	name = Dannel Albert
+	email = cuebix@gmail.com
+[core]
+	excludesFile = ~/.gitignore
+	pager = bat -n
+[init]
+	defaultBranch = main
+[credential]
+	helper = store
+[pull]
+	rebase = true
+[mergetool]
+	prompt = false
+[pretty]
+	simple = %as%x09%h%x09%an%x09%s
+[alias]
+	a = add -p
+	s = status
+	st = status
+	sw = switch
+	c = commit
+	co = checkout
+	l = log --pretty=simple
+	slog = log --pretty=simple
+	unstage = restore --staged
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[color "diff"]
+	meta = yellow
