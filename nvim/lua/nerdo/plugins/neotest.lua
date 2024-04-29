@@ -50,9 +50,9 @@ return {
 		vim.keymap.set({ "n", "i" }, "<M-t>", runSingleTest)
 		vim.keymap.set({ "n", "i" }, "<C-t>", runFileTests)
 
-		vim.keymap.set({ "n", "i" }, "<leader>tr", runSingleTest)
-		vim.keymap.set({ "n", "i" }, "<leader>tt", runFileTests)
-		vim.keymap.set({ "n", "i" }, "<leader>tl", runLastTest)
+		vim.keymap.set("n", "<leader>tr", runSingleTest)
+		vim.keymap.set("n", "<leader>tt", runFileTests)
+		vim.keymap.set("n", "<leader>tl", runLastTest)
 
 		vim.keymap.set("n", "<leader>dt", function()
 			neotest.run.run({ strategy = "dap" })
