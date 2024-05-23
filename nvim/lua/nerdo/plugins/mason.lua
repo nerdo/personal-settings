@@ -28,7 +28,6 @@ return {
 		mason_lspconfig.setup({
 			ensure_installed = {
 				"gopls",
-				"rust_analyzer",
 				"taplo", -- For .toml
 				"intelephense",
 				"svelte",
@@ -49,11 +48,6 @@ return {
 			-- a dedicated handler.
 			function(server_name) -- default handler (optional)
 				require("lspconfig")[server_name].setup({})
-			end,
-			-- Next, you can provide a dedicated handler for specific servers.
-			-- For example, a handler override for the `rust_analyzer`:
-			["rust_analyzer"] = function()
-				require("nerdo.plugins.rust-tools").config()
 			end,
 		})
 		-- nvim-cmp settings.
@@ -181,16 +175,6 @@ return {
 
 		lspconfig.jsonls.setup({})
 
-		lspconfig.rust_analyzer.setup({
-			settings = {
-				["rust-analyzer"] = {
-					checkOnSave = {
-						command = "clippy",
-					},
-				},
-			},
-		})
-
 		-- For some dynamic behavior based on whether trobuble is present and open.
 		local trouble_is_present, trouble = pcall(require, "trouble")
 		local nerdo = require("nerdo.functions")
@@ -212,14 +196,14 @@ return {
 		end
 
 		-- Keymaps
+		local inlay_hints_enabled = false
 		local on_attach_behaviors = function(event)
 			local bufnr = event.buf
 
-			local inlay_hints_enabled = false
 			local set_inlay_hint = function(enable)
 				if nerdo.active_lsp_has_inlay_hint_provider() then
 					inlay_hints_enabled = enable
-					vim.lsp.inlay_hint.enable(bufnr, enable)
+					vim.lsp.inlay_hint.enable(inlay_hints_enabled)
 				else
 					vim.notify("Inlay hints are not supported by this LSP.")
 				end
@@ -228,7 +212,7 @@ return {
 			-- Inlay hint setup.
 			if vim.lsp.inlay_hint then
 				if nerdo.active_lsp_has_inlay_hint_provider() then
-					set_inlay_hint(false)
+					set_inlay_hint(inlay_hints_enabled)
 				end
 				vim.keymap.set("n", "<leader>ih", function()
 					set_inlay_hint(not inlay_hints_enabled)
