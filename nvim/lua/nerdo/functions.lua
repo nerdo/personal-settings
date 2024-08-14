@@ -53,58 +53,6 @@ vim.api.nvim_create_user_command("NerdoShowAbsPath", function()
 	path.show({ absolute = true })
 end, {})
 
-local line_numbers = {}
-
--- Toggles line numbers on and off.
-line_numbers.cycle = function()
-	line_numbers.current_setting = math.max(1, (line_numbers.current_setting + 1) % (#line_numbers.options + 1))
-	line_numbers.refresh()
-end
-
--- Custom line numbers - grayed out absolute line numbers alongside relative line numbers
-line_numbers.set_custom = function()
-	vim.o.statuscolumn = "%{%v:lua.require'nerdo.functions'.custom_statuscolumn(v:lnum, v:relnum)%}"
-	vim.opt.number = true
-	vim.opt.relativenumber = true
-	line_numbers.current_setting = 1
-end
-
--- Turn on line numbers and set it to relative mode.
-line_numbers.set_relative = function()
-	vim.o.statuscolumn = ""
-	vim.opt.number = true
-	vim.opt.relativenumber = true
-	line_numbers.current_setting = 2
-end
-
--- Turn on line numbers and set it to absolute mode.
-line_numbers.set_absolute = function()
-	vim.o.statuscolumn = ""
-	vim.opt.number = true
-	vim.opt.relativenumber = false
-	line_numbers.current_setting = 3
-end
-
-line_numbers.options = { line_numbers.set_custom, line_numbers.set_relative, line_numbers.set_absolute }
-line_numbers.current_setting = 1
-
-line_numbers.refresh = function()
-	line_numbers.options[line_numbers.current_setting]()
-end
-
-vim.api.nvim_create_user_command("NerdoCycleLineNr", function()
-	line_numbers.cycle()
-end, {})
-vim.api.nvim_create_user_command("NerdoSetLineNrCustom", function()
-	line_numbers.set_custom()
-end, {})
-vim.api.nvim_create_user_command("NerdoSetLineNrRelative", function()
-	line_numbers.set_relative()
-end, {})
-vim.api.nvim_create_user_command("NerdoSetLineNrAbsolute", function()
-	line_numbers.set_absolute()
-end, {})
-
 -- Buffer/window functions.
 local editor = {}
 
@@ -208,16 +156,9 @@ local active_lsp_has_inlay_hint_provider = function()
 	return false
 end
 
-local custom_statuscolumn = function(lnum, rnum)
-	if rnum ~= 0 then
-		return "%s %#LineNrAbsolute#" .. lnum .. "%* %=" .. rnum .. " "
-	end
-	return "%s " .. lnum .. " "
-end
-
 local M = {
 	path = path,
-	line_numbers = line_numbers,
+	line_numbers = require("nerdo.line-numbers"),
 	editor = editor,
 	trouble_auto_leave = {
 		set = set_trouble_auto_leave,
@@ -225,7 +166,6 @@ local M = {
 	},
 	augroup = augroup,
 	active_lsp_has_inlay_hint_provider = active_lsp_has_inlay_hint_provider,
-	custom_statuscolumn = custom_statuscolumn,
 }
 
 return M
