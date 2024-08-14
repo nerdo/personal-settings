@@ -15,6 +15,7 @@ return {
 		-- Set gutter line number colors.
 		vim.api.nvim_set_hl(0, "LineNrAbove", { ctermfg = "red", fg = "#C46EA2" })
 		vim.api.nvim_set_hl(0, "LineNrBelow", { ctermfg = "green", fg = "#6EC48B" })
+		vim.api.nvim_set_hl(0, "LineNrAbsolute", { ctermfg = "gray", fg = "#444444" })
 		vim.api.nvim_set_hl(
 			0,
 			"CursorLineNr",

@@ -4,8 +4,7 @@ if not vim.g.vscode then
 end
 
 -- Sets relative line numbering.
-vim.opt.number = true
-vim.opt.relativenumber = true
+require("nerdo.functions").line_numbers.refresh()
 
 -- Turn off line wrapping
 vim.opt.wrap = false
