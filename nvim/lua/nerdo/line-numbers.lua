@@ -1,10 +1,15 @@
 local M = {}
 
+local append_folds = function()
+	-- return "%=" .. require("nerdo.folds")() .. " "
+	return ""
+end
+
 M.custom_statuscolumn = function(lnum, rnum)
 	if rnum ~= 0 then
-		return "%s %#LineNrAbsolute#" .. lnum .. "%* %=" .. rnum .. " "
+		return "%s %#LineNrAbsolute#" .. lnum .. "%* %=" .. rnum .. " " .. append_folds()
 	end
-	return "%s " .. lnum .. " "
+	return "%s " .. lnum .. " " .. append_folds()
 end
 
 -- Toggles line numbers on and off.
