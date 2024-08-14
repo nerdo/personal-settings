@@ -1,7 +1,8 @@
 -- https://github.com/neovide/neovide/issues/1301#issuecomment-1119370546
-vim.g.gui_font_default_size = 16
+vim.g.gui_font_default_size = 18
 vim.g.gui_font_size = vim.g.gui_font_default_size
-vim.g.gui_font_face = "Dank Mono"
+vim.g.gui_font_face = "JetBrains Mono,Hack Nerd Font Mono,Noto Color Emoji"
+vim.opt.linespace = 10
 
 RefreshGuiFont = function()
 	vim.opt.guifont = string.format("%s:h%s", vim.g.gui_font_face, vim.g.gui_font_size)
