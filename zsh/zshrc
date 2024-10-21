@@ -7,7 +7,7 @@ fi
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
-export PATH=$HOME/.composer/vendor/bin:$HOME/.local/bin:$HOME/bin:$HOME/go/bin:/Users/nerdo/.surrealdb:$PATH
+export PATH=$HOME/.composer/vendor/bin:$HOME/.local/bin:$HOME/bin:$HOME/go/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -117,6 +117,7 @@ alias ls='eza --icons'
 alias l='eza -l -g --header --git --icons'
 alias lg=lazygit
 #alias neovide=/Applications/Neovide.app/Contents/MacOS/neovide
+alias surreal='docker run --rm --pull always surrealdb/surrealdb:latest'
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
