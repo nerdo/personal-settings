@@ -9,9 +9,9 @@ return {
 
 		-- Modify phpcbf to set the php.ini display_errors value to off.
 		-- Without it I was getting some warnings/errors that were polluting my code on format.
-		require("conform.formatters.phpcbf").args = function(ctx)
-			return { "-d", "display_errors", "off", "-q", "--stdin-path=" .. ctx.filename, "-" }
-		end
+		-- require("conform.formatters.phpcbf").args = function(ctx)
+		-- 	return { "-d", "display_errors", "off", "-q", "--stdin-path=" .. ctx.filename, "-" }
+		-- end
 
 		conform.setup({
 			formatters_by_ft = {

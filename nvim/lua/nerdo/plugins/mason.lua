@@ -31,7 +31,7 @@ return {
 				"taplo", -- For .toml
 				"intelephense",
 				"svelte",
-				"tsserver",
+				"ts_ls",
 				"html",
 				"cssls",
 				"cssmodules_ls",
@@ -123,7 +123,7 @@ return {
 			},
 		})
 
-		lspconfig.tsserver.setup({
+		lspconfig.ts_ls.setup({
 			settings = {
 				typescript = {
 					inlayHints = {
