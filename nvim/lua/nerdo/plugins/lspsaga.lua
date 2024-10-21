@@ -14,24 +14,24 @@ return {
 					toggle_or_open = "<CR>",
 					vsplit = "|",
 					split = "-",
-					quit = { "q", "<esc>", "<C-c>" },
+					quit = { "<esc>", "<C-c>" },
 				},
 			},
 			rename = {
 				keys = {
-					quit = { "q", "<esc>", "<C-c>" },
+					quit = { "<esc>", "<C-c>" },
 				},
 			},
 			code_action = {
 				keys = {
-					quit = { "q", "<esc>", "<C-c>" },
+					quit = { "<esc>", "<C-c>" },
 				},
 			},
 			diagnostic = {
 				show_code_action = false,
 				jump_num_shortcut = false,
 				keys = {
-					quit = { "q", "<esc>", "<C-c>" },
+					quit = { "<esc>", "<C-c>" },
 				},
 			},
 			hover = {
