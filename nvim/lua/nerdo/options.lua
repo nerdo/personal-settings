@@ -3,6 +3,9 @@ if not vim.g.vscode then
 	vim.opt.scrolloff = 999
 end
 
+-- Gives horizontal scrolling some breathing room
+vim.opt.sidescrolloff = 20
+
 -- Sets relative line numbering.
 require("nerdo.functions").line_numbers.refresh()
 
