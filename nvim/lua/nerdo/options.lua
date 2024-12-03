@@ -35,3 +35,11 @@ vim.opt.shiftwidth = 4
 -- Create splits to the right and below by default.
 vim.opt.splitright = true
 vim.opt.splitbelow = true
+
+-- Set PHP file comments
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "php",
+	callback = function()
+		vim.bo.commentstring = "// %s"
+	end,
+})
