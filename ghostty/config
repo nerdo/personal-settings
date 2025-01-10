@@ -4,7 +4,6 @@ clipboard-read = allow
 clipboard-write = allow
 window-padding-balance = true
 theme = Argonaut
-bold-is-bright = true
 background = #0e1019
 foreground = #fffaf4
 selection-background = #002a3b
@@ -28,7 +27,7 @@ palette = 12=#0092ff
 palette = 13=#9a5feb
 palette = 14=#67fff0
 palette = 15=#ffffff
-font-size = 18
-font-family = Dank Mono
-adjust-cell-height = 16
+font-size = 16
+font-family = JetBrains Mono
+adjust-cell-height = 18
 cursor-click-to-move = false
