@@ -1,4 +1,8 @@
 -- Telescope.
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"nvim-telescope/telescope.nvim",
 	dependencies = {

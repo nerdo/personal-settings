@@ -1,4 +1,8 @@
 -- Show symbols in gutter for git changes.
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"lewis6991/gitsigns.nvim",
 	config = function()

@@ -1,4 +1,8 @@
 -- Theme.
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"navarasu/onedark.nvim",
 	lazy = false,

@@ -1,3 +1,7 @@
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"rcarriga/nvim-notify",
 	config = function()

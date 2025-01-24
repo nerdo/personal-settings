@@ -156,6 +156,8 @@ local active_lsp_has_inlay_hint_provider = function()
 	return false
 end
 
+vim.g.nerdo_is_headless = vim.g.vscode
+
 local M = {
 	path = path,
 	line_numbers = require("nerdo.line-numbers"),

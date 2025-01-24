@@ -1,4 +1,8 @@
 -- LSP saga (enhanced LSP functionality).
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"nvimdev/lspsaga.nvim",
 	dependencies = {

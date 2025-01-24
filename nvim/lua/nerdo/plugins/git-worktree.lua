@@ -1,4 +1,8 @@
 -- Navigate git worktrees. Thanks ThePrimeagen :D.
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"ThePrimeagen/git-worktree.nvim",
 	config = function()

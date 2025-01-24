@@ -1,4 +1,8 @@
 -- Replace UI for messages, cmdline, popupmenu.
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"folke/noice.nvim",
 	enabled = false,

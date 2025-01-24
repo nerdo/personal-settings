@@ -1,4 +1,8 @@
 -- Debug adapter.
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"rcarriga/nvim-dap-ui",
 	dependencies = {

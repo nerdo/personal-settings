@@ -1,4 +1,8 @@
 -- File explorer.
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"stevearc/oil.nvim",
 	opts = {},

@@ -1,4 +1,8 @@
 -- Terminal.
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"chengzeyi/multiterm.vim",
 	config = function()

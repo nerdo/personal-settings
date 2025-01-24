@@ -1,3 +1,7 @@
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"L3MON4D3/LuaSnip",
 	config = function()

@@ -1,5 +1,5 @@
--- Centers the cursor on the screen (when not using vscode)
-if not vim.g.vscode then
+-- Centers the cursor on the screen (when not running headless)
+if not vim.g.nerdo_is_headless then
 	vim.opt.scrolloff = 999
 end
 

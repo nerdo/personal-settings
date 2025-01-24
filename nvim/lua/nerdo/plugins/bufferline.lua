@@ -1,4 +1,8 @@
 -- Display tabs for buffers.
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"akinsho/bufferline.nvim",
 	version = "*",

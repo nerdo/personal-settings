@@ -1,4 +1,8 @@
 -- Test runner.
+if vim.g.nerdo_is_headless then
+	return {}
+end
+
 return {
 	"nvim-neotest/neotest",
 	dependencies = {
