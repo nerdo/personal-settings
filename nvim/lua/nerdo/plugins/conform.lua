@@ -4,8 +4,8 @@ return {
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		local conform = require("conform")
-		local prettier = { "prettierd", "prettier" }
-		local webdev = { prettier, "rustywind" }
+		local prettier = { "prettierd", "prettier", stop_after_first = true }
+		local webdev = { "prettier", "rustywind", stop_after_first = false }
 
 		-- Modify phpcbf to set the php.ini display_errors value to off.
 		-- Without it I was getting some warnings/errors that were polluting my code on format.
