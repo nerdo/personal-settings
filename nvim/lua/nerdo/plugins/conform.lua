@@ -4,14 +4,8 @@ return {
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		local conform = require("conform")
-		local prettier = { "prettierd", "prettier", stop_after_first = true }
-		local webdev = { "prettier", "rustywind", stop_after_first = false }
-
-		-- Modify phpcbf to set the php.ini display_errors value to off.
-		-- Without it I was getting some warnings/errors that were polluting my code on format.
-		-- require("conform.formatters.phpcbf").args = function(ctx)
-		-- 	return { "-d", "display_errors", "off", "-q", "--stdin-path=" .. ctx.filename, "-" }
-		-- end
+		local prettier = { "prettierd" }
+		local webdev = { "prettierd", "rustywind", stop_after_first = false }
 
 		conform.setup({
 			formatters_by_ft = {

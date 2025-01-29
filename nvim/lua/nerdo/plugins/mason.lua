@@ -40,6 +40,7 @@ return {
 				"jsonls",
 				"yamlls",
 				"lua_ls",
+				"vale_ls"
 			},
 		})
 		mason_lspconfig.setup_handlers({
@@ -495,8 +496,6 @@ return {
 
 			map("n", "<leader>w", "<Cmd>w<CR>")
 			map("n", "<leader>;", function()
-				-- Formats before saving.
-				vim.lsp.buf.format({ async = false })
 				vim.cmd.write()
 			end)
 		end
