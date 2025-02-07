@@ -25,8 +25,8 @@ shift + ctrl - h : yabai -m window --warp west
 shift + ctrl - l : yabai -m window --warp east
 
 # Changing window focus within a space, and if no adjacent window exists, move to the next display.
-alt - j : yabai -m window --focus south || (yabai -m display --focus south)
-alt - k : yabai -m window --focus north || (yabai -m display --focus north)
+alt - j : [[ "$(yabai -m query --spaces --space | jq -r '.type')" == "bsp" ]] && (yabai -m window --focus south || (yabai -m display --focus south)) || (yabai -m window --focus stack.prev || yabai -m window --focus stack.last)
+alt - k : [[ "$(yabai -m query --spaces --space | jq -r '.type')" == "bsp" ]] && (yabai -m window --focus north || (yabai -m display --focus north)) || (yabai -m window --focus stack.next || yabai -m window --focus stack.first)
 alt - h : yabai -m window --focus west  || (yabai -m display --focus west )
 alt - l : yabai -m window --focus east  || (yabai -m display --focus east )
 
@@ -38,3 +38,6 @@ alt - up : yabai -m window --toggle zoom-fullscreen
 
 # Re-balance windows in current space.
 shift + cmd - b : yabai -m space --balance
+
+# Toggle bsp and stack layout on current space
+alt - space : [[ "$(yabai -m query --spaces --space | jq -r '.type')" == "bsp" ]] && (yabai -m space --layout stack) || (yabai -m space --layout bsp)
