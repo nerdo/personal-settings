@@ -22,6 +22,8 @@ yabai -m config mouse_modifier               alt
 yabai -m config mouse_action1                move
 yabai -m config mouse_action2                resize
 
+yabai -m rule --add app="^Slack$" manage=on
+
 # disable specific apps
 yabai -m rule --add app="^System Settings$" manage=off
 yabai -m rule --add app="^Calculator$" manage=off
@@ -30,4 +32,4 @@ yabai -m rule --add app="^Karabiner-Elements$" manage=off
 # disable certain types of windows
 yabai -m rule --add subrole="Dialog|Floating" manage=off
 
-borders active_color=0xffff0000 width=15.0 &
+borders active_color=0xffffa500 width=15.0 &
