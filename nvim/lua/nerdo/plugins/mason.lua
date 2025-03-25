@@ -447,7 +447,7 @@ return {
 				-- Show diagnostics
 				map("n", "<leader>!", "<cmd>Lspsaga show_workspace_diagnostics<CR>")
 				map("n", "<leader>%!", "<cmd>Lspsaga show_buffer_diagnostics<CR>")
-				map("n", "<leader><leader>", "<cmd>Lspsaga show_line_diagnostics<CR>")
+				map("n", "<leader>?", "<cmd>Lspsaga show_line_diagnostics<CR>")
 
 				-- Find references.
 				map("n", "gh", "<cmd>Lspsaga finder<CR>")

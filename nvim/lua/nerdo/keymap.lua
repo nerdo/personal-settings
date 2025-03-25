@@ -1,6 +1,6 @@
 -- Default vi key bindings: https://hea-www.harvard.edu/~fine/Tech/vi.html (try to preserve these...)
 -- Set leader.
-vim.g.mapleader = " "
+vim.g.mapleader = ","
 
 -- Save buffer.
 -- Note: these two do the same thing by default, but in a buffer where a language server is present,
@@ -20,7 +20,7 @@ vim.keymap.set("n", "XQ", "<Cmd>qa!<CR>", opts)
 vim.keymap.set("n", "XX", "<Cmd>wqa<CR>", opts)
 
 -- Save file.
-vim.keymap.set("n", "<leader>;", save_buffer, opts)
+vim.keymap.set("n", ";;", save_buffer, opts)
 
 -- Close buffer.
 vim.keymap.set("n", "<leader>c", "<Cmd>bd!<CR>")
