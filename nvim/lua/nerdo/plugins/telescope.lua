@@ -18,7 +18,8 @@ return {
 				layout_config = {
 					anchor = "N",
 					width = 0.9,
-					height = 0.25,
+					height = { 0.35, min = 9, max = 11 },
+					preview_cutoff = 5,
 				}
 			},
 			pickers = {
