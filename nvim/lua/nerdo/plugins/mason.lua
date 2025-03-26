@@ -493,9 +493,6 @@ return {
 			end)
 
 			map("n", "<leader>w", "<Cmd>w<CR>")
-			map("n", "<leader>;", function()
-				vim.cmd.write()
-			end)
 		end
 
 		if trouble_is_present then
