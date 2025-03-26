@@ -1,4 +1,5 @@
 -- Default vi key bindings: https://hea-www.harvard.edu/~fine/Tech/vi.html (try to preserve these...)
+
 -- Set leader.
 vim.g.mapleader = ","
 
