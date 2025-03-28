@@ -31,7 +31,7 @@ alt - h : yabai -m window --focus west  || (yabai -m display --focus west )
 alt - l : yabai -m window --focus east  || (yabai -m display --focus east )
 
 # Toggle window float.
-shift + alt - f : yabai -m window --toggle float --grid 4:4:1:1:2:2
+shift + cmd - f : yabai -m window --toggle float --grid 4:4:1:1:2:2
 
 # Toggle fullscreen.
 alt - up : yabai -m window --toggle zoom-fullscreen
