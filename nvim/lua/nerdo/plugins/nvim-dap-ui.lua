@@ -17,6 +17,9 @@ return {
 
 		dapui.setup()
 
+		-- Keymaps
+		vim.keymap.set('n', '<leader>du', dapui.toggle, {})
+
 		-- Auto open/close the dap ui when debugging is in progress/completed.
 		local dap_present, dap = pcall(require, "dap")
 		if dap_present then

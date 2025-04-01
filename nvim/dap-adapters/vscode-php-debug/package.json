@@ -422,7 +422,7 @@
         ],
         "configurationSnippets": [
           {
-            "label": "PHP: Listen for Xdebug",
+            "label": "PHP1: Listen for Xdebug",
             "description": "Listen for incoming XDebug connections",
             "body": {
               "name": "Listen for Xdebug",
