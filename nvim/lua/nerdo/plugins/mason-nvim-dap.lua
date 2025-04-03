@@ -3,6 +3,19 @@ if vim.g.nerdo_is_headless then
 	return {}
 end
 
+update_workspace_variable_in_project_config = function(config_table)
+	local project_config = {}
+	for k, v in pairs(config_table) do
+		if type(v) == "table" then
+			project_config[k] = update_workspace_variable_in_project_config(v)
+		else
+			-- replace occurrences of the variable workspaceRoot with workspaceFolder.
+			project_config[k] = string.gsub(v, "%${workspaceRoot}", "${workspaceFolder}")
+		end
+	end
+	return project_config
+end
+
 return {
 	"jay-babu/mason-nvim-dap.nvim",
 	dependencies = {
@@ -14,6 +27,7 @@ return {
 	end,
 	config = function()
 		require("mason-nvim-dap").setup({
+			automatic_installation = false,
 			ensure_installed = {
 				"codelldb",
 				"php",
@@ -42,12 +56,8 @@ return {
 						-- Look for matching config by name
 						if decoded and decoded.configurations then
 							for _, c in ipairs(decoded.configurations) do
-								local project_config = {}
 								-- Merge fields from the JSON config into the dap config
-								for k, v in pairs(c) do
-									-- replace occurrences of the variable workspaceRoot with workspaceFolder.
-									project_config[k] = string.gsub(v, "%${workspaceRoot}", "${workspaceFolder}")
-								end
+								local project_config = update_workspace_variable_in_project_config(c)
 								table.insert(config.configurations, project_config)
 							end
 						end

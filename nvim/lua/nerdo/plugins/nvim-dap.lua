@@ -20,13 +20,18 @@ return {
 
 		-- Set up debugging keymaps.
 		vim.keymap.set("n", "<F5>", function()
-			dap.continue()
+			local telescope_exists, telescope = pcall(require, "telescope")
+			if telescope_exists and telescope.extensions["dap"] then
+				if dap.session() then
+					dap.continue()
+				else
+					vim.cmd("Telescope dap configurations")
+				end
+			else
+				dap.continue()
+			end
 		end)
 		vim.keymap.set("n", "<S-F5>", function()
-			dap.terminate()
-		end)
-		-- S-F5 seems to read as F17 in my terminal...
-		vim.keymap.set("n", "<F17>", function()
 			dap.terminate()
 		end)
 		vim.keymap.set("n", "<F8>", function()
