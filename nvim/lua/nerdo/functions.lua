@@ -145,7 +145,7 @@ local get_trouble_auto_leave = function()
 end
 
 local active_lsp_has_inlay_hint_provider = function()
-	local active_clients = vim.lsp.get_active_clients()
+	local active_clients = vim.lsp.get_clients()
 	local current_bufnr = vim.fn.bufnr("%")
 	for _, client in pairs(active_clients) do
 		if client.attached_buffers[current_bufnr] and client.server_capabilities.inlayHintProvider then
