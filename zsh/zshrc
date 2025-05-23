@@ -164,3 +164,7 @@ export CPPFLAGS="-I/opt/homebrew/opt/php@7.0/include"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+export GITHUB_TOKEN=$(cat ~/.github_token)
+export GITHUB_PERSONAL_ACCESS_TOKEN=$GITHUB_TOKEN
+export GITHUB_MCP_TOKEN=$(cat ~/.github_mcp_token)
