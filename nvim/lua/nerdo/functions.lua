@@ -14,7 +14,9 @@ path.copy = function(options)
 	local expand_arg = "%"
 
 	if not relative then
-		expand_arg = "%:p"
+		expand_arg = expand_arg .. ":p"
+	else
+		expand_arg = expand_arg .. ":."
 	end
 
 	local p = vim.fn.expand(expand_arg)
@@ -29,11 +31,14 @@ end
 path.show = function(options)
 	local relative = options.relative or not options.absolute
 	local expand_arg = "%"
-	local label = "Relative"
+	local label = ""
 
 	if not relative then
-		expand_arg = "%:p"
+		expand_arg = expand_arg .. ":p"
 		label = "Absolute"
+	else
+		expand_arg = expand_arg .. ":."
+		label = "Relative"
 	end
 
 	local p = vim.fn.expand(expand_arg)
