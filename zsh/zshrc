@@ -168,3 +168,4 @@ export CPPFLAGS="-I/opt/homebrew/opt/php@7.0/include"
 export GITHUB_TOKEN=$(cat ~/.github_token)
 export GITHUB_PERSONAL_ACCESS_TOKEN=$GITHUB_TOKEN
 export GITHUB_MCP_TOKEN=$(cat ~/.github_mcp_token)
+export JIRA_API_TOKEN=$(cat ~/.jira_api_token)
