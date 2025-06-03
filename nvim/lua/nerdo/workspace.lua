@@ -31,7 +31,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 						callback = function()
 							vim.schedule(function()
 								if vim.g.nerdo_session_load_trouble then
-									trouble.open()
+									trouble.open({ mode = 'project' })
 								end
 							end)
 						end,
@@ -45,8 +45,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
 			end
 
 			if trouble_is_present then
-				-- Not loading a session. I like trouble to be open by default.
-				trouble.open()
+				-- Not loading a session. I like to start trouble :>
+				-- trouble.open({ mode = 'project' })
 			end
 		end)
 	end,
@@ -81,7 +81,7 @@ local function mksession(session_file)
 		file:write(new_content)
 		file:close()
 
-		trouble.open()
+		trouble.open({ mode = 'project' })
 		vim.api.nvim_set_current_buf(nerdo.editor.last_normal_focused_bufnr())
 	else
 		vim.api.nvim_command("mksession! " .. session_file)
