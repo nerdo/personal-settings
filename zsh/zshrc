@@ -169,3 +169,4 @@ export GITHUB_TOKEN=$(cat ~/.github_token)
 export GITHUB_PERSONAL_ACCESS_TOKEN=$GITHUB_TOKEN
 export GITHUB_MCP_TOKEN=$(cat ~/.github_mcp_token)
 export JIRA_API_TOKEN=$(cat ~/.jira_api_token)
+export TSI_OPENAI_API_KEY=$(cat ~/.tsi_openai_api_key)
