@@ -24,7 +24,7 @@ vim.keymap.set("n", "XX", "<Cmd>wqa<CR>", opts)
 vim.keymap.set("n", ";;", save_buffer, opts)
 
 -- Close buffer.
-vim.keymap.set("n", "<leader>c", "<Cmd>bd!<CR>")
+vim.keymap.set("n", "<leader>c", function() require("nerdo.functions").editor.smart_buffer_close() end)
 vim.keymap.set("n", "<leader>C", function()
 	-- https://github.com/neovim/neovim/issues/2434#issuecomment-93434827
 	vim.cmd("set bufhidden=delete")

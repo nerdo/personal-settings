@@ -140,6 +140,33 @@ vim.api.nvim_create_autocmd("BufLeave", {
 	callback = update_last_normal_focused_bufnr,
 })
 
+-- Smart buffer delete function
+editor.smart_buffer_close = function()
+	local current_buf = vim.api.nvim_get_current_buf()
+	local buflisted = vim.api.nvim_buf_get_option(current_buf, "buflisted")
+	
+	-- If current buffer is listed (normal file), find next listed buffer before closing
+	if buflisted then
+		local buffers = vim.fn.getbufinfo({buflisted = 1})
+		local next_buf = nil
+		
+		-- Find another listed buffer that's not the current one (don't require loaded)
+		for _, buf in ipairs(buffers) do
+			if buf.bufnr ~= current_buf then
+				next_buf = buf.bufnr
+				break
+			end
+		end
+		
+		-- Switch to next buffer before deleting current one
+		if next_buf then
+			vim.api.nvim_set_current_buf(next_buf)
+		end
+	end
+	
+	vim.api.nvim_buf_delete(current_buf, {force = true})
+end
+
 -- Context variable accessors.
 local trouble_auto_leave = true
 local set_trouble_auto_leave = function(flag)
