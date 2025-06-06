@@ -167,6 +167,33 @@ editor.smart_buffer_close = function()
 	vim.api.nvim_buf_delete(current_buf, {force = true})
 end
 
+-- Create smart buffer delete command that accepts arguments
+local smart_bd_command = function(opts)
+	local target_buf = opts.args ~= "" and tonumber(opts.args) or vim.api.nvim_get_current_buf()
+	local force = opts.bang or false
+	
+	-- Only apply smart logic if no specific buffer was provided
+	if opts.args == "" then
+		-- Use the existing smart logic
+		editor.smart_buffer_close()
+	else
+		-- For specific buffer numbers, just delete normally
+		if force then
+			vim.api.nvim_buf_delete(target_buf, {force = true})
+		else
+			vim.api.nvim_buf_delete(target_buf, {force = false})
+		end
+	end
+end
+
+-- Create smart buffer delete commands
+vim.api.nvim_create_user_command("Bd", smart_bd_command, {bang = true, nargs = "?"})
+vim.api.nvim_create_user_command("Bdelete", smart_bd_command, {bang = true, nargs = "?"})
+
+-- Simple command-line abbreviations
+vim.cmd("cabbrev bd Bd")
+vim.cmd("cabbrev bdelete Bdelete")
+
 -- Context variable accessors.
 local trouble_auto_leave = true
 local set_trouble_auto_leave = function(flag)
