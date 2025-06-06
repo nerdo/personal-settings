@@ -15,6 +15,7 @@ return {
 		telescope.setup({
 			defaults = {
 				layout_strategy = 'center',
+				sorting_strategy = 'ascending',
 				layout_config = {
 					anchor = "N",
 					width = 0.9,
