@@ -143,14 +143,16 @@ vim.api.nvim_create_autocmd("BufLeave", {
 -- Smart buffer delete function
 editor.smart_buffer_close = function()
 	local current_buf = vim.api.nvim_get_current_buf()
+	local current_win = vim.api.nvim_get_current_win()
 	local buflisted = vim.api.nvim_buf_get_option(current_buf, "buflisted")
+	local win_count = #vim.api.nvim_tabpage_list_wins(0)
 	
-	-- If current buffer is listed (normal file), find next listed buffer before closing
 	if buflisted then
+		-- For listed buffers (normal files), find replacement to prevent unlisted takeover
 		local buffers = vim.fn.getbufinfo({buflisted = 1})
 		local next_buf = nil
 		
-		-- Find another listed buffer that's not the current one (don't require loaded)
+		-- Find another listed buffer that's not the current one
 		for _, buf in ipairs(buffers) do
 			if buf.bufnr ~= current_buf then
 				next_buf = buf.bufnr
@@ -162,9 +164,18 @@ editor.smart_buffer_close = function()
 		if next_buf then
 			vim.api.nvim_set_current_buf(next_buf)
 		end
+		
+		vim.api.nvim_buf_delete(current_buf, {force = true})
+	else
+		-- For unlisted buffers, check if we should close the window or just the buffer
+		if win_count > 1 then
+			-- Multiple windows: close the window instead of just the buffer
+			vim.api.nvim_win_close(current_win, false)
+		else
+			-- Single window: delete the buffer normally
+			vim.api.nvim_buf_delete(current_buf, {force = true})
+		end
 	end
-	
-	vim.api.nvim_buf_delete(current_buf, {force = true})
 end
 
 -- Create smart buffer delete command that accepts arguments
