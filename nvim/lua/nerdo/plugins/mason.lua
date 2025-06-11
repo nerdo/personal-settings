@@ -132,6 +132,33 @@ return {
 				-- fixes annoying prompt when doing <leader>gh
 				["window/showMessage"] = function() end,
 				["window/logMessage"] = function() end,
+				-- suppress code actions progress notifications
+				["$/progress"] = function(_, result, ctx)
+					local client = vim.lsp.get_client_by_id(ctx.client_id)
+					if client and client.name == "phpactor" and result.value then
+						local title = result.value.title or ""
+						local kind = result.value.kind or ""
+
+						-- Use a module-level variable for token tracking
+						if not _G.phpactor_code_action_tokens then
+							_G.phpactor_code_action_tokens = {}
+						end
+
+						-- Filter "Resolving code actions" begin message and track token
+						if title == "Resolving code actions" then
+							_G.phpactor_code_action_tokens[result.token] = true
+							return
+						end
+
+						-- Filter end message only if it matches a tracked code actions token
+						if kind == "end" and _G.phpactor_code_action_tokens[result.token] then
+							_G.phpactor_code_action_tokens[result.token] = nil
+							return
+						end
+					end
+					-- Let other progress notifications through
+					vim.lsp.handlers["$/progress"](_, result, ctx)
+				end,
 			},
 		})
 
