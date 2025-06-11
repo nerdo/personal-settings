@@ -1,6 +1,7 @@
 require("nerdo.functions")
 require("nerdo.keymap")
 require("nerdo.options")
+require("nerdo.quickfix").setup()
 require("nerdo.lazy")
 if not vim.g.nerdo_is_headless then
 	require("nerdo.gui")
