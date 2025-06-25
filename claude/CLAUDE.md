@@ -1,14 +1,49 @@
-- It is important to have data input and output have a separate I/O layer. The purpose of this layer is two fold. This implies that the module will only use its own entities and call externally defined functions for getting data into and out of the module. It also means that it can be tested without external dependencies like a database or calling real APIs; those specific implementations can be tested independently when the I/O layer creates isolation in this way.
-- When writing tests, avoid not using the setup functions that are called automatically unless absolutely necessary. Instead, make each test stand alone and refactor setup steps to explicitly called, private utility methods within the test suite.
-- Prefer the word `make` over `create` for factory functions, and within the context of a test, I prefer naming them like `makeTestEntity` when they are clearly used for test data. If I need to overwrite specific parts of the test data, ideally I'd pass an argument that makes it very clear what is being overridden.
-- Do not use Reflection for testing private methods. Please prompt me to convert private methods to public ones whenever this scenario arises.
-- When making private methods public for testing would require passing in complex typed dependencies (like Eloquent models), I prefer extracting the logic into a separate method that accepts entities with no external dependencies. I want to avoid passing unstructured arrays as argument functions and/or return types. Objects are OK, but I don't want to have to rely on external dependencies like Eloquent objects that force ties to a database system.
-- Put factory functions at the end of test suites.
-- When importing dependencies, I like them to be sorted by order of importance to the current file's functionality. The most important/central classes to what the file is doing should appear first, followed by their direct dependencies, then supporting classes, with external dependencies at the bottom. For example, in a test file that primarily tests an OpenAI service, the OpenAI service import should come first, then its API dependency, then entity classes used in the test, and finally external testing frameworks like Mockery. This sorting by importance tends to reduce cognitive overload for me. Please order dependencies in this way whenever possible.
-- When I refer to my personal memory or preferences for Claude, I'm referring to memories in ~/.claude/CLAUDE.md. Please update this file when I ask you to update my personal preferences or personal memory.
-- Before refactoring, if tests don't exist to cover the change, first create a tests to validate existing behavior. This may require some smaller "blind" refactorings that are not covered by tests, but strive to do this first and prompt me to verify the behavior before moving on to the refactoring in question.
-- Use conventional commit syntax when committing code.
-- You must prompt me if you are about to apply a workaround. Always prioritize actual fixes over workarounds.
-- When creating React components, create custom hooks for behaviors so that the behaviors can be tested independently of the user interface.
-- When working with complexity, seek to simplify. A great technique for this is to decouple the complex part - the implementation details - from the simple part - usually, the "what" that is being asked. This can often take the form of creating a test and creating an interface that allows drivers that implement the interface to hide complexity, effectively mapping the complex logic to simpler data types. A great side effect of this is that now testing becomes much easier, and when there are issues, it can often be isolated to a bug in the drivers unless there is a fundamental issue with how things work.
-- When creating applying patterns like the repository pattern, focus on what the module actually needs and favor simpler implementations with fewer introduced entities over super granular entities that don't get much use in the module.
+# Development Guidelines
+
+## Architecture & Design Principles
+
+**Data Layer Isolation**: Always create a separate data layer for input and output. Modules must only use their own entities and call externally defined functions for data access. This ensures modules can be tested without external dependencies like databases or real APIs. The I/O layer implementations are tested independently.
+
+**Complexity Management**: When encountering complexity, always seek to simplify by decoupling the complex implementation details from the simple "what" being asked. Create interfaces that allow drivers to hide complexity and map complex logic to simpler data types. This improves testability and isolates bugs to specific drivers.
+
+**Pattern Implementation**: When applying patterns like repository pattern, focus strictly on what the module actually needs. Always favor simpler implementations with fewer entities over granular entities that don't provide value to the module.
+
+## Testing Requirements
+
+**Test Independence**: Do not use automatic setup functions unless absolutely necessary. Each test must stand alone. Refactor setup steps into explicitly called, private utility methods within the test suite.
+
+**Factory Function Standards**:
+
+- Use `make` instead of `create` for factory functions
+- In test contexts, name them `makeTestEntity` when used for test data
+- When overriding test data, pass arguments that clearly indicate what is being overridden
+- Place all factory functions at the end of test suites
+
+**Private Method Testing**: Never use Reflection for testing private methods. When this scenario arises, I will be prompted to convert private methods to public ones.
+
+**Dependency Extraction**: When making private methods public for testing would require complex typed dependencies (like Eloquent models), extract the logic into a separate method that accepts entities with no external dependencies. Avoid unstructured arrays as arguments or return types. Objects are acceptable, but external dependencies like Eloquent objects that tie to database systems are not.
+
+**Pre-Refactoring Testing**: Before any refactoring, if tests don't exist to cover the change, create tests first to validate existing behavior. This may require some smaller "blind" refactorings, but this must be done first with verification before proceeding to the main refactoring.
+
+## Code Organization
+
+**Import Ordering**: Dependencies must be sorted by order of importance to the current file's functionality:
+
+1. Most important/central classes to the file's purpose
+2. Direct dependencies of the central classes
+3. Supporting classes
+4. External dependencies (testing frameworks, etc.)
+
+Example: In an OpenAI service test file, order should be: OpenAI service → API dependency → entity classes → external testing frameworks like Mockery.
+
+## Development Workflow
+
+**Commit Standards**: Use conventional commit syntax for all commits.
+
+**Workaround Policy**: I must be prompted before applying any workaround. Actual fixes are always prioritized over workarounds.
+
+**React Development**: When creating React components, create custom hooks for behaviors so they can be tested independently of the user interface.
+
+## Personal Memory Management
+
+When references are made to personal memory or preferences for Claude, these refer to memories stored in `~/.claude/CLAUDE.md`. This file should be updated when personal preferences or memory updates are requested.
