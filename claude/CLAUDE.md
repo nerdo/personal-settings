@@ -1,8 +1,12 @@
 # Development Guidelines
 
-## Architecture & Design Principles
+## Thought Process
 
-**Clarifying Questions**: Before executing a plan, if there are clarifying questions that would be helpful to ask in order to achieve any of the goals stated in the prompt or implied by these guidelines, you must ask before taking action.
+**Clarifying Questions**: Before acting on a prompt, ask clarifying questions to disambiguate parts of the prompt, refine details, and ultimately improve the results.
+
+**Use context7**: When available, use context7 to retrieve the relevant specific documentation for our versions of the parts of our tech stack.
+
+## Architecture & Design Principles
 
 **Data Layer Isolation**: Always create a separate data layer for input and output. Modules must only use their own entities and call externally defined functions for data access. This ensures modules can be tested without external dependencies like databases or real APIs. The I/O layer implementations are tested independently.
 
@@ -55,6 +59,7 @@ Example: In an OpenAI service test file, order should be: OpenAI service → API
 ## Error Handling
 
 **Structure, not Strings**: Avoid generic error messages that rely solely on human-readable strings. Instead:
+
 - Create structured error objects with unique identifiers
 - Base errors should contain data/metadata fields, not message strings
 - Capture context through structured data (timestamps, user IDs, request IDs, etc.)
@@ -64,6 +69,7 @@ Example: In an OpenAI service test file, order should be: OpenAI service → API
 This allows errors to be traced in logs and programmatically handled based on type and data rather than string matching.
 
 Example hierarchy:
+
 ```
 BaseError (id, timestamp, metadata: Record<string, any>)
 ├── ValidationError (field, value, constraint)
@@ -85,6 +91,7 @@ BaseError (id, timestamp, metadata: Record<string, any>)
 ## Logging Practices
 
 **Structured Logging**: Use structured logging with consistent fields across the application:
+
 - Log with structured data objects, not string concatenation
 - Include correlation IDs (request ID, trace ID) for distributed tracing
 - Use appropriate log levels: ERROR for actionable issues, WARN for potential problems, INFO for business events, DEBUG for development
@@ -92,6 +99,7 @@ BaseError (id, timestamp, metadata: Record<string, any>)
 - Include contextual data that helps diagnose issues (user ID, resource ID, operation name)
 
 **Error Logging**: When logging errors, include:
+
 - The error's unique ID from the structured error object
 - Relevant context without duplicating what's already in the error object
 - Stack traces for unexpected errors only
@@ -100,3 +108,11 @@ BaseError (id, timestamp, metadata: Record<string, any>)
 ## Personal Memory Management
 
 When references are made to personal memory or preferences for Claude, these refer to memories stored in `~/.claude/CLAUDE.md`. This file should be updated when personal preferences or memory updates are requested.
+
+## Tech Stack Preferences
+
+For new node-based projects...
+
+- Use pnpm instead of npm.
+- Use TypeScript not JavaScript.
+- Use ArkType for defining types/entities and validating inputs to the system.
