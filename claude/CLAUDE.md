@@ -16,7 +16,11 @@
 
 ## Testing Requirements
 
+**Write Tests For Core Functionality**: You must write tests for core functionality. Use a domain driven philosophy where entities are created to represent the input and output data of the core functionality. Ensure it can be tested without depending on databases, APIs, etc. Those details should have separate layers that translate to and from the domain.
+
 **Test Independence**: Do not use automatic setup functions unless absolutely necessary. Each test must stand alone. Refactor setup steps into explicitly called, private utility methods within the test suite.
+
+**Avoid Mocks**: Unless in an existing codebase where using mocks is the standard or introducing fakes would overcomplicate the existing setup, create fakes instead of using mocks.
 
 **Factory Function Standards**:
 
