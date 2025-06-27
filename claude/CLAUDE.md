@@ -274,6 +274,18 @@ The error handling logic is in src/services/auth.ts:45
 3. Steps to reproduce: [if applicable]
 4. Fix recommendation: [specific solution]
 
+## Quick Decision Tree
+
+**Testing Approach**:
+- Existing mocks in codebase? → Use mocks
+- New test suite? → Use fakes
+- Complex external dependency? → Extract to testable interface
+
+**When to Ask vs Act**:
+- Ambiguous requirement? → Ask for clarification
+- Clear task with obvious approach? → Implement
+- Potential breaking change? → Propose first
+
 ## Common Scenarios
 
 **When asked to "fix" something**: First reproduce the issue, then follow Bug Fix Response Format
@@ -288,4 +300,8 @@ The error handling logic is in src/services/auth.ts:45
 
 ## Miscellaneous
 
-When creating a `.gitignore` file, ignore the Claude local settings files.
+**Git-related**:
+- When creating `.gitignore`, ignore Claude local settings files
+- Never auto-push commits
+- Use conventional commit format
+- Always include co-author attribution in commit messages
