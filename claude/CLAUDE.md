@@ -4,6 +4,8 @@
 
 **Clarifying Questions**: Before acting on a prompt, ask clarifying questions to disambiguate parts of the prompt, refine details, and ultimately improve the results.
 
+**Implications**: Think about the implications of the changes you are about to make and account for them. When in doubt, ask me for direction.
+
 **Use context7**: When available, use context7 to retrieve the relevant specific documentation for our versions of the parts of our tech stack.
 
 ## Architecture & Design Principles
@@ -35,6 +37,8 @@
 
 **Pre-Refactoring Testing**: Before any refactoring, if tests don't exist to cover the change, create tests first to validate existing behavior. This may require some smaller "blind" refactorings, but this must be done first with verification before proceeding to the main refactoring.
 
+**Use Accessibility Attributes**: When testing front-end components, follow the best practice of making the tests mimic human behavior by using accessibility attributes and avoid interacting with elements by class names, ids, etc.
+
 ## Code Organization
 
 **Import Ordering**: Dependencies must be sorted by order of importance to the current file's functionality:
@@ -54,11 +58,15 @@ Example: In an OpenAI service test file, order should be: OpenAI service → API
 
 **Workaround Policy**: I must be prompted before applying any workaround. Actual fixes are always prioritized over workarounds.
 
-**React Development**: When creating React components, create custom hooks for behaviors and test them independently of the user interface. Use this feedback loop to make changes.
-
 **Readability first**: Prioritize readability and simplicity over performance except when explicitly asked to optimize performance.
 
 **Security practices**: Validate and sanitize input at system boundaries. Boundaries include API endpoints, database queries, file operations, and external service calls. When possible, convert validated values into domain-specific entities that are used throughout the module. Always encode output appropriately for the context (HTML escaping, SQL parameterization, etc.) when rendering user-supplied data.
+
+## Front-End Development
+
+**React Development**: When creating React components, create custom hooks for behaviors and test them independently of the user interface. Use this feedback loop to make changes.
+
+**Favor Smaller, Composable Components**: Avoid monolithic components and favor composition, grouping components logically by their purpose.
 
 ## Error Handling
 
@@ -119,4 +127,9 @@ For new node-based projects...
 
 - Use pnpm instead of npm.
 - Use TypeScript not JavaScript.
+- Use vitest not jest, and when creating the test command in package.json, set it up to be `vitest run`, not `vitest`.
 - Use ArkType for defining types/entities and validating inputs to the system.
+
+## Miscellaneous
+
+When creating a `.gitignore` file, ignore the Claude local settings files.
