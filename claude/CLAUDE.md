@@ -4,13 +4,34 @@
 
 **Clarifying Questions**: Before acting on a prompt, ask clarifying questions to disambiguate parts of the prompt, refine details, and ultimately improve the results.
 
-**Implications**: Think about the implications of the changes you are about to make and account for them. When in doubt, ask me for direction.
+**Implications**: Before implementing any solution:
 
-**Use context7**: When available, use context7 to retrieve the relevant specific documentation for our versions of the parts of our tech stack.
+1. List potential side effects
+2. Identify affected files/components
+3. Consider edge cases
+
+**Use context7**: Context7 is an MCP server that pulls up-to-date, version-specific documentation and code examples directly from the source. It is designed to get better answers, no hallucinations and an AI that actually understands the stack. When available, use context7 to retrieve the relevant specific documentation for our versions of the parts of our tech stack.
 
 ## Architecture & Design Principles
 
 **Data Layer Isolation**: Always create a separate data layer for input and output. Modules must only use their own entities and call externally defined functions for data access. This ensures modules can be tested without external dependencies like databases or real APIs. The I/O layer implementations are tested independently.
+
+Example:
+
+```typescript
+// Domain layer (testable without DB)
+class UserService {
+  constructor(private userRepo: UserRepository) {}
+  async getActiveUsers() {
+    return this.userRepo.findByStatus("active");
+  }
+}
+
+// Data layer (separate, mockable)
+interface UserRepository {
+  findByStatus(status: string): Promise<User[]>;
+}
+```
 
 **Complexity Management**: When encountering complexity, always seek to simplify by decoupling the complex implementation details from the simple "what" being asked. Create interfaces that allow drivers to hide complexity and map complex logic to simpler data types. This improves testability and isolates bugs to specific drivers.
 
@@ -121,6 +142,26 @@ BaseError (id, timestamp, metadata: Record<string, any>)
 
 When references are made to personal memory or preferences for Claude, these refer to memories stored in `~/.claude/CLAUDE.md`. This file should be updated when personal preferences or memory updates are requested.
 
+## Always/Never Rules
+
+**ALWAYS**:
+
+- Run linter, tests, and build - in that order - after code changes
+- Use TypeScript strict mode in new projects
+- Validate inputs at system boundaries (API endpoints, file operations, external services)
+- Check if a library/framework is already in use before suggesting alternatives
+- Mark todos as completed immediately after finishing a task
+- Use structured logging with consistent fields
+- Follow existing code conventions in the codebase
+
+**NEVER**:
+
+- Commit console.log statements to production code
+- Use `any` type without explicit justification
+- Use Reflection for testing private methods
+- Log sensitive data (passwords, tokens, PII)
+- Apply workarounds without prompting for approval
+
 ## Tech Stack Preferences
 
 For new node-based projects...
@@ -129,6 +170,43 @@ For new node-based projects...
 - Use TypeScript not JavaScript.
 - Use vitest not jest, and when creating the test command in package.json, set it up to be `vitest run`, not `vitest`.
 - Use ArkType for defining types/entities and validating inputs to the system.
+
+## Response Templates
+
+**Bug Fix Response Format**:
+
+1. Root cause: [brief explanation of why the bug occurs]
+2. Solution: [approach to fix the issue]
+3. Changes needed:
+   - file_path:line_number - [what changes]
+   - file_path:line_number - [what changes]
+4. Tests to add: [list specific test cases]
+
+**Feature Implementation Response Format**:
+
+1. Overview: [1-2 sentence summary]
+2. Implementation plan:
+   - [ ] Task 1
+   - [ ] Task 2
+3. Files to modify/create:
+   - file_path - [purpose]
+4. Potential impacts: [list any side effects]
+
+**Code Review Response Format**:
+
+1. Issues found:
+   - file_path:line_number - [issue description]
+2. Suggestions:
+   - [improvement with rationale]
+3. Security concerns: [if any]
+4. Performance considerations: [if any]
+
+**Error Analysis Response Format**:
+
+1. Error type: [classification from error hierarchy]
+2. Affected component: file_path:line_number
+3. Steps to reproduce: [if applicable]
+4. Fix recommendation: [specific solution]
 
 ## Miscellaneous
 
