@@ -45,6 +45,26 @@ interface UserRepository {
 
 **Avoid Mocks**: Unless in an existing codebase where using mocks is the standard or introducing fakes would overcomplicate the existing setup, create fakes instead of using mocks.
 
+Example fake implementation:
+```typescript
+class FakeUserRepository implements UserRepository {
+  private users: User[];
+  
+  constructor(initialData?: { users?: User[] }) {
+    this.users = initialData?.users || [];
+  }
+  
+  async findByStatus(status: string): Promise<User[]> {
+    return this.users.filter(u => u.status === status);
+  }
+  
+  // Helper method for single user
+  addTestUser(user: User): void {
+    this.users.push(user);
+  }
+}
+```
+
 **Factory Function Standards**:
 
 - Use `make` instead of `create` for factory functions
@@ -56,7 +76,7 @@ interface UserRepository {
 
 **Dependency Extraction**: When making private methods public for testing would require complex typed dependencies (like Eloquent models), extract the logic into a separate method that accepts entities with no external dependencies. Avoid unstructured arrays as arguments or return types. Objects are acceptable, but external dependencies like Eloquent objects that tie to database systems are not.
 
-**Pre-Refactoring Testing**: Before any refactoring, if tests don't exist to cover the change, create tests first to validate existing behavior. This may require some smaller "blind" refactorings, but this must be done first with verification before proceeding to the main refactoring.
+**Pre-Refactoring Testing**: Before any refactoring, if tests don't exist to cover the change, create tests first to validate existing behavior. This may require some smaller "blind" refactorings (refactorings performed without test coverage, sometimes necessary to make the code testable), but this must be done first with verification before proceeding to the main refactoring.
 
 **Use Accessibility Attributes**: When testing front-end components, follow the best practice of making the tests mimic human behavior by using accessibility attributes and avoid interacting with elements by class names, ids, etc.
 
@@ -144,7 +164,39 @@ BaseError (id, timestamp, metadata: Record<string, any>)
 
 ## Personal Memory Management
 
-When references are made to personal memory or preferences for Claude, these refer to memories stored in `~/.claude/CLAUDE.md`. This file should be updated when personal preferences or memory updates are requested.
+**When to update memory files**:
+
+1. **Global memory (~/.claude/CLAUDE.md)**:
+   - User explicitly says "remember this" or "update your memory"
+   - User establishes a new personal preference
+   - Only update when explicitly asked
+
+2. **Project memory (./CLAUDE.md)**:
+   - User corrects a repeated mistake specific to the project
+   - User establishes project-specific conventions
+   - User provides project-specific commands or workflows
+
+**Handling conflicts**:
+- If user asks to add something that conflicts with existing guidelines, ask for clarification before proceeding
+- Project memory takes precedence over global memory for project-specific tasks
+
+## Common Verification Commands
+
+**Final Verification**: Before considering any task complete, run these commands in order:
+
+For Node/TypeScript projects:
+- `pnpm lint` or `npm run lint`
+- `pnpm test` or `npm test`
+- `pnpm build` or `npm run build`
+
+For PHP projects:
+- `phpunit` or `./vendor/bin/phpunit`
+- Check composer.json for specific test commands
+
+**Finding the Right Commands**:
+1. Check the project's CLAUDE.md file for project-specific commands
+2. Look in package.json (Node) or composer.json (PHP) for available scripts
+3. If still unsure, ask the user for the correct commands
 
 ## Always/Never Rules
 
