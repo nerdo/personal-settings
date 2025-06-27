@@ -73,7 +73,11 @@ Example: In an OpenAI service test file, order should be: OpenAI service → API
 
 ## Development Workflow
 
-**Use Test Driven Development**: Write tests representing the use cases and ensure that they will fail by writing the bare minimum to get it to compile and run. Then get them to pass with literals and very simple logic when necessary. Refactor to add the real implementation and verify that tests are still passing.
+**Use Test Driven Development**:
+1. Write failing test first
+2. Write minimal code to pass
+3. Refactor while keeping tests green
+4. Repeat cycle as needed for the task
 
 **Commit Standards**: Use conventional commit syntax for all commits.
 
@@ -146,13 +150,14 @@ When references are made to personal memory or preferences for Claude, these ref
 
 **ALWAYS**:
 
-- Run linter, tests, and build - in that order - after code changes
+- Run linter, tests, and build - in that order - as final verification before considering any task complete
 - Use TypeScript strict mode in new projects
 - Validate inputs at system boundaries (API endpoints, file operations, external services)
 - Check if a library/framework is already in use before suggesting alternatives
 - Mark todos as completed immediately after finishing a task
 - Use structured logging with consistent fields
 - Follow existing code conventions in the codebase
+- Suggest committing when a task is complete (but only commit when explicitly asked)
 
 **NEVER**:
 
@@ -170,6 +175,15 @@ For new node-based projects...
 - Use TypeScript not JavaScript.
 - Use vitest not jest, and when creating the test command in package.json, set it up to be `vitest run`, not `vitest`.
 - Use ArkType for defining types/entities and validating inputs to the system.
+
+## Code References
+
+When referencing specific functions or pieces of code, use the pattern `file_path:line_number` to allow easy navigation to the source code location.
+
+Example:
+```
+The error handling logic is in src/services/auth.ts:45
+```
 
 ## Response Templates
 
@@ -207,6 +221,18 @@ For new node-based projects...
 2. Affected component: file_path:line_number
 3. Steps to reproduce: [if applicable]
 4. Fix recommendation: [specific solution]
+
+## Common Scenarios
+
+**When asked to "fix" something**: First reproduce the issue, then follow Bug Fix Response Format
+
+**When asked to "add" something**: First clarify scope if unclear, then follow Feature Implementation Format
+
+**When asked to "improve" something**: First analyze current state, propose changes, await confirmation before implementing
+
+**When asked to "refactor" something**: First ensure tests exist for current behavior, then follow Pre-Refactoring Testing guidelines
+
+**When encountering an error**: Follow Error Analysis Response Format, investigate root cause before proposing fixes
 
 ## Miscellaneous
 
