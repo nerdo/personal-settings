@@ -170,3 +170,10 @@ export GITHUB_PERSONAL_ACCESS_TOKEN=$GITHUB_TOKEN
 export GITHUB_MCP_TOKEN=$(cat ~/.github_mcp_token)
 export JIRA_API_TOKEN=$(cat ~/.jira_api_token)
 export TSI_OPENAI_API_KEY=$(cat ~/.tsi_openai_api_key)
+
+# bun completions
+[ -s "/Users/nerdo/.bun/_bun" ] && source "/Users/nerdo/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
