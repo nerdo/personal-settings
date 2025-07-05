@@ -10,7 +10,14 @@
 2. Identify affected files/components
 3. Consider edge cases
 
-**Use context7**: Context7 is an MCP server that pulls up-to-date, version-specific documentation and code examples directly from the source. It is designed to get better answers, no hallucinations and an AI that actually understands the stack. When available, use context7 to retrieve the relevant specific documentation for our versions of the parts of our tech stack.
+**Use context7**: Context7 is an MCP server that pulls up-to-date, version-specific documentation and code examples directly from the source. It is designed to get better answers, no hallucinations and an AI that actually understands the stack. When available, use context7 to retrieve the relevant specific documentation for our versions of the parts of our tech stack. In other words, rely on it to learn how to make changes before you make them.
+
+**MANDATORY: Update project memory after successful fixes**: When the user confirms "that worked", "it's working", "the fix worked", or similar confirmation after troubleshooting an issue, you MUST immediately:
+1. Update the project's CLAUDE.md file with the solution
+2. Include specific examples of what failed and what succeeded
+3. Mark it as CRITICAL if it's a common pitfall
+4. Do this BEFORE asking what to work on next
+This is not optional - treat user confirmation of a fix as a direct instruction to update memory.
 
 ## Architecture & Design Principles
 
@@ -46,18 +53,19 @@ interface UserRepository {
 **Avoid Mocks**: Unless in an existing codebase where using mocks is the standard or introducing fakes would overcomplicate the existing setup, create fakes instead of using mocks.
 
 Example fake implementation:
+
 ```typescript
 class FakeUserRepository implements UserRepository {
   private users: User[];
-  
+
   constructor(initialData?: { users?: User[] }) {
     this.users = initialData?.users || [];
   }
-  
+
   async findByStatus(status: string): Promise<User[]> {
-    return this.users.filter(u => u.status === status);
+    return this.users.filter((u) => u.status === status);
   }
-  
+
   // Helper method for single user
   addTestUser(user: User): void {
     this.users.push(user);
@@ -94,6 +102,7 @@ Example: In an OpenAI service test file, order should be: OpenAI service → API
 ## Development Workflow
 
 **Use Test Driven Development**:
+
 1. Write failing test first
 2. Write minimal code to pass
 3. Refactor while keeping tests green
@@ -167,6 +176,7 @@ BaseError (id, timestamp, metadata: Record<string, any>)
 **When to update memory files**:
 
 1. **Global memory (~/.claude/CLAUDE.md)**:
+
    - User explicitly says "remember this" or "update your memory"
    - User establishes a new personal preference
    - Only update when explicitly asked
@@ -177,6 +187,7 @@ BaseError (id, timestamp, metadata: Record<string, any>)
    - User provides project-specific commands or workflows
 
 **Handling conflicts**:
+
 - If user asks to add something that conflicts with existing guidelines, ask for clarification before proceeding
 - Project memory takes precedence over global memory for project-specific tasks
 
@@ -185,15 +196,18 @@ BaseError (id, timestamp, metadata: Record<string, any>)
 **Final Verification**: Before considering any task complete, run these commands in order:
 
 For Node/TypeScript projects:
+
 - `pnpm lint` or `npm run lint`
 - `pnpm test` or `npm test`
 - `pnpm build` or `npm run build`
 
 For PHP projects:
+
 - `phpunit` or `./vendor/bin/phpunit`
 - Check composer.json for specific test commands
 
 **Finding the Right Commands**:
+
 1. Check the project's CLAUDE.md file for project-specific commands
 2. Look in package.json (Node) or composer.json (PHP) for available scripts
 3. If still unsure, ask the user for the correct commands
@@ -233,6 +247,7 @@ For new node-based projects...
 When referencing specific functions or pieces of code, use the pattern `file_path:line_number` to allow easy navigation to the source code location.
 
 Example:
+
 ```
 The error handling logic is in src/services/auth.ts:45
 ```
@@ -277,11 +292,13 @@ The error handling logic is in src/services/auth.ts:45
 ## Quick Decision Tree
 
 **Testing Approach**:
+
 - Existing mocks in codebase? → Use mocks
 - New test suite? → Use fakes
 - Complex external dependency? → Extract to testable interface
 
 **When to Ask vs Act**:
+
 - Ambiguous requirement? → Ask for clarification
 - Clear task with obvious approach? → Implement
 - Potential breaking change? → Propose first
@@ -301,6 +318,7 @@ The error handling logic is in src/services/auth.ts:45
 ## Miscellaneous
 
 **Git-related**:
+
 - When creating `.gitignore`, ignore Claude local settings files
 - Never auto-push commits
 - Use conventional commit format
