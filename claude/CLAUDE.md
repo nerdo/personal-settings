@@ -13,10 +13,48 @@
 **Use context7**: Context7 is an MCP server that pulls up-to-date, version-specific documentation and code examples directly from the source. It is designed to get better answers, no hallucinations and an AI that actually understands the stack. When available, use context7 to retrieve the relevant specific documentation for our versions of the parts of our tech stack. In other words, rely on it to learn how to make changes before you make them.
 
 **MANDATORY: Update project memory after successful fixes**: When the user confirms "that worked", "it's working", "the fix worked", or similar confirmation after troubleshooting an issue, you MUST immediately:
-1. Update the project's CLAUDE.md file with the solution
-2. Include specific examples of what failed and what succeeded
-3. Mark it as CRITICAL if it's a common pitfall
-4. Do this BEFORE asking what to work on next
+
+1. **First time only**: Update the project's CLAUDE.md file to add the following complete template at the top:
+
+```markdown
+## Required Reading
+
+**ALWAYS read these files together when starting work on this project**:
+1. `CLAUDE.md` (this file) - Core guidelines and principles
+2. `CLAUDE_JOURNAL.md` - Lessons learned from past fixes (if it exists)
+
+## Journal Maintenance
+
+**MANDATORY: When the user confirms a fix worked** ("that worked", "it's working", "the fix worked"), you MUST immediately:
+
+1. Update CLAUDE_JOURNAL.md with lessons learned to avoid similar mistakes in future
+2. Include: what failed, what worked, why it worked, and the lesson learned
+3. Mark as CRITICAL if it's a common pitfall
+4. Check for contradictions with existing entries before adding
+5. Do this BEFORE asking what to work on next
+
+**Purpose**: The journal is a learning tool to improve effectiveness, not a comprehensive changelog. Think "what would help me avoid this mistake next time?"
+
+**Format for CLAUDE_JOURNAL.md entries**:
+```
+## YYYY-MM-DD
+
+### [CRITICAL] Issue: Brief Description (if critical)
+### Issue: Brief Description (if not critical)
+- **What failed**: Approach that didn't work
+- **Solution**: What actually worked
+- **Why it worked**: Root cause or explanation
+- **Lesson**: Pattern to recognize for similar situations
+- **Affects**: Files/components/commands involved
+```
+
+This is not optional - treat user confirmation of a fix as a direct instruction to update the journal.
+```
+
+2. Create/update CLAUDE_JOURNAL.md following the format specified in the template
+
+3. Do this BEFORE asking what to work on next
+
 This is not optional - treat user confirmation of a fix as a direct instruction to update memory.
 
 ## Architecture & Design Principles
