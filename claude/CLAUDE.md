@@ -1,5 +1,16 @@
 # Development Guidelines
 
+## 🔄 Project Awareness & Context
+
+- **Always read `PLANNING.md`** at the start of a new conversation to understand the project's architecture, goals, style, and constraints.
+- **Check `TASK.md`** before starting a new task. If the task isn’t listed, add it with a brief description and today's date.
+- **Use consistent naming conventions, file structure, and architecture patterns** as described in `PLANNING.md`.
+
+## 🧱 Code Structure & Modularity
+
+- **Never create a file longer than 500 lines of code.** If a file approaches this limit, refactor by splitting it into modules or helper files.
+- **Organize code into clearly separated modules**, grouped by feature or responsibility.
+
 ## Thought Process
 
 **Clarifying Questions**: Before acting on a prompt, ask clarifying questions to disambiguate parts of the prompt, refine details, and ultimately improve the results.
@@ -20,14 +31,15 @@
 ## Required Reading
 
 **ALWAYS read these files together when starting work on this project**:
+
 1. `CLAUDE.md` (this file) - Core guidelines and principles
-2. `CLAUDE_JOURNAL.md` - Lessons learned from past fixes (if it exists)
+2. `JOURNAL.md` - Lessons learned from past fixes and user's thoughts (if it exists)
 
 ## Journal Maintenance
 
 **MANDATORY: When the user confirms a fix worked** ("that worked", "it's working", "the fix worked"), you MUST immediately:
 
-1. Update CLAUDE_JOURNAL.md with lessons learned to avoid similar mistakes in future
+1. Update JOURNAL.md with lessons learned to avoid similar mistakes in future
 2. Include: what failed, what worked, why it worked, and the lesson learned
 3. Mark as CRITICAL if it's a common pitfall
 4. Check for contradictions with existing entries before adding
@@ -35,23 +47,28 @@
 
 **Purpose**: The journal is a learning tool to improve effectiveness, not a comprehensive changelog. Think "what would help me avoid this mistake next time?"
 
-**Format for CLAUDE_JOURNAL.md entries**:
+**Format for JOURNAL.md entries**:
 ```
+
 ## YYYY-MM-DD
 
 ### [CRITICAL] Issue: Brief Description (if critical)
+
 ### Issue: Brief Description (if not critical)
+
 - **What failed**: Approach that didn't work
 - **Solution**: What actually worked
 - **Why it worked**: Root cause or explanation
 - **Lesson**: Pattern to recognize for similar situations
 - **Affects**: Files/components/commands involved
+- **Author**: Who wrote the journal entry; since the user may also edit the journal, make it clear when you author entries.
+
 ```
 
 This is not optional - treat user confirmation of a fix as a direct instruction to update the journal.
 ```
 
-2. Create/update CLAUDE_JOURNAL.md following the format specified in the template
+2. Create/update JOURNAL.md following the format specified in the template
 
 3. Do this BEFORE asking what to work on next
 
@@ -83,6 +100,8 @@ interface UserRepository {
 **Pattern Implementation**: When applying patterns like repository pattern, focus strictly on what the module actually needs. Always favor simpler implementations with fewer entities over granular entities that don't provide value to the module.
 
 ## Testing Requirements
+
+- **Tests should live in files side-by-side with the code in new codebases.** For example, if there is a file `features/do-the-thing.ts`, there would be a test `features/do-the-thing.test.ts`. In existing codebases, follow the existing convention.
 
 **Write Tests For Core Functionality**: You must write tests for core functionality. Use a domain driven philosophy where entities are created to represent the input and output data of the core functionality. Ensure it can be tested without depending on databases, APIs, etc. Those details should have separate layers that translate to and from the domain.
 
@@ -153,6 +172,21 @@ Example: In an OpenAI service test file, order should be: OpenAI service → API
 **Readability first**: Prioritize readability and simplicity over performance except when explicitly asked to optimize performance.
 
 **Security practices**: Validate and sanitize input at system boundaries. Boundaries include API endpoints, database queries, file operations, and external service calls. When possible, convert validated values into domain-specific entities that are used throughout the module. Always encode output appropriately for the context (HTML escaping, SQL parameterization, etc.) when rendering user-supplied data.
+
+### 📚 Documentation & Explainability
+
+- **Update `README.md`** when new features are added, dependencies change, or setup steps are modified.
+- **Comment non-obvious code** and ensure everything is understandable to a mid-level developer.
+- When writing complex logic, **add an inline `# Reason:` comment** explaining the why, not just the what.
+
+- **Never delete or overwrite existing code** unless explicitly instructed to or if part of a task from `TASK.md`.
+
+### 🧠 AI Behavior Rules
+
+- **Never assume missing context. Ask questions if uncertain.**
+- **Never hallucinate libraries or functions** – only use known, verified packages and use context7 to find out what is available.
+- **Always confirm file paths and module names** exist before referencing them in code or tests.
+- **Never delete or overwrite existing code** unless explicitly instructed to or if part of a task from `TASK.md`.
 
 ## Front-End Development
 
@@ -255,7 +289,9 @@ For PHP projects:
 **ALWAYS**:
 
 - Run linter, tests, and build - in that order - as final verification before considering any task complete
+- For projects that can be written using JavaScript, always use TypeScript instead and compile it to JavaScript.
 - Use TypeScript strict mode in new projects
+  - **Use strong types**. In TypeScript avoid `any` at all costs. Use `unknown` instead and parse unknown data through the preferred validator.
 - Validate inputs at system boundaries (API endpoints, file operations, external services)
 - Check if a library/framework is already in use before suggesting alternatives
 - Mark todos as completed immediately after finishing a task
@@ -278,7 +314,31 @@ For new node-based projects...
 - Use pnpm instead of npm.
 - Use TypeScript not JavaScript.
 - Use vitest not jest, and when creating the test command in package.json, set it up to be `vitest run`, not `vitest`.
-- Use ArkType for defining types/entities and validating inputs to the system.
+- Use ArkType as a validator and for defining types/entities and validating inputs to the system.
+
+- Format code with `prettier` and configure it to use `@townsquare-interactive/prettier-config` as a standard.
+- Use `FastAPI` for APIs and `SQLAlchemy` or `SQLModel` for ORM if applicable.
+- Write **docstrings for every function** using tsdoc:
+
+  ```typescript
+  export class Statistics {
+    /**
+     * Returns the average of two numbers.
+     *
+     * @remarks
+     * This method is part of the {@link core-library#Statistics | Statistics subsystem}.
+     *
+     * @param x - The first input number
+     * @param y - The second input number
+     * @returns The arithmetic mean of `x` and `y`
+     *
+     * @beta
+     */
+    public static getAverage(x: number, y: number): number {
+      return (x + y) / 2.0;
+    }
+  }
+  ```
 
 ## Code References
 
@@ -355,9 +415,14 @@ The error handling logic is in src/services/auth.ts:45
 
 ## Miscellaneous
 
-**Git-related**:
+### Git-related
 
 - When creating `.gitignore`, ignore Claude local settings files
 - Never auto-push commits
 - Use conventional commit format
 - Always include co-author attribution in commit messages
+
+### ✅ Task Completion
+
+- **Mark completed tasks in `TASK.md`** immediately after finishing them.
+- Add new sub-tasks or TODOs discovered during development to `TASK.md` under a “Discovered During Work” section.
