@@ -231,6 +231,9 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - NEVER delete code unless explicitly instructed
 - NEVER create files over 500 lines
 - NEVER skip the lint/test/build verification
+- NEVER trust external data without validation
+- NEVER use raw database results without validation
+- NEVER skip validation for "internal" APIs
 
 ## ✅ ALWAYS Rules (Mandatory Practices)
 
@@ -244,6 +247,9 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - ALWAYS use structured logging
 - ALWAYS include co-author attribution in commits
 - ALWAYS use context7 for documentation lookup
+- ALWAYS validate ALL external data at system boundaries
+- ALWAYS create validation schemas before implementing features
+- ALWAYS test validation with invalid data scenarios
 
 ## 🚨 Pre-Implementation Checklist
 
@@ -253,6 +259,9 @@ Before writing ANY code:
 - [ ] Have I searched for similar code?
 - [ ] Have I used context7 for documentation?
 - [ ] Do I understand the security implications?
+- [ ] Have I identified ALL external data sources?
+- [ ] Have I planned validation for each data source?
+- [ ] Are validation schemas defined before implementation?
 
 ## 📋 Task Completion Checklist
 
@@ -262,6 +271,8 @@ Before marking ANY task complete:
 - [ ] Did `pnpm build` pass?
 - [ ] Have I marked the todo as completed?
 - [ ] Should I update TASK.md?
+- [ ] Is ALL external data properly validated?
+- [ ] Are validation tests covering edge cases?
 
 ## 🔧 Tech Stack Defaults
 
@@ -272,6 +283,67 @@ For new projects, unless specified otherwise:
 - Validation: ArkType
 - Formatter: prettier with `@townsquare-interactive/prettier-config`
 - Database drivers: pg, mysql2, or better-sqlite3
+
+## 🔒 Data Validation Requirements (CRITICAL)
+
+**FUNDAMENTAL PRINCIPLE**: The core system must ONLY work with validated, strongly-typed entities. ALL external data must be validated at system boundaries.
+
+### External Data Sources (MUST validate ALL)
+- [ ] User input (forms, API requests, command line arguments)
+- [ ] Configuration files (JSON, YAML, TOML, etc.)
+- [ ] Environment variables
+- [ ] Database query results
+- [ ] File parsing (CSV, XML, JSON, etc.)
+- [ ] External API responses
+- [ ] Network requests/responses
+- [ ] Command line output parsing
+- [ ] Third-party library responses
+
+### Validation Implementation Rules
+1. **Use ArkType schemas** for ALL validation
+2. **Validate at entry points** - the moment data enters your system
+3. **Create validation functions** with clear error messages
+4. **Never trust external data** - even from "trusted" sources
+5. **Test validation thoroughly** - include edge cases and malformed data
+
+### Required Validation Pattern
+```typescript
+// Define schema
+const UserSchema = type({
+  id: "string",
+  email: "email",
+  age: "number>0"
+});
+
+// Validate function
+function validateUser(raw: unknown): User {
+  const result = UserSchema(raw);
+  if (result instanceof type.errors) {
+    throw new ValidationError("Invalid user data", result);
+  }
+  return result; // Now strongly typed as User
+}
+
+// Usage at boundary
+const userData = validateUser(request.body);
+```
+
+### Validation Checklist for Each External Data Source
+- [ ] Schema defined using ArkType
+- [ ] Validation function created
+- [ ] Error handling for invalid data
+- [ ] Tests for valid cases
+- [ ] Tests for invalid cases
+- [ ] Tests for edge cases (empty, null, undefined)
+- [ ] Tests for malformed data
+
+### Common Validation Mistakes to Avoid
+- Assuming database data is valid (it can be corrupted)
+- Trusting environment variables without validation
+- Not validating configuration on startup
+- Skipping validation for "internal" APIs
+- Using `any` type instead of proper validation
+- Validating only happy path scenarios
 
 ## 📊 Structured Logging Requirements
 
@@ -292,6 +364,8 @@ IMMEDIATELY stop and ask for clarification if:
 - Build commands are not working
 - You're about to use `any` type
 - You're about to exceed 500 lines in a file
+- You're about to use external data without validation
+- You discover unvalidated data in existing code
 
 ## 💡 Remember
 
