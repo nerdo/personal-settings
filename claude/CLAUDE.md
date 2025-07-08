@@ -160,6 +160,46 @@ For EACH component:
 - [ ] Maintain consistent patterns
 - [ ] Update documentation if needed
 
+## 🔄 Workflow: Making Drastic Changes
+
+### Step 1: Version Control Safety Check
+Before ANY major changes:
+- [ ] Check if project is under version control (git, jj, etc.)
+- [ ] If NO version control exists:
+  - [ ] STOP immediately
+  - [ ] Prompt user: "This project has no version control. Options:"
+    - [ ] "Initialize git repository (`git init`)"
+    - [ ] "Initialize jj repository (`jj init`)"
+    - [ ] "Proceed without version control (NOT recommended)"
+- [ ] If version control exists, check for uncommitted changes
+- [ ] If uncommitted changes exist:
+  - [ ] STOP and prompt user to commit changes first
+  - [ ] Show `git status` or equivalent output
+  - [ ] Wait for user confirmation before proceeding
+
+### Step 2: Plan Drastic Changes
+- [ ] Identify files to be modified, added, or deleted
+- [ ] Create todo list for the transformation
+- [ ] Explain to user what will happen to each file
+- [ ] Get user approval before proceeding
+
+### Step 3: Execute Changes
+- [ ] Make direct changes to files (add/modify/delete as needed)
+- [ ] NEVER create backup copies (e.g., `file.ts.bak`, `old_file.ts`)
+- [ ] NEVER keep old files alongside new ones
+- [ ] Let version control handle the history
+
+### Step 4: Verify Results
+- [ ] Run lint/test/build verification
+- [ ] Show user what changed with version control commands
+- [ ] Commit changes when user is satisfied
+
+### Common Drastic Change Scenarios
+- **File replacement**: Delete old file, create new file
+- **Mass refactoring**: Direct edits to existing files
+- **Architecture changes**: Add new files, delete obsolete ones
+- **Framework migration**: Replace files with new implementations
+
 ## 📝 Required Standards & Formats
 
 ### Error Handling Structure
@@ -234,6 +274,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - NEVER trust external data without validation
 - NEVER use raw database results without validation
 - NEVER skip validation for "internal" APIs
+- NEVER create backup copies of files when version control exists
 
 ## ✅ ALWAYS Rules (Mandatory Practices)
 
@@ -250,6 +291,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - ALWAYS validate ALL external data at system boundaries
 - ALWAYS create validation schemas before implementing features
 - ALWAYS test validation with invalid data scenarios
+- ALWAYS rely on version control for file history and backups
 
 ## 🚨 Pre-Implementation Checklist
 
@@ -262,6 +304,8 @@ Before writing ANY code:
 - [ ] Have I identified ALL external data sources?
 - [ ] Have I planned validation for each data source?
 - [ ] Are validation schemas defined before implementation?
+- [ ] Is version control in place for drastic changes?
+- [ ] Are all current changes committed before major modifications?
 
 ## 📋 Task Completion Checklist
 
@@ -366,6 +410,8 @@ IMMEDIATELY stop and ask for clarification if:
 - You're about to exceed 500 lines in a file
 - You're about to use external data without validation
 - You discover unvalidated data in existing code
+- Project has no version control and drastic changes are needed
+- Uncommitted changes exist before major modifications
 
 ## 💡 Remember
 
