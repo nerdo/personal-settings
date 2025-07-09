@@ -30,6 +30,45 @@ Using TodoWrite tool:
 - [ ] Mark first task as in_progress
 - [ ] Update TASK.md if task isn't already listed
 
+## 🧪 Workflow: TDD-First for ALL Code Changes (MANDATORY)
+
+This workflow MUST be followed for:
+- Bug fixes
+- Feature additions
+- Code updates
+- Refactoring
+- ANY code modification
+
+### Step 1: Locate or Create Tests
+- [ ] Search for existing test files using `**/*.test.*` or `**/*.spec.*` patterns
+- [ ] If tests exist:
+  - [ ] Read ALL relevant test files
+  - [ ] Understand current test coverage
+  - [ ] Identify gaps in test coverage
+- [ ] If NO tests exist:
+  - [ ] STOP - do not write any implementation code
+  - [ ] Create test file alongside source file
+  - [ ] Write comprehensive tests for existing functionality FIRST
+
+### Step 2: Write Tests for the Change
+- [ ] Write test(s) that define expected behavior
+- [ ] For bugs: Test should fail, demonstrating the bug
+- [ ] For features: Test should fail, showing missing functionality
+- [ ] For refactoring: Tests should pass before and after
+- [ ] Run tests to confirm they fail (or pass for refactoring)
+
+### Step 3: Implement the Change
+- [ ] Write MINIMAL code to make tests pass
+- [ ] Run tests frequently during implementation
+- [ ] Do NOT write code beyond what tests require
+- [ ] Do NOT add features not covered by tests
+
+### Step 4: Verify and Refactor
+- [ ] All tests must pass
+- [ ] Check test coverage if available
+- [ ] Refactor if needed (tests still passing)
+- [ ] Add any edge case tests discovered during implementation
+
 ## 🐛 Workflow: Bug Fixing
 
 ### Step 1: Understand the Bug
@@ -41,24 +80,15 @@ Using TodoWrite tool:
 ### Step 2: Plan the Fix
 Create todos:
 - [ ] "Analyze and reproduce the bug"
-- [ ] "Write failing test that captures the bug"
-- [ ] "Implement minimal fix"
+- [ ] "Apply TDD-First workflow for the fix"
 - [ ] "Verify fix resolves issue"
 - [ ] "Run lint/test/build verification"
 
-### Step 3: Test-Driven Fix
-1. **Write the test FIRST:**
-   - [ ] Create test file alongside source (e.g., `bug.ts` → `bug.test.ts`)
-   - [ ] Use vitest (not jest) for new projects
-   - [ ] Write test that fails due to the bug
-   - [ ] Run `pnpm test` to confirm failure
-   - [ ] Mark test task completed
-
-2. **Implement the fix:**
-   - [ ] Make MINIMAL changes to fix issue
-   - [ ] Run test to confirm it passes
-   - [ ] Check for side effects using Grep
-   - [ ] Mark implementation task completed
+### Step 3: Apply TDD-First Workflow
+- [ ] MANDATORY: Follow the "TDD-First for ALL Code Changes" workflow above
+- [ ] Do NOT skip to implementation without tests
+- [ ] Ensure test fails first, demonstrating the bug
+- [ ] Then implement minimal fix to make test pass
 
 ### Step 4: Verification
 Run in this exact order:
@@ -102,30 +132,26 @@ When user confirms "it worked" or "that fixed it":
 - [ ] Identify potential side effects
 - [ ] Create detailed todo list with TodoWrite
 
-### Step 3: Implementation (TDD Cycle)
-For EACH component:
+### Step 3: Implementation
+- [ ] MANDATORY: Follow the "TDD-First for ALL Code Changes" workflow
+- [ ] For EACH component, apply full TDD cycle
+- [ ] Do NOT write implementation before tests
 
-1. **Write failing test:**
-   - [ ] Follow test organization rules (tests alongside code)
-   - [ ] Use descriptive test names
-   - [ ] No automatic setup - each test stands alone
-   - [ ] Use `makeTest*` factory functions at end of file
+**Implementation constraints:**
+- [ ] Use TypeScript (NEVER plain JavaScript)
+- [ ] Enable strict mode for new projects
+- [ ] NEVER use `any` type - use `unknown` + validation
+- [ ] Keep files under 500 lines (split if larger)
+- [ ] Follow existing code conventions exactly
 
-2. **Implement with these constraints:**
-   - [ ] Use TypeScript (NEVER plain JavaScript)
-   - [ ] Enable strict mode for new projects
-   - [ ] NEVER use `any` type - use `unknown` + validation
-   - [ ] Keep files under 500 lines (split if larger)
-   - [ ] Follow existing code conventions exactly
-
-3. **Data layer requirements:**
-   - [ ] Create interface in domain layer
-   - [ ] Create fake implementation for testing
-   - [ ] Real implementation must:
-     - Use parameterized queries (NEVER concatenate SQL)
-     - Validate ALL inputs using ArkType
-     - Use approved drivers: pg, mysql2, or better-sqlite3
-     - Handle errors with structured error types
+**Data layer requirements:**
+- [ ] Create interface in domain layer
+- [ ] Create fake implementation for testing
+- [ ] Real implementation must:
+  - Use parameterized queries (NEVER concatenate SQL)
+  - Validate ALL inputs using ArkType
+  - Use approved drivers: pg, mysql2, or better-sqlite3
+  - Handle errors with structured error types
 
 ### Step 4: Security Validation
 - [ ] Verify NO SQL injection possible
@@ -142,10 +168,10 @@ For EACH component:
 
 ## 🔄 Workflow: Refactoring Code
 
-### Step 1: Ensure Test Coverage
-- [ ] Search for tests using `**/*.test.*` pattern
-- [ ] If no tests exist, write them FIRST
-- [ ] Run all tests to establish baseline
+### Step 1: Apply TDD-First Workflow
+- [ ] MANDATORY: Follow the "TDD-First for ALL Code Changes" workflow
+- [ ] Existing tests MUST pass before starting refactoring
+- [ ] If no tests exist, STOP and write them FIRST
 - [ ] Create refactoring todo list
 
 ### Step 2: Incremental Refactoring
@@ -298,6 +324,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 Before writing ANY code:
 - [ ] Have I asked clarifying questions?
 - [ ] Have I created a todo list?
+- [ ] Have I searched for existing tests FIRST?
+- [ ] Have I planned which tests to write?
 - [ ] Have I searched for similar code?
 - [ ] Have I used context7 for documentation?
 - [ ] Do I understand the security implications?
@@ -412,6 +440,8 @@ IMMEDIATELY stop and ask for clarification if:
 - You discover unvalidated data in existing code
 - Project has no version control and drastic changes are needed
 - Uncommitted changes exist before major modifications
+- You're about to write implementation code without tests
+- No tests exist for code you're modifying
 
 ## 💡 Remember
 
