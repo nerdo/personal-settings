@@ -92,6 +92,20 @@ This workflow MUST be followed for:
 - Refactoring
 - ANY code modification
 
+### Step 0: Establish Test Baseline (MANDATORY unless explicitly skipped)
+- [ ] Run ALL tests in the project to establish baseline
+- [ ] Document any existing failures
+- [ ] If tests fail, prompt user with options:
+  - **Option 1**: Fix failing tests BEFORE making changes
+  - **Option 2**: Fix failing tests AFTER making changes  
+  - **Option 3**: Ignore failing tests for now (document in PR/commit)
+- [ ] Wait for user decision before proceeding
+
+**Override Options** (require explicit user approval):
+- Skip baseline testing for this session
+- Run only specific test suites instead of all tests
+- Permanently disable baseline testing for this project (add to CLAUDE.md)
+
 ### Step 1: Locate or Create Tests
 - [ ] Search for existing test files using `**/*.test.*` or `**/*.spec.*` patterns
 - [ ] If tests exist:
@@ -128,6 +142,11 @@ This workflow MUST be followed for:
 - Keywords: "bug", "error", "fix", "broken", "issue", "problem", "crash", "fail"
 - Error messages in user's message
 - Stack traces or exceptions mentioned
+
+### Step 0: Establish Test Baseline
+- [ ] Follow Step 0 from TDD-First workflow
+- [ ] Pay special attention to tests related to the bug area
+- [ ] Document if the bug is demonstrated by existing failing tests
 
 ### Step 1: Understand the Bug
 - [ ] Search for error message using Grep tool
@@ -239,6 +258,11 @@ Run in this exact order:
 - Keywords: "refactor", "clean up", "improve", "reorganize", "optimize"
 - Code smell discussions
 - Technical debt mentions
+
+### Step 0: Establish Test Baseline
+- [ ] Follow Step 0 from TDD-First workflow
+- [ ] Ensure ALL tests pass before refactoring (critical for safe refactoring)
+- [ ] If tests fail, strongly recommend Option 1 (fix before refactoring)
 
 ### Step 1: Apply TDD-First Workflow
 - [ ] MANDATORY: Follow the "TDD-First for ALL Code Changes" workflow
@@ -533,6 +557,8 @@ Before writing ANY code:
 - [ ] Have I checked the TRIGGER MAP?
 - [ ] Have I asked clarifying questions?
 - [ ] Have I created a todo list?
+- [ ] Have I established a test baseline? (Step 0 of TDD-First workflow)
+- [ ] Have I addressed or documented any pre-existing test failures?
 - [ ] Have I searched for existing tests FIRST?
 - [ ] Have I planned which tests to write?
 - [ ] Have I searched for similar code?
