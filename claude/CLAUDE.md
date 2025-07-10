@@ -301,6 +301,15 @@ BaseError (id, timestamp, metadata: Record<string, any>)
 - Create fakes, NOT mocks (unless existing codebase uses mocks)
 - Each test must be independent
 
+### Interface Naming Standards
+- Do NOT use prefix on interface names (e.g., NO `IFeatureFlagRepository`)
+- Use clean names for interfaces (e.g., `FeatureFlagRepository`)
+- Use specific descriptive names for implementations (e.g., `SampleDataFeatureFlagRepository`)
+- File naming for interfaces:
+  - Follow project's file naming convention (e.g., kebab-case: `feature-flag-repository`)
+  - Inject `.interface` before file extension
+  - Examples: `feature-flag-repository.interface.ts`, `user-service.interface.js`
+
 ### Import Ordering
 1. Most important classes for the file
 2. Direct dependencies
@@ -430,6 +439,13 @@ For new projects, unless specified otherwise:
 4. **Never trust external data** - even from "trusted" sources
 5. **Test validation thoroughly** - include edge cases and malformed data
 
+### Data Transformation Rules
+1. **Use ArkType for ALL data transformations** - NEVER hand-code transformations
+2. **Transform at system boundaries** - alongside validation
+3. **Use ArkType's `match` for translations** - when converting between data shapes
+4. **Type-safe transformations only** - input and output types must be defined
+5. **Test transformations thoroughly** - include edge cases and type conversions
+
 ### Required Validation Pattern
 ```typescript
 // Define schema
@@ -452,6 +468,35 @@ function validateUser(raw: unknown): User {
 const userData = validateUser(request.body);
 ```
 
+### Required Transformation Pattern
+```typescript
+// Define schemas for both shapes
+const SampleFeatureFlagSchema = type({
+  flag_id: "string",
+  is_enabled: "boolean",
+  display_name: "string"
+});
+
+const FeatureFlagSchema = type({
+  id: "string",
+  enabled: "boolean",
+  name: "string"
+});
+
+// Use ArkType's match for transformation
+const transformToFeatureFlag = match(
+  SampleFeatureFlagSchema,
+  (data): FeatureFlag => ({
+    id: data.flag_id,
+    enabled: data.is_enabled,
+    name: data.display_name
+  })
+);
+
+// Usage at boundary (validate and transform)
+const featureFlag = transformToFeatureFlag(rawData);
+```
+
 ### Validation Checklist for Each External Data Source
 - [ ] Schema defined using ArkType
 - [ ] Validation function created
@@ -468,6 +513,17 @@ const userData = validateUser(request.body);
 - Skipping validation for "internal" APIs
 - Using `any` type instead of proper validation
 - Validating only happy path scenarios
+
+## 🔄 Data Transformation Requirements
+
+**When you need to transform data between different shapes, ALWAYS use ArkType.**
+
+See the "Data Transformation Rules" and "Required Transformation Pattern" in the **Data Validation Requirements** section above for detailed implementation guidelines.
+
+Key points:
+- NEVER hand-code data transformations
+- Use ArkType's `match` function for type-safe transformations
+- Transform data at system boundaries alongside validation
 
 ## 📊 Structured Logging Requirements
 
