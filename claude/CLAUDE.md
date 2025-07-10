@@ -1,10 +1,34 @@
 # Claude Development Workflows & Standards
 
+## 🚨 TRIGGER MAP - When to Use Each Workflow
+
+### Immediate Action Triggers
+| User Says | Action Required |
+|-----------|----------------|
+| "it worked", "that fixed it", "problem solved" | → Update JOURNAL.md IMMEDIATELY |
+| "fix", "bug", "error", "broken", "not working" | → Bug Fixing Workflow |
+| "add", "create", "implement", "feature", "new" | → Adding New Features Workflow |
+| "refactor", "clean up", "improve", "reorganize" | → Refactoring Code Workflow |
+| "replace", "migrate", "overhaul", "rewrite" | → Making Drastic Changes Workflow |
+| ANY code-related request | → TDD-First Workflow (MANDATORY) |
+
+### STOP Triggers - Halt Immediately
+- Ambiguous requirements detected
+- No tests exist for code being modified
+- About to use `any` type
+- File exceeds 500 lines
+- External data without validation
+- No version control for drastic changes
+- Uncommitted changes before major work
+- Tests failing after 3 attempts
+
 ## CRITICAL: This Document Contains MANDATORY Procedures
 
 Every workflow and standard in this document is REQUIRED. These are step-by-step procedures you MUST follow, not suggestions. Deviations require explicit user approval.
 
 ## 🚀 Workflow: Starting Any Task
+
+**TRIGGERS**: ANY new request, conversation start, context switch
 
 ### Step 1: Read Project Context
 Execute in this exact order:
@@ -31,6 +55,11 @@ Using TodoWrite tool:
 - [ ] Update TASK.md if task isn't already listed
 
 ## 🧪 Workflow: TDD-First for ALL Code Changes (MANDATORY)
+
+**TRIGGERS**: 
+- ANY code modification request
+- Keywords: "code", "implement", "fix", "add", "change", "update", "modify"
+- File extensions: .js, .ts, .py, .java, .go, etc.
 
 This workflow MUST be followed for:
 - Bug fixes
@@ -71,6 +100,11 @@ This workflow MUST be followed for:
 
 ## 🐛 Workflow: Bug Fixing
 
+**TRIGGERS**: 
+- Keywords: "bug", "error", "fix", "broken", "issue", "problem", "crash", "fail"
+- Error messages in user's message
+- Stack traces or exceptions mentioned
+
 ### Step 1: Understand the Bug
 - [ ] Search for error message using Grep tool
 - [ ] Read all files containing the error
@@ -98,7 +132,7 @@ Run in this exact order:
 - [ ] ALL must pass before proceeding
 
 ### Step 5: Document the Fix
-When user confirms "it worked" or "that fixed it":
+**TRIGGER**: When user confirms "it worked" or "that fixed it" or similar:
 - [ ] IMMEDIATELY update JOURNAL.md using this format:
 
 ```markdown
@@ -118,6 +152,11 @@ When user confirms "it worked" or "that fixed it":
 - [ ] Do this BEFORE asking "what's next?"
 
 ## ✨ Workflow: Adding New Features
+
+**TRIGGERS**: 
+- Keywords: "add", "create", "implement", "new feature", "build", "develop"
+- Feature descriptions or user stories
+- Enhancement requests
 
 ### Step 1: Requirements Analysis
 - [ ] Ask about expected behavior for ALL edge cases
@@ -168,6 +207,11 @@ When user confirms "it worked" or "that fixed it":
 
 ## 🔄 Workflow: Refactoring Code
 
+**TRIGGERS**: 
+- Keywords: "refactor", "clean up", "improve", "reorganize", "optimize"
+- Code smell discussions
+- Technical debt mentions
+
 ### Step 1: Apply TDD-First Workflow
 - [ ] MANDATORY: Follow the "TDD-First for ALL Code Changes" workflow
 - [ ] Existing tests MUST pass before starting refactoring
@@ -187,6 +231,12 @@ When user confirms "it worked" or "that fixed it":
 - [ ] Update documentation if needed
 
 ## 🔄 Workflow: Making Drastic Changes
+
+**TRIGGERS**: 
+- Keywords: "replace", "migrate", "overhaul", "rewrite", "major change"
+- Architecture changes
+- Framework migrations
+- Large-scale refactoring
 
 ### Step 1: Version Control Safety Check
 Before ANY major changes:
@@ -301,6 +351,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - NEVER use raw database results without validation
 - NEVER skip validation for "internal" APIs
 - NEVER create backup copies of files when version control exists
+- NEVER skip writing tests before implementation
 
 ## ✅ ALWAYS Rules (Mandatory Practices)
 
@@ -322,6 +373,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ## 🚨 Pre-Implementation Checklist
 
 Before writing ANY code:
+- [ ] Have I checked the TRIGGER MAP?
 - [ ] Have I asked clarifying questions?
 - [ ] Have I created a todo list?
 - [ ] Have I searched for existing tests FIRST?
@@ -443,8 +495,19 @@ IMMEDIATELY stop and ask for clarification if:
 - You're about to write implementation code without tests
 - No tests exist for code you're modifying
 
-## 💡 Remember
+## 💡 Quick Reference
 
+### Immediate Actions
+1. User says "it worked" → Update JOURNAL.md NOW
+2. Any code request → Start with TDD-First workflow
+3. Ambiguous request → STOP and clarify
+
+### Workflow Selection
+1. Check TRIGGER MAP at top of document
+2. Match keywords to appropriate workflow
+3. Follow workflow steps exactly
+
+### Remember
 1. These are EXACT procedures, not guidelines
 2. When user says "it worked" → Update JOURNAL.md IMMEDIATELY
 3. Every task needs a todo list
