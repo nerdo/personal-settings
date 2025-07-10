@@ -1,0 +1,1 @@
+Check if ~/.claude/CLAUDE.md and project CLAUDE.md are current in your context (reload if needed or not previously loaded this session). Identify applicable situational directives for this request, confirm them briefly, then execute: $ARGUMENTS
