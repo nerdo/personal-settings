@@ -436,6 +436,28 @@ describe('DatabaseFeatureFlagRepository', () => {
   - Inject `.interface` before file extension
   - Examples: `feature-flag-repository.interface.ts`, `user-service.interface.js`
 
+### Type Definition Standards
+
+**FUNDAMENTAL PRINCIPLE**: Single source of truth for all types. When validation is needed, the validation schema IS the type definition.
+
+#### Core Rules
+1. **Schema-first for boundary types** - Types that need validation MUST be defined through validation schemas
+2. **Use inferred types** - Extract types from schemas, never duplicate definitions
+3. **No manual duplication** - NEVER hand-write types that can be inferred from schemas
+4. **Validation library as type source** - Let the validation library generate TypeScript types
+
+#### When This Applies
+- ALL types at system boundaries (API requests/responses, database models, configs)
+- Any type that requires validation or transformation
+- Types that map to external data sources
+
+#### When This Doesn't Apply
+- Internal-only types that never touch boundaries
+- Pure computational types (e.g., internal state machines)
+- Types that have no validation requirements
+
+**See "Type Definition Through Validation" in Data Validation Requirements section for implementation details.**
+
 ### Import Ordering
 1. Most important classes for the file
 2. Direct dependencies
@@ -638,6 +660,56 @@ const featureFlag = transformToFeatureFlag(rawData);
 - [ ] Tests for edge cases (empty, null, undefined)
 - [ ] Tests for malformed data
 
+### Type Definition Through Validation
+
+**PRINCIPLE**: For types at system boundaries, the validation schema IS the type definition. Never duplicate.
+
+#### Implementation Pattern (TypeScript with ArkType)
+```typescript
+// WRONG - Duplicated type definition
+interface User {
+  id: string;
+  email: string;
+  age: number;
+}
+const UserSchema = type({
+  id: "string",
+  email: "email",
+  age: "number>0"
+});
+
+// CORRECT - Single source of truth
+const UserSchema = type({
+  id: "string",
+  email: "email",
+  age: "number>0"
+});
+type User = typeof UserSchema.infer;  // Type derived from schema
+
+// For API responses
+const ApiResponseSchema = type({
+  data: UserSchema,
+  meta: {
+    timestamp: "number",
+    version: "string"
+  }
+});
+type ApiResponse = typeof ApiResponseSchema.infer;
+```
+
+#### Benefits
+- **Single source of truth** - Schema defines both validation AND type
+- **Always in sync** - Type updates automatically with schema changes
+- **Prevents drift** - Impossible for type and validation to disagree
+- **Runtime safety** - Type safety guaranteed by validation
+
+#### Requirements
+- [ ] Define schema FIRST for all boundary types
+- [ ] Derive TypeScript types from schemas using inference
+- [ ] NEVER manually duplicate type definitions
+- [ ] Use schema-derived types throughout the codebase
+- [ ] Export both schema AND derived type from modules
+
 ### Common Validation Mistakes to Avoid
 - Assuming database data is valid (it can be corrupted)
 - Trusting environment variables without validation
@@ -645,6 +717,7 @@ const featureFlag = transformToFeatureFlag(rawData);
 - Skipping validation for "internal" APIs
 - Using `any` type instead of proper validation
 - Validating only happy path scenarios
+- Defining types separately from validation schemas
 
 ## 🔄 Data Transformation Requirements
 
