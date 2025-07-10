@@ -209,12 +209,16 @@ Run in this exact order:
 
 **Data layer requirements:**
 - [ ] Create interface in domain layer
-- [ ] Create fake implementation for testing
+- [ ] Create composable base test suite for the interface (see Test Standards → Composable Interface Testing)
+- [ ] Create fake/sample implementation for initial design and testing
+- [ ] Ensure fake implementation passes all base tests
 - [ ] Real implementation must:
   - Use parameterized queries (NEVER concatenate SQL)
   - Validate ALL inputs using validation library (TypeScript: ArkType)
   - Use language-appropriate database drivers
   - Handle errors with structured error types
+  - Pass ALL base test suite tests without modification
+  - Add minimal implementation-specific tests only
 
 ### Step 4: Security Validation
 - [ ] Verify NO SQL injection possible
@@ -324,6 +328,104 @@ BaseError (id, timestamp, metadata: Record<string, any>)
 - Place factories at END of test files
 - Create fakes, NOT mocks (unless existing codebase uses mocks)
 - Each test must be independent
+
+### Composable Interface Testing (MANDATORY for all interfaces)
+
+**FUNDAMENTAL PRINCIPLE**: Write tests once for the interface contract, reuse them for ALL implementations.
+
+#### Structure
+1. **Base Test Suite** - Tests the interface contract itself
+   - Tests ALL methods defined in the interface
+   - Tests expected behaviors and edge cases
+   - Tests error conditions and validation
+   - Implementation-agnostic (works with any concrete type)
+
+2. **Implementation Tests** - Minimal setup for each concrete implementation
+   - Inherits or composes the base test suite
+   - Provides factory method to create its specific instance
+   - Adds implementation-specific tests only when needed
+
+#### Implementation Pattern
+
+**Base Test Suite Example (TypeScript):**
+```typescript
+// feature-flag-repository.test-base.ts
+export function createBaseRepositoryTests(
+  getRepository: () => FeatureFlagRepository,
+  cleanup?: () => Promise<void>
+) {
+  describe('FeatureFlagRepository Contract', () => {
+    let repository: FeatureFlagRepository;
+    
+    beforeEach(() => {
+      repository = getRepository();
+    });
+    
+    afterEach(async () => {
+      if (cleanup) await cleanup();
+    });
+    
+    describe('findById', () => {
+      it('returns feature flag when exists', async () => {
+        // Test implementation
+      });
+      
+      it('returns null when not found', async () => {
+        // Test implementation
+      });
+      
+      it('validates ID format', async () => {
+        // Test implementation
+      });
+    });
+    
+    // ... all other interface methods
+  });
+}
+```
+
+**Concrete Implementation Tests:**
+```typescript
+// sample-data-feature-flag-repository.test.ts
+describe('SampleDataFeatureFlagRepository', () => {
+  createBaseRepositoryTests(
+    () => new SampleDataFeatureFlagRepository(sampleData)
+  );
+  
+  // Add implementation-specific tests if needed
+  it('loads sample data correctly', () => {
+    // Specific to this implementation
+  });
+});
+
+// database-feature-flag-repository.test.ts
+describe('DatabaseFeatureFlagRepository', () => {
+  createBaseRepositoryTests(
+    () => new DatabaseFeatureFlagRepository(dbConnection),
+    async () => { await dbConnection.clear(); }
+  );
+});
+```
+
+#### Testing Flow
+1. **Design Phase**: Start with sample/fake implementation
+   - Create interface
+   - Write base test suite
+   - Implement fake with sample data
+   - Ensure all base tests pass
+
+2. **Implementation Phase**: Add real implementations
+   - Create new implementation (DB, API, etc.)
+   - Reuse base test suite
+   - Add only implementation-specific concerns
+   - All base tests must pass unchanged
+
+#### Requirements
+- [ ] EVERY interface MUST have a base test suite
+- [ ] Base tests MUST be implementation-agnostic
+- [ ] ALL implementations MUST pass the base test suite
+- [ ] Implementation tests MUST be minimal (just setup + specific concerns)
+- [ ] Use dependency injection for testability
 
 ### Interface Naming Standards
 - Do NOT use prefix on interface names (e.g., NO `IFeatureFlagRepository`)
