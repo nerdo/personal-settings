@@ -353,6 +353,48 @@ BaseError (id, timestamp, metadata: Record<string, any>)
 - Create fakes, NOT mocks (unless existing codebase uses mocks)
 - Each test must be independent
 
+#### When to Use Fakes vs Mocks
+
+**Default: Use Fakes** for testing interface contracts and internal implementations
+- Fakes provide real behavior with simplified implementation
+- Ideal for testing business logic and interface contracts
+- Example: In-memory repository instead of database repository
+
+**Exception: Use Mocks** for external dependencies in concrete implementations
+- When testing implementations that call external APIs
+- When testing implementations that query databases
+- When you need to simulate specific external responses/failures
+- When you need to verify specific calls were made to external systems
+
+**Example Pattern:**
+```typescript
+// Testing interface contract - use fake
+describe('FeatureFlagRepository Contract', () => {
+  createBaseRepositoryTests(
+    () => new FakeFeatureFlagRepository(testData)
+  );
+});
+
+// Testing database implementation - mock the database client
+describe('DatabaseFeatureFlagRepository', () => {
+  createBaseRepositoryTests(
+    () => {
+      const mockDbClient = createMock<DatabaseClient>();
+      mockDbClient.query.mockResolvedValue({ rows: [testData] });
+      return new DatabaseFeatureFlagRepository(mockDbClient);
+    }
+  );
+  
+  // Implementation-specific tests
+  it('handles database connection errors', async () => {
+    const mockDbClient = createMock<DatabaseClient>();
+    mockDbClient.query.mockRejectedValue(new Error('Connection failed'));
+    const repository = new DatabaseFeatureFlagRepository(mockDbClient);
+    // Test error handling
+  });
+});
+```
+
 ### Composable Interface Testing (MANDATORY for all interfaces)
 
 **FUNDAMENTAL PRINCIPLE**: Write tests once for the interface contract, reuse them for ALL implementations.
