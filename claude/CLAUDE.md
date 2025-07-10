@@ -26,6 +26,30 @@
 
 Every workflow and standard in this document is REQUIRED. These are step-by-step procedures you MUST follow, not suggestions. Deviations require explicit user approval.
 
+## 🌐 Language Adaptations
+
+**FUNDAMENTAL PRINCIPLE**: All principles and workflows in this document apply to EVERY language. TypeScript is the reference implementation, but the concepts are universal.
+
+### How to Apply These Standards
+1. **Principles over tools** - The principle matters more than the specific tool
+2. **Language-appropriate implementation** - Use idiomatic solutions for each language
+3. **When in doubt** - Apply the TypeScript approach conceptually using language-specific tools
+
+### Tool Mapping
+| Principle | TypeScript | PHP | Other Languages |
+|-----------|------------|-----|-----------------|
+| Validation Library | ArkType | respect/validation, symfony/validator | Use language's preferred validation library |
+| Package Manager | pnpm | Composer | pip, cargo, gem, etc. |
+| Testing Framework | vitest | PHPUnit | pytest, cargo test, rspec, etc. |
+| Type Safety | TypeScript strict mode | PHP 8+ types, PHPStan level 9 | Use language's strongest type system |
+| Code Quality | ESLint, Prettier | PHP-CS-Fixer, PHPStan | Language-appropriate linters |
+
+### Key Adaptations
+- **"Never use `any`"** → Never use untyped/dynamic types when typed alternatives exist
+- **"Use TypeScript"** → Use the language's type system to its fullest
+- **"Use ArkType for validation"** → Use a robust validation library, never hand-roll validation
+- **"Use ArkType's match for transformation"** → Use type-safe transformation patterns
+
 ## 🚀 Workflow: Starting Any Task
 
 **TRIGGERS**: ANY new request, conversation start, context switch
@@ -177,9 +201,9 @@ Run in this exact order:
 - [ ] Do NOT write implementation before tests
 
 **Implementation constraints:**
-- [ ] Use TypeScript (NEVER plain JavaScript)
-- [ ] Enable strict mode for new projects
-- [ ] NEVER use `any` type - use `unknown` + validation
+- [ ] Use type-safe language features (TypeScript: never plain JavaScript)
+- [ ] Enable strictest type checking (TypeScript: strict mode)
+- [ ] NEVER use untyped/dynamic types - use unknown + validation (TypeScript: avoid `any`)
 - [ ] Keep files under 500 lines (split if larger)
 - [ ] Follow existing code conventions exactly
 
@@ -188,8 +212,8 @@ Run in this exact order:
 - [ ] Create fake implementation for testing
 - [ ] Real implementation must:
   - Use parameterized queries (NEVER concatenate SQL)
-  - Validate ALL inputs using ArkType
-  - Use approved drivers: pg, mysql2, or better-sqlite3
+  - Validate ALL inputs using validation library (TypeScript: ArkType)
+  - Use language-appropriate database drivers
   - Handle errors with structured error types
 
 ### Step 4: Security Validation
@@ -346,10 +370,10 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## 🛑 NEVER Rules (Absolute Constraints)
 
-- NEVER use `any` type without explicit justification
+- NEVER use untyped/dynamic types without explicit justification (TypeScript: `any`)
 - NEVER concatenate SQL strings (use parameterized queries)
-- NEVER commit console.log statements
-- NEVER use Reflection for testing private methods
+- NEVER commit debug statements (console.log, var_dump, print, etc.)
+- NEVER use Reflection/magic methods for testing private methods
 - NEVER log sensitive data (passwords, tokens, PII)
 - NEVER apply workarounds without user approval
 - NEVER auto-push commits
@@ -364,11 +388,11 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## ✅ ALWAYS Rules (Mandatory Practices)
 
-- ALWAYS use TypeScript for JavaScript projects
+- ALWAYS use type-safe language features (TypeScript for JavaScript projects)
 - ALWAYS write tests FIRST (TDD)
-- ALWAYS use pnpm for new Node projects
-- ALWAYS use vitest for new test suites
-- ALWAYS use ArkType for validation
+- ALWAYS use language's preferred package manager (Node: pnpm)
+- ALWAYS use appropriate testing framework (TypeScript: vitest)
+- ALWAYS use validation library (TypeScript: ArkType)
 - ALWAYS mark todos completed immediately
 - ALWAYS update JOURNAL.md when user confirms fix
 - ALWAYS use structured logging
@@ -410,12 +434,18 @@ Before marking ANY task complete:
 ## 🔧 Tech Stack Defaults
 
 For new projects, unless specified otherwise:
+
+**TypeScript/Node.js:**
 - Package manager: pnpm
 - Language: TypeScript with strict mode
 - Testing: vitest (command: `vitest run`)
 - Validation: ArkType
 - Formatter: prettier with `@townsquare-interactive/prettier-config`
 - Database drivers: pg, mysql2, or better-sqlite3
+
+**Other Languages:**
+- Use language's standard tooling (see Language Adaptations section)
+- Apply equivalent principles with language-appropriate tools
 
 ## 🔒 Data Validation Requirements (CRITICAL)
 
@@ -433,16 +463,16 @@ For new projects, unless specified otherwise:
 - [ ] Third-party library responses
 
 ### Validation Implementation Rules
-1. **Use ArkType schemas** for ALL validation
+1. **Use validation library** for ALL validation (TypeScript: ArkType)
 2. **Validate at entry points** - the moment data enters your system
 3. **Create validation functions** with clear error messages
 4. **Never trust external data** - even from "trusted" sources
 5. **Test validation thoroughly** - include edge cases and malformed data
 
 ### Data Transformation Rules
-1. **Use ArkType for ALL data transformations** - NEVER hand-code transformations
+1. **Use validation library for ALL transformations** - NEVER hand-code transformations
 2. **Transform at system boundaries** - alongside validation
-3. **Use ArkType's `match` for translations** - when converting between data shapes
+3. **Use type-safe transformation patterns** (TypeScript: ArkType's `match`)
 4. **Type-safe transformations only** - input and output types must be defined
 5. **Test transformations thoroughly** - include edge cases and type conversions
 
@@ -516,13 +546,13 @@ const featureFlag = transformToFeatureFlag(rawData);
 
 ## 🔄 Data Transformation Requirements
 
-**When you need to transform data between different shapes, ALWAYS use ArkType.**
+**When you need to transform data between different shapes, ALWAYS use your validation library.**
 
 See the "Data Transformation Rules" and "Required Transformation Pattern" in the **Data Validation Requirements** section above for detailed implementation guidelines.
 
 Key points:
 - NEVER hand-code data transformations
-- Use ArkType's `match` function for type-safe transformations
+- Use type-safe transformation functions (TypeScript: ArkType's `match`)
 - Transform data at system boundaries alongside validation
 
 ## 📊 Structured Logging Requirements
@@ -542,7 +572,7 @@ IMMEDIATELY stop and ask for clarification if:
 - You need to deviate from these procedures
 - Tests fail after 3 attempts
 - Build commands are not working
-- You're about to use `any` type
+- You're about to use untyped/dynamic types (TypeScript: `any`)
 - You're about to exceed 500 lines in a file
 - You're about to use external data without validation
 - You discover unvalidated data in existing code
