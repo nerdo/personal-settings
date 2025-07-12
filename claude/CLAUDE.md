@@ -11,6 +11,8 @@
 | "refactor", "clean up", "improve", "reorganize" | → Refactoring Code Workflow |
 | "replace", "migrate", "overhaul", "rewrite" | → Making Drastic Changes Workflow |
 | ANY code-related request | → TDD-First Workflow (MANDATORY) |
+| Starting new project | → Version Control Management Workflow |
+| ANY code change when jj present | → Create new jj change |
 
 ### STOP Triggers - Halt Immediately
 - Ambiguous requirements detected
@@ -282,6 +284,82 @@ Run in this exact order:
 - [ ] Maintain consistent patterns
 - [ ] Update documentation if needed
 
+## 🗂️ Workflow: Version Control Management
+
+**TRIGGERS**: 
+- Starting a new project
+- Working in an existing project without jj
+- Any code changes (for commit practices)
+- Keywords: "init", "initialize", "version control", "git", "jj"
+
+### Step 1: Initialize New Projects
+For ALL new projects:
+- [ ] Initialize with jj and git together: `jj init --git` (creates both in one step)
+- [ ] Or if git already exists: `jj git init --colocate`
+- [ ] Create initial commit with jj: `jj new -m "Initial commit"`
+- [ ] PREFER jj commands over git when colocated (use git only when necessary)
+
+### Step 2: Existing Projects Without jj
+When working in git-only projects:
+- [ ] Check for existing git repository
+- [ ] If git exists, colocate with jj: `jj git init --colocate`
+- [ ] Continue with jj workflow (see Step 3)
+- [ ] PREFER jj commands once colocated (git commands allowed when needed)
+
+### Step 3: jj Commit Workflow (MANDATORY)
+For EVERY code change when jj is present:
+
+**Understanding jj's Working Copy Model:**
+- Your working directory changes are ALWAYS in a commit (the "working-copy commit")
+- No "uncommitted changes" exist - everything is already tracked
+- No need for stashing - just create a new change when switching tasks
+
+**Workflow Steps:**
+- [ ] Start new work with descriptive change: `jj new -m "feat: add user authentication"`
+- [ ] Work naturally - your changes are automatically saved in the working-copy commit
+- [ ] Use `jj describe` to improve commit messages after initial work
+- [ ] Create new change frequently: `jj new -m "refactor: extract validation logic"`
+- [ ] Use conventional commit format in descriptions:
+  - `feat:` for new features
+  - `fix:` for bug fixes
+  - `refactor:` for code improvements
+  - `test:` for test additions/changes
+  - `docs:` for documentation
+  - `chore:` for maintenance tasks
+
+**jj-Specific Best Practices:**
+- [ ] Use `jj split` to break up changes that got too large
+- [ ] Use `jj squash` to combine related small changes
+- [ ] Use `jj describe` to enhance commit messages before pushing
+- [ ] Use `jj undo` if you make a mistake (safer than git reset)
+- [ ] Each change should be self-contained and reviewable
+
+### Step 4: Change Granularity Guidelines
+Keep changes small and focused:
+- [ ] Aim for one logical change per jj commit
+- [ ] Work naturally, then use `jj split` to separate concerns before pushing:
+  - Features: Can split into interface, implementation, and tests
+  - Bug fixes: Can split test demonstrating bug from the fix
+  - Refactoring: Can split by type (rename, extract, move)
+- [ ] Target ~200 lines per change, but use `jj split` if you exceed this
+- [ ] Remember: jj makes it easy to reorganize commits before sharing
+
+### Step 5: Conflict Handling with jj
+jj has unique conflict handling capabilities:
+- [ ] Conflicts are recorded IN commits (not blocking like git)
+- [ ] You can create new changes on top of conflicts
+- [ ] Conflicts automatically resolve in descendants when fixed
+- [ ] Use `jj resolve` to address conflicts interactively
+- [ ] Collaborate on conflict resolution by sharing conflict commits
+
+### Step 6: Git Integration
+When user requests git operations:
+- [ ] For push: Let user handle `jj git push`
+- [ ] For status: Use `jj status` instead of `git status`
+- [ ] For log: Use `jj log` instead of `git log`
+- [ ] Both jj and git commands can be used interchangeably when needed
+- [ ] PREFER jj commands for better functionality (EXCEPTION: when user explicitly requests git usage)
+
 ## 🔄 Workflow: Making Drastic Changes
 
 **TRIGGERS**: 
@@ -296,13 +374,14 @@ Before ANY major changes:
 - [ ] If NO version control exists:
   - [ ] STOP immediately
   - [ ] Prompt user: "This project has no version control. Options:"
-    - [ ] "Initialize git repository (`git init`)"
-    - [ ] "Initialize jj repository (`jj init`)"
+    - [ ] "Initialize git repository with jj colocated (`git init && jj git init --colocate`)"
     - [ ] "Proceed without version control (NOT recommended)"
+- [ ] If only git exists (no jj):
+  - [ ] Colocate with jj: `jj git init --colocate`
 - [ ] If version control exists, check for uncommitted changes
 - [ ] If uncommitted changes exist:
   - [ ] STOP and prompt user to commit changes first
-  - [ ] Show `git status` or equivalent output
+  - [ ] Show `jj status` output
   - [ ] Wait for user confirmation before proceeding
 
 ### Step 2: Plan Drastic Changes
@@ -531,6 +610,20 @@ describe('DatabaseFeatureFlagRepository', () => {
 4. External dependencies
 
 ### Commit Message Format
+
+#### For jj changes (PREFERRED when jj is present):
+Use descriptive messages with conventional format in `jj new`:
+```
+jj new -m "<type>: <description>"
+```
+
+Examples:
+- `jj new -m "feat: add user authentication"`
+- `jj new -m "fix: resolve null pointer in validator"`
+- `jj new -m "test: add edge cases for email validation"`
+- `jj new -m "refactor: extract common validation logic"`
+
+#### For git commits (ONLY when jj is not present):
 ```
 <type>(<scope>): <subject>
 
@@ -575,6 +668,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - NEVER skip validation for "internal" APIs
 - NEVER create backup copies of files when version control exists
 - NEVER skip writing tests before implementation
+- NEVER make git commits when jj is present without good reason (EXCEPTION: when user explicitly requests git usage or specific git features are needed)
+- NEVER bypass jj for version control without consideration (EXCEPTION: when user requests or when git-specific features are required)
 
 ## ✅ ALWAYS Rules (Mandatory Practices)
 
@@ -592,6 +687,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - ALWAYS create validation schemas before implementing features
 - ALWAYS test validation with invalid data scenarios
 - ALWAYS rely on version control for file history and backups
+- ALWAYS initialize new projects with jj and git together (`jj init --git`)
+- ALWAYS prefer jj for version control operations when colocated
+- ALWAYS leverage jj's working-copy-as-commit model for continuous saves
+- ALWAYS work in small, atomic changes (use `jj split` when needed)
+- ALWAYS use descriptive conventional commit messages
+- ALWAYS take advantage of jj's history rewriting features before pushing
 
 ## 🚨 Pre-Implementation Checklist
 
@@ -611,6 +712,8 @@ Before writing ANY code:
 - [ ] Are validation schemas defined before implementation?
 - [ ] Is version control in place for drastic changes?
 - [ ] Are all current changes committed before major modifications?
+- [ ] If jj is present, have I created a new change with descriptive message?
+- [ ] Am I planning to work in small, atomic commits?
 
 ## 📋 Task Completion Checklist
 
