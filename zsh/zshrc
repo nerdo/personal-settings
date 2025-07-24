@@ -122,6 +122,7 @@ source $ZSH/oh-my-zsh.sh
 alias lg=lazygit
 #alias neovide=/Applications/Neovide.app/Contents/MacOS/neovide
 alias surreal='docker run --rm --pull always surrealdb/surrealdb:latest'
+alias cc='claude --append-system-prompt $(uvx --from git+https://github.com/oraios/serena serena print-system-prompt)'
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
