@@ -179,3 +179,5 @@ export TSI_OPENAI_API_KEY=$(cat ~/.tsi_openai_api_key)
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+# set pager to bat
+export PAGER=bat
