@@ -57,5 +57,8 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # prime barnacle
 source ~/go/src/barnacle/barnacle.plugin.zsh
 
+# keybinding for ctrl+r for history seems to be missing without this
+bindkey "^R" history-incremental-search-backward 
+
 # init zoxide
 eval "$(zoxide init zsh)"
