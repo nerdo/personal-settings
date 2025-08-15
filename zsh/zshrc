@@ -5,7 +5,6 @@ export PATH=$HOME/tsi/bin:$HOME/.composer/vendor/bin:$HOME/.local/bin:$HOME/bin:
 alias ls='eza --icons'
 alias l='eza -al -g --header --git --icons'
 alias lg=lazygit
-alias surreal='docker run --rm --pull always surrealdb/surrealdb:latest'
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
