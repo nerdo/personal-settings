@@ -40,11 +40,11 @@ export CPPFLAGS="-I/opt/homebrew/opt/php@7.0/include"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-export GITHUB_TOKEN=$(cat ~/.github_token)
+export GITHUB_TOKEN=$(cat ~/.secrets/GITHUB_PERSONAL_ACCESS_TOKEN)
 export GITHUB_PERSONAL_ACCESS_TOKEN=$GITHUB_TOKEN
-export GITHUB_MCP_TOKEN=$(cat ~/.github_mcp_token)
-export JIRA_API_TOKEN=$(cat ~/.jira_api_token)
-export TSI_OPENAI_API_KEY=$(cat ~/.tsi_openai_api_key)
+export GITHUB_MCP_TOKEN=$(cat ~/.secrets/GITHUB_MCP_TOKEN)
+export JIRA_API_TOKEN=$(cat ~/.secrets/tsi/JIRA_API_TOKEN)
+export TSI_OPENAI_API_KEY=$(cat ~/.secrets/tsi/OPENAI_API_KEY)
 
 # bun completions
 [ -s "/Users/nerdo/.bun/_bun" ] && source "/Users/nerdo/.bun/_bun"
