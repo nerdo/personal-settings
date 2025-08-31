@@ -65,3 +65,5 @@ eval "$(zoxide init zsh)"
 # set zsh to use emacs keybindings but map escape to enter vi mode
 bindkey -e
 bindkey '^[' vi-cmd-mode
+
+alias claude="/Users/nerdo/.claude/local/claude"
