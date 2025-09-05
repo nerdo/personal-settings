@@ -92,3 +92,6 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", with_desc("Move selected lines up")
 -- nerdo's keymaps
 vim.keymap.set("i", "<F9>", "<Esc>I", with_desc("Exit insert and go to beginning of line"))
 vim.keymap.set("i", "<F10>", "<Esc>A", with_desc("Exit insert and go to end of line"))
+
+-- escape in terminal mode
+vim.keymap.set('t', '<M-Esc>', '<C-\\><C-n>', { desc = 'Exit insert mode in terminal' })
