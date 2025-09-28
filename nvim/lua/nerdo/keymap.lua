@@ -79,11 +79,11 @@ vim.keymap.set("n", "<A-l>", function()
 	vim.cmd("wincmd l")
 end, with_desc("Navigate to right window"))
 
--- Split resizing with Alt+Shift+nav keys.
-vim.keymap.set("n", "<A-S-h>", "<Cmd>vertical resize -1<CR>", with_desc("Decrease window width"))
-vim.keymap.set("n", "<A-S-j>", "<Cmd>resize -1<CR>", with_desc("Decrease window height"))
-vim.keymap.set("n", "<A-S-k>", "<Cmd>resize +1<CR>", with_desc("Increase window height"))
-vim.keymap.set("n", "<A-S-l>", "<Cmd>vertical resize +1<CR>", with_desc("Increase window width"))
+-- Split resizing with Ctrl+Alt+nav keys.
+vim.keymap.set("n", "<C-A-h>", "<Cmd>vertical resize -1<CR>", with_desc("Decrease window width"))
+vim.keymap.set("n", "<C-A-j>", "<Cmd>resize -1<CR>", with_desc("Decrease window height"))
+vim.keymap.set("n", "<C-A-k>", "<Cmd>resize +1<CR>", with_desc("Increase window height"))
+vim.keymap.set("n", "<C-A-l>", "<Cmd>vertical resize +1<CR>", with_desc("Increase window width"))
 
 -- theprimagen's awesome visual move text keymap.
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", with_desc("Move selected lines down"))

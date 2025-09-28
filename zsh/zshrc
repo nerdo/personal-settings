@@ -6,6 +6,8 @@ alias ls='eza --icons'
 alias l='eza -al -g --header --git --icons'
 alias lg=lazygit
 
+alias wake-relentless='wakeonlan 9c:6b:00:c4:e5:c3'
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -66,4 +68,19 @@ eval "$(zoxide init zsh)"
 bindkey -e
 bindkey '^[' vi-cmd-mode
 
-alias claude="/Users/nerdo/.claude/local/claude"
+# alias claude="DISABLE_MICROCOMPACT=1 /Users/nerdo/.claude/local/claude"
+#alias claude="/Users/nerdo/.claude/local/claude"
+
+# opencode
+export PATH=/Users/nerdo/.opencode/bin:$PATH
+
+
+# >>> nvwb
+# Sourcing the nvwb wrapper function was added during the NVIDIA AI Workbench installation and
+# is required for NVIDIA AI Workbench to function properly. When uninstalling
+# NVIDIA AI Workbench, it will be removed. 
+
+source $HOME/.local/share/nvwb/nvwb-wrapper.sh
+# >>> nvwb
+
+
