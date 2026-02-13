@@ -165,7 +165,9 @@ editor.smart_buffer_close = function()
 			vim.api.nvim_set_current_buf(next_buf)
 		end
 		
-		vim.api.nvim_buf_delete(current_buf, {force = true})
+		if vim.api.nvim_buf_is_valid(current_buf) then
+			vim.api.nvim_buf_delete(current_buf, {force = true})
+		end
 	else
 		-- For unlisted buffers, check if we should close the window or just the buffer
 		if win_count > 1 then
@@ -173,7 +175,9 @@ editor.smart_buffer_close = function()
 			vim.api.nvim_win_close(current_win, false)
 		else
 			-- Single window: delete the buffer normally
-			vim.api.nvim_buf_delete(current_buf, {force = true})
+			if vim.api.nvim_buf_is_valid(current_buf) then
+				vim.api.nvim_buf_delete(current_buf, {force = true})
+			end
 		end
 	end
 end
