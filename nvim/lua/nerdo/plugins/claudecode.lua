@@ -1,5 +1,40 @@
 local saved_claude_width = nil
 
+-- Sends current file context to Claude once a WebSocket client connects,
+-- so Claude immediately knows which file you're working in.
+local pending_context_timer = nil
+local function send_file_context_on_connect(context)
+	if pending_context_timer then
+		pending_context_timer:stop()
+		pending_context_timer:close()
+		pending_context_timer = nil
+	end
+	local attempts = 0
+	pending_context_timer = vim.loop.new_timer()
+	pending_context_timer:start(200, 500, vim.schedule_wrap(function()
+		attempts = attempts + 1
+
+		local main_ok, main = pcall(require, "claudecode")
+		local srv = main_ok and main.state and main.state.server
+		local has_client = srv and srv.state and srv.state.clients and next(srv.state.clients)
+
+		if has_client then
+			srv.broadcast("selection_changed", context)
+			if pending_context_timer then
+				pending_context_timer:stop()
+				pending_context_timer:close()
+				pending_context_timer = nil
+			end
+		elseif attempts >= 30 then
+			if pending_context_timer then
+				pending_context_timer:stop()
+				pending_context_timer:close()
+				pending_context_timer = nil
+			end
+		end
+	end))
+end
+
 return {
 	"coder/claudecode.nvim",
 	dependencies = {
@@ -49,6 +84,13 @@ return {
 				local terminal = require("claudecode.terminal")
 				local bufnr = terminal.get_active_terminal_bufnr()
 
+				-- Capture current file context before focus moves to terminal
+				local cursor_context = nil
+				if not bufnr then
+					local sel = require("claudecode.selection")
+					cursor_context = sel.get_cursor_position()
+				end
+
 				-- Save width before toggling (if terminal is visible)
 				if bufnr then
 					local info = vim.fn.getbufinfo(bufnr)
@@ -70,6 +112,11 @@ return {
 							end
 						end
 					end)
+				end
+
+				-- Send file context once Claude's WebSocket client connects
+				if cursor_context then
+					send_file_context_on_connect(cursor_context)
 				end
 			end,
 			desc = "Toggle Claude",
