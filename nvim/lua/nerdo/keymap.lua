@@ -21,9 +21,30 @@ local function with_desc(description)
 	return vim.tbl_extend("force", opts, { desc = description })
 end
 
--- Quitting
-vim.keymap.set("n", "XQ", "<Cmd>qa!<CR>", with_desc("Force quit all"))
-vim.keymap.set("n", "XX", "<Cmd>wqa<CR>", with_desc("Save and quit all"))
+-- Quitting - wipe terminal buffers first to avoid stuck-window issues.
+local function close_terminal_buffers()
+	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == "terminal" then
+			vim.api.nvim_buf_delete(buf, { force = true })
+		end
+	end
+end
+local function smart_quit(save)
+	local buf = vim.api.nvim_get_current_buf()
+	if vim.bo[buf].buftype == "terminal" then
+		vim.api.nvim_buf_delete(buf, { force = true })
+		return
+	end
+	vim.cmd(save and "x" or "q!")
+end
+local function quit_all(save)
+	close_terminal_buffers()
+	vim.cmd(save and "wqa" or "qa!")
+end
+vim.keymap.set("n", "ZZ", function() smart_quit(true) end, with_desc("Save and quit"))
+vim.keymap.set("n", "ZQ", function() smart_quit(false) end, with_desc("Force quit"))
+vim.keymap.set("n", "XX", function() quit_all(true) end, with_desc("Save and quit all"))
+vim.keymap.set("n", "XQ", function() quit_all(false) end, with_desc("Force quit all"))
 
 -- Save file.
 vim.keymap.set("n", ";;", save_buffer, with_desc("Save buffer"))
