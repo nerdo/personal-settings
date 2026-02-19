@@ -24,12 +24,14 @@ return {
 		local mason = require("mason")
 		mason.setup({})
 
+		local lspconfig = require("lspconfig")
 		local mason_lspconfig = require("mason-lspconfig")
 		mason_lspconfig.setup({
 			ensure_installed = {
 				"gopls",
 				"taplo", -- For .toml
 				"phpactor",
+				"psalm",
 				"svelte",
 				"ts_ls",
 				"html",
@@ -41,6 +43,10 @@ return {
 				"yamlls",
 				"lua_ls",
 				"vale_ls"
+			},
+			-- Exclude servers configured manually below from auto-enable.
+			automatic_enable = {
+				exclude = { "phpactor", "psalm", "gopls", "ts_ls", "lua_ls", "jsonls" },
 			},
 		})
 		-- mason_lspconfig.setup_handlers({
@@ -106,8 +112,6 @@ return {
 			})
 		end
 
-		local lspconfig = require("lspconfig")
-
 		lspconfig.phpactor.setup({
 			cmd = {
 				"/opt/homebrew/opt/php@8.1/bin/php",
@@ -159,6 +163,13 @@ return {
 					-- Let other progress notifications through
 					vim.lsp.handlers["$/progress"](_, result, ctx)
 				end,
+			},
+		})
+
+		lspconfig.psalm.setup({
+			cmd = {
+				"/opt/homebrew/bin/php",
+				vim.fn.stdpath("data") .. "/mason/packages/psalm/vendor/bin/psalm-language-server",
 			},
 		})
 
