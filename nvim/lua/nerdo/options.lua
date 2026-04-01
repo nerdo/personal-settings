@@ -43,3 +43,8 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.bo.commentstring = "// %s"
 	end,
 })
+
+-- Write files in place instead of atomic save (write-to-temp-then-rename).
+-- Atomic saves briefly delete the original file, which crashes file watchers
+-- like Bun's --watch. Safe tradeoff for version-controlled source code.
+vim.opt.backupcopy = "yes"
