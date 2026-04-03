@@ -42,11 +42,12 @@ return {
 				"jsonls",
 				"yamlls",
 				"lua_ls",
-				"vale_ls"
+				"vale_ls",
+				"htmx"
 			},
 			-- Exclude servers configured manually below from auto-enable.
 			automatic_enable = {
-				exclude = { "phpactor", "psalm", "gopls", "ts_ls", "lua_ls", "jsonls" },
+				exclude = { "phpactor", "psalm", "gopls", "ts_ls", "lua_ls", "jsonls", "htmx-lsp" },
 			},
 		})
 		-- mason_lspconfig.setup_handlers({
