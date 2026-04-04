@@ -1,21 +1,25 @@
 # -----------------------------------------------------
 # CUSTOMIZATION
 # -----------------------------------------------------
-POSH=agnoster
 
-# -----------------------------------------------------
-# oh-myzsh themes: https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-# -----------------------------------------------------
-# ZSH_THEME=robbyrussell
+# oh-my-posh theme (must match a filename in the themes directory without extension/suffix)
+# e.g. "agnoster" resolves to agnoster.omp.json
+POSH=1_shell
 
 # -----------------------------------------------------
 # oh-my-zsh plugins
+# External plugins (cloned into $ZSH_CUSTOM/plugins if missing)
 # -----------------------------------------------------
+_external_plugins=(
+    "zsh-autosuggestions          https://github.com/zsh-users/zsh-autosuggestions"
+    "zsh-syntax-highlighting      https://github.com/zsh-users/zsh-syntax-highlighting"
+    "fast-syntax-highlighting     https://github.com/zdharma-continuum/fast-syntax-highlighting"
+)
+
 plugins=(
     git
     sudo
     web-search
-    archlinux
     zsh-autosuggestions
     zsh-syntax-highlighting
     fast-syntax-highlighting
@@ -24,13 +28,38 @@ plugins=(
     dirhistory
 )
 
-# Set-up oh-my-zsh
-source $ZSH/oh-my-zsh.sh
+# -----------------------------------------------------
+# Set-up oh-my-zsh (auto-install if missing)
+# -----------------------------------------------------
+if [[ ! -d "$ZSH" ]]; then
+    echo "oh-my-zsh not found, installing..."
+    git clone https://github.com/ohmyzsh/ohmyzsh.git "$ZSH" --depth 1
+fi
+
+# Auto-install missing external plugins
+ZSH_CUSTOM="${ZSH_CUSTOM:-$ZSH/custom}"
+for _entry in "${_external_plugins[@]}"; do
+    _plugin_name="${_entry%% *}"
+    _plugin_url="${_entry##* }"
+    if [[ ! -d "$ZSH_CUSTOM/plugins/$_plugin_name" ]]; then
+        echo "Installing oh-my-zsh plugin: $_plugin_name..."
+        git clone "$_plugin_url" "$ZSH_CUSTOM/plugins/$_plugin_name" --depth 1
+    fi
+done
+unset _entry _plugin_name _plugin_url _external_plugins
+
+if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
+    source "$ZSH/oh-my-zsh.sh"
+else
+    echo "oh-my-zsh: could not load $ZSH/oh-my-zsh.sh"
+fi
 
 # -----------------------------------------------------
 # Set-up FZF key bindings (CTRL R for fuzzy history finder)
 # -----------------------------------------------------
-source <(fzf --zsh)
+if command -v fzf &>/dev/null; then
+    source <(fzf --zsh)
+fi
 
 # zsh history
 HISTFILE=~/.zsh_history
@@ -39,10 +68,26 @@ SAVEHIST=10000
 setopt appendhistory
 
 # -----------------------------------------------------
-# Prompt
+# Prompt (oh-my-posh)
 # -----------------------------------------------------
-eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/zen.toml)"
-# eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/EDM115-newline.omp.json)"
+if command -v oh-my-posh &>/dev/null; then
+    # Resolve themes directory cross-platform
+    _posh_themes=""
+    if [[ -d "/usr/share/oh-my-posh/themes" ]]; then
+        _posh_themes="/usr/share/oh-my-posh/themes"            # Arch Linux
+    elif command -v brew &>/dev/null; then
+        _posh_themes="$(brew --prefix oh-my-posh 2>/dev/null)/themes"  # macOS Homebrew
+    fi
 
-# Shipped Theme
-# eval "$(oh-my-posh init zsh --config /usr/share/oh-my-posh/themes/agnoster.omp.json)"
+    # Use custom config if it exists, otherwise fall back to built-in theme
+    if [[ -f "$HOME/.config/ohmyposh/${POSH}.toml" ]]; then
+        eval "$(oh-my-posh init zsh --config "$HOME/.config/ohmyposh/${POSH}.toml")"
+    elif [[ -f "$HOME/.config/ohmyposh/${POSH}.omp.json" ]]; then
+        eval "$(oh-my-posh init zsh --config "$HOME/.config/ohmyposh/${POSH}.omp.json")"
+    elif [[ -n "$_posh_themes" && -f "${_posh_themes}/${POSH}.omp.json" ]]; then
+        eval "$(oh-my-posh init zsh --config "${_posh_themes}/${POSH}.omp.json")"
+    else
+        echo "oh-my-posh: theme '${POSH}' not found"
+    fi
+    unset _posh_themes
+fi
