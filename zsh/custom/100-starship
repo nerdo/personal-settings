@@ -1,0 +1,4 @@
+if (( $+commands[startship] )); then
+    eval "$(startship init zsh)"
+fi
+

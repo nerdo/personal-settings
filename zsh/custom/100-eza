@@ -1,0 +1,5 @@
+if (( $+commands[eza] )); then
+    alias ls='eza --icons'
+    alias l='eza -al -g --header --git --icons'
+fi
+

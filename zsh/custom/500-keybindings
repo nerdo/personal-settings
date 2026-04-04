@@ -1,0 +1,8 @@
+# Ensure vi mode is enabled
+bindkey -v
+
+# Add specific emacs keybindings
+bindkey '^A' beginning-of-line
+bindkey '^E' end-of-line
+bindkey '^K' kill-line
+bindkey '^U' backward-kill-line

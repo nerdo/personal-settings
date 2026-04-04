@@ -1,0 +1,5 @@
+# prime barnacle
+if [[ -f ~/go/src/barnacle/barnacle.plugin.zsh ]]; then
+    source ~/go/src/barnacle/barnacle.plugin.zsh
+fi
+

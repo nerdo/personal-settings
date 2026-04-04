@@ -1,0 +1,8 @@
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS specific commands
+    export LDFLAGS="-L/opt/homebrew/opt/php@7.0/lib"
+    export CPPFLAGS="-I/opt/homebrew/opt/php@7.0/include"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux specific commands
+fi
+

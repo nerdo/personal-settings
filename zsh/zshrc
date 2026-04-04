@@ -1,86 +1,37 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-export PATH=$HOME/tsi/bin:$HOME/.composer/vendor/bin:$HOME/.local/bin:$HOME/bin:$HOME/go/bin:$PATH
+#            _
+#    _______| |__  _ __ ___
+#   |_  / __| '_ \| '__/ __|
+#  _ / /\__ \ | | | | | (__
+# (_)___|___/_| |_|_|  \___|
+#
+# -----------------------------------------------------
+# ML4W zshrc loader
+# -----------------------------------------------------
 
-alias ls='eza --icons'
-alias l='eza -al -g --header --git --icons'
-alias lg=lazygit
+# DON'T CHANGE THIS FILE
 
-alias wake-relentless='wakeonlan 9c:6b:00:c4:e5:c3'
+# You can define your custom configuration by adding
+# files in ~/.config/zshrc
+# or by creating a folder ~/.config/zshrc/custom
+# with copies of files from ~/.config/zshrc
+# -----------------------------------------------------
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# -----------------------------------------------------
+# Load modular configuration
+# -----------------------------------------------------
 
-# Disable experimental warnings with node 23.x: https://github.com/npm/cli/issues/7857#issuecomment-2481331001
-export NODE_OPTIONS='--disable-warning=ExperimentalWarning'
+for f in ~/.config/zshrc/*; do
+    if [ ! -d $f ]; then
+        c=`echo $f | sed -e "s=.config/zshrc=.config/zshrc/custom="`
+        [[ -f $c ]] && source $c || source $f
+    fi
+done
 
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
+# -----------------------------------------------------
+# Load single customization file (if exists)
+# -----------------------------------------------------
+
+if [ -f ~/.zshrc_custom ]; then
+    source ~/.zshrc_custom
 fi
-
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-
-export EDITOR="nvim"
-
-eval "$(starship init zsh)"
-
-# pnpm
-export PNPM_HOME="/Users/nerdo/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin:$HOME/.cargo"
-
-# For php 7.0
-export LDFLAGS="-L/opt/homebrew/opt/php@7.0/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/php@7.0/include"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-export GITHUB_TOKEN=$(cat ~/.secrets/GITHUB_PERSONAL_ACCESS_TOKEN)
-export GITHUB_PERSONAL_ACCESS_TOKEN=$GITHUB_TOKEN
-export GITHUB_MCP_TOKEN=$(cat ~/.secrets/GITHUB_MCP_TOKEN)
-export JIRA_API_TOKEN=$(cat ~/.secrets/tsi/JIRA_API_TOKEN)
-export TSI_OPENAI_API_KEY=$(cat ~/.secrets/tsi/OPENAI_API_KEY)
-
-# bun completions
-[ -s "/Users/nerdo/.bun/_bun" ] && source "/Users/nerdo/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-# prime barnacle
-source ~/go/src/barnacle/barnacle.plugin.zsh
-
-# keybinding for ctrl+r for history seems to be missing without this
-bindkey "^R" history-incremental-search-backward 
-
-# init zoxide
-eval "$(zoxide init zsh)"
-
-# set zsh to use emacs keybindings but map escape to enter vi mode
-bindkey -e
-bindkey '^[' vi-cmd-mode
-
-# alias claude="DISABLE_MICROCOMPACT=1 /Users/nerdo/.claude/local/claude"
-#alias claude="/Users/nerdo/.claude/local/claude"
-
-# opencode
-export PATH=/Users/nerdo/.opencode/bin:$PATH
-
-
-# >>> nvwb
-# Sourcing the nvwb wrapper function was added during the NVIDIA AI Workbench installation and
-# is required for NVIDIA AI Workbench to function properly. When uninstalling
-# NVIDIA AI Workbench, it will be removed. 
-
-source $HOME/.local/share/nvwb/nvwb-wrapper.sh
-# >>> nvwb
-
 
