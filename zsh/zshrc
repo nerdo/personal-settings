@@ -5,27 +5,39 @@
 # (_)___|___/_| |_|_|  \___|
 #
 # -----------------------------------------------------
-# ML4W zshrc loader
+# zshrc loader (compatible with ml4w)
 # -----------------------------------------------------
 
-# DON'T CHANGE THIS FILE
-
-# You can define your custom configuration by adding
-# files in ~/.config/zshrc
-# or by creating a folder ~/.config/zshrc/custom
-# with copies of files from ~/.config/zshrc
-# -----------------------------------------------------
+# Loads modules from ~/.config/zshrc/ and ~/.config/zshrc/custom/.
+# When both dirs contain a file with the same name, the custom/ version wins.
+# Files only in custom/ are also sourced (additions).
+# This lets ml4w manage its defaults while personal config lives in custom/.
+# On macOS (no ml4w), just populate custom/ — everything still loads.
 
 # -----------------------------------------------------
 # Load modular configuration
 # -----------------------------------------------------
 
-for f in ~/.config/zshrc/*; do
-    if [ ! -d $f ]; then
-        c=`echo $f | sed -e "s=.config/zshrc=.config/zshrc/custom="`
-        [[ -f $c ]] && source $c || source $f
+_zshrc_dir="$HOME/.config/zshrc"
+_custom_dir="$_zshrc_dir/custom"
+
+# Collect all filenames from both dirs, sorted and deduplicated
+_modules=()
+for f in "$_zshrc_dir"/* "$_custom_dir"/*; do
+    [[ -d $f || ! -f $f ]] && continue
+    _modules+=("$(basename "$f")")
+done
+_modules=($(printf '%s\n' "${_modules[@]}" | sort -u))
+
+# Source each, preferring custom/ version
+for name in "${_modules[@]}"; do
+    if [[ -f "$_custom_dir/$name" ]]; then
+        source "$_custom_dir/$name"
+    elif [[ -f "$_zshrc_dir/$name" ]]; then
+        source "$_zshrc_dir/$name"
     fi
 done
+unset _zshrc_dir _custom_dir _modules name
 
 # -----------------------------------------------------
 # Load single customization file (if exists)
@@ -34,4 +46,3 @@ done
 if [ -f ~/.zshrc_custom ]; then
     source ~/.zshrc_custom
 fi
-

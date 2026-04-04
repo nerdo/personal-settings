@@ -84,15 +84,30 @@ if command -v oh-my-posh &>/dev/null; then
         _posh_themes="$(brew --prefix oh-my-posh 2>/dev/null)/themes"  # macOS Homebrew
     fi
 
-    # Use custom config if it exists, otherwise fall back to built-in theme
+    # Resolve theme config file
+    _posh_config=""
     if [[ -f "$HOME/.config/ohmyposh/${POSH}.toml" ]]; then
-        eval "$(oh-my-posh init zsh --config "$HOME/.config/ohmyposh/${POSH}.toml")"
+        _posh_config="$HOME/.config/ohmyposh/${POSH}.toml"
     elif [[ -f "$HOME/.config/ohmyposh/${POSH}.omp.json" ]]; then
-        eval "$(oh-my-posh init zsh --config "$HOME/.config/ohmyposh/${POSH}.omp.json")"
+        _posh_config="$HOME/.config/ohmyposh/${POSH}.omp.json"
     elif [[ -n "$_posh_themes" && -f "${_posh_themes}/${POSH}.omp.json" ]]; then
-        eval "$(oh-my-posh init zsh --config "${_posh_themes}/${POSH}.omp.json")"
+        _posh_config="${_posh_themes}/${POSH}.omp.json"
     else
-        echo "oh-my-posh: theme '${POSH}' not found"
+        # Auto-download from oh-my-posh built-in themes
+        mkdir -p "$HOME/.config/ohmyposh"
+        local _url="https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/${POSH}.omp.json"
+        local _dest="$HOME/.config/ohmyposh/${POSH}.omp.json"
+        if command -v curl &>/dev/null; then
+            curl -fsSL "$_url" -o "$_dest" 2>/dev/null
+        elif command -v wget &>/dev/null; then
+            wget -qO "$_dest" "$_url" 2>/dev/null
+        fi
+        [[ -s "$_dest" ]] && _posh_config="$_dest" || echo "oh-my-posh: theme '${POSH}' not found"
     fi
+
+    if [[ -n "$_posh_config" ]]; then
+        eval "$(oh-my-posh init zsh --config "$_posh_config")"
+    fi
+    unset _posh_config
     unset _posh_themes
 fi
