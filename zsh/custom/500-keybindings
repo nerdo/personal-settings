@@ -6,3 +6,16 @@ bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
 bindkey '^K' kill-line
 bindkey '^U' backward-kill-line
+
+# Tab accepts autosuggestion if visible, otherwise falls back to completion
+if (( ${+widgets[autosuggest-accept]} )); then
+    _tab_autosuggest_or_complete() {
+        if [[ -n "$POSTDISPLAY" ]]; then
+            zle autosuggest-accept
+        else
+            zle fzf-completion 2>/dev/null || zle expand-or-complete
+        fi
+    }
+    zle -N _tab_autosuggest_or_complete
+    bindkey '^I' _tab_autosuggest_or_complete
+fi
