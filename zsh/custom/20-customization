@@ -28,6 +28,11 @@ plugins=(
     dirhistory
 )
 
+# Platform-specific plugins
+if [[ -f /etc/arch-release ]]; then
+    plugins+=(archlinux)
+fi
+
 # -----------------------------------------------------
 # Set-up oh-my-zsh (auto-install if missing)
 # -----------------------------------------------------
