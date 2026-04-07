@@ -29,6 +29,10 @@ mkdir -p ~/.config/zshrc
 ln -sf ~/personal/settings/zsh/custom ~/.config/zshrc/custom
 ```
 
+**Note:** ml4w updates replace `~/.zshrc` with a symlink to its own loader
+(which only supports 1:1 overrides, not additive modules like `100-zoxide`).
+After an ml4w update, re-run the `ln -sf ... ~/.zshrc` line.
+
 ## File numbering convention
 
 Modules are sourced in sorted order. Use the numbering prefixes to control
