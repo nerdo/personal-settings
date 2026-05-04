@@ -14,17 +14,11 @@ return {
 		"hrsh7th/cmp-cmdline",
 		"hrsh7th/nvim-cmp",
 
-		-- Completion for neovim lua.
-		"folke/neodev.nvim",
 	},
 	config = function()
-		local neodev = require("neodev")
-		neodev.setup({})
-
 		local mason = require("mason")
 		mason.setup({})
 
-		local lspconfig = require("lspconfig")
 		local mason_lspconfig = require("mason-lspconfig")
 		mason_lspconfig.setup({
 			ensure_installed = {
@@ -113,7 +107,7 @@ return {
 			})
 		end
 
-		lspconfig.phpactor.setup({
+		vim.lsp.config('phpactor', {
 			cmd = {
 				"/opt/homebrew/opt/php@8.1/bin/php",
 				vim.fn.stdpath("data") .. "/mason/packages/phpactor/phpactor.phar",
@@ -166,15 +160,17 @@ return {
 				end,
 			},
 		})
+		vim.lsp.enable('phpactor')
 
-		lspconfig.psalm.setup({
+		vim.lsp.config('psalm', {
 			cmd = {
 				"/opt/homebrew/bin/php",
 				vim.fn.stdpath("data") .. "/mason/packages/psalm/vendor/bin/psalm-language-server",
 			},
 		})
+		vim.lsp.enable('psalm')
 
-		lspconfig.gopls.setup({
+		vim.lsp.config('gopls', {
 			settings = {
 				gopls = {
 					hints = {
@@ -189,8 +185,9 @@ return {
 				},
 			},
 		})
+		vim.lsp.enable('gopls')
 
-		lspconfig.ts_ls.setup({
+		vim.lsp.config('ts_ls', {
 			settings = {
 				typescript = {
 					inlayHints = {
@@ -216,31 +213,20 @@ return {
 				},
 			},
 		})
+		vim.lsp.enable('ts_ls')
 
-		lspconfig.lua_ls.setup({
+		vim.lsp.config('lua_ls', {
 			settings = {
 				Lua = {
 					hint = {
 						enable = true,
 					},
-					-- from nvchad's .config/nvim/lua/plugins/configs/lspconfig.lua
-					diagnostics = {
-						globals = { "vim" },
-					},
-					workspace = {
-						checkThirdParty = false,
-						library = {
-							[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-							[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-						},
-						maxPreload = 100000,
-						preloadFileSize = 10000,
-					},
 				},
 			},
 		})
+		vim.lsp.enable('lua_ls')
 
-		lspconfig.jsonls.setup({})
+		vim.lsp.enable('jsonls')
 
 		-- For some dynamic behavior based on whether trobuble is present and open.
 		local trouble_is_present, trouble = pcall(require, "trouble")
