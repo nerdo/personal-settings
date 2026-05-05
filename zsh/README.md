@@ -35,13 +35,14 @@ After an ml4w update, re-run the `ln -sf ... ~/.zshrc` line.
 
 ## File numbering convention
 
-Modules are sourced in sorted order. Use the numbering prefixes to control
-load order:
+Modules are sourced in **lexical** (string) sorted order, so prefixes must be
+zero-padded to the same width or they sort wrong — e.g. `"100"` sorts before
+`"20"`. Use 3-digit prefixes:
 
-| Range   | Purpose                                      |
+| Prefix  | Purpose                                      |
 |---------|----------------------------------------------|
-| `00-`   | Init, exports, PATH                          |
-| `20-`   | Shell setup (oh-my-zsh, prompt, history)     |
+| `000-`  | Init, exports, PATH                          |
+| `020-`  | Shell setup (oh-my-zsh, prompt, history)     |
 | `100-`  | Tool integrations (eza, zoxide, starship...) |
 | `200-`  | Language environments (nvm, pyenv, rust...)   |
 | `500-`  | Keybindings                                  |

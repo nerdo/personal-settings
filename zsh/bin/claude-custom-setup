@@ -1,0 +1,39 @@
+#!/bin/sh
+# requires: bun, uvx
+# usage: claude-custom-setup <tag>
+#   claude-custom-setup default  -> CLAUDE_CONFIG_DIR=~/.claude
+#   claude-custom-setup tsi      -> CLAUDE_CONFIG_DIR=~/.claude-tsi
+
+usage() {
+    cat <<'EOF'
+claude-custom-setup <tag>
+
+Seeds the user-scope MCP servers for a Claude Code config directory.
+A tag is required (this avoids clobbering the wrong config by accident):
+
+  claude-custom-setup default   -> CLAUDE_CONFIG_DIR=~/.claude
+  claude-custom-setup tsi       -> CLAUDE_CONFIG_DIR=~/.claude-tsi
+  claude-custom-setup <tag>     -> CLAUDE_CONFIG_DIR=~/.claude-<tag>
+EOF
+}
+
+if [ -z "$1" ]; then
+    usage
+    exit 1
+fi
+
+if [ "$1" = "default" ]; then
+    CLAUDE_CONFIG_DIR="$HOME/.claude"
+else
+    CLAUDE_CONFIG_DIR="$HOME/.claude-$1"
+fi
+export CLAUDE_CONFIG_DIR
+
+claude mcp add -s user prime-directive -- bunx @strflt/prime-directive-mcp
+claude mcp add -s user context7 -- bunx @upstash/context7-mcp
+claude mcp add -s user clear-thought -- bunx @waldzellai/clear-thought-onepointfive
+claude mcp add -s user json-emitter -- bunx @nerdo/json-emitter-mcp
+claude mcp add -s user playwright -- bunx @playwright/mcp@latest
+claude mcp add -s user precision-math -- bunx @nerdo/precision-math-mcp
+claude mcp add -s user excel -- uvx excel-mcp-server stdio
+claude mcp add -s user -t sse atlassian 'https://mcp.atlassian.com/v1/sse'

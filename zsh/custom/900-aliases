@@ -1,1 +1,5 @@
 alias wake-relentless='wakeonlan 9c:6b:00:c4:e5:c3'
+
+# Claude Code with isolated config dirs (see zsh/bin/claude-custom-setup to seed MCP servers).
+alias claude='CLAUDE_CONFIG_DIR="$HOME/.claude" command claude'
+alias claude-tsi='CLAUDE_CONFIG_DIR="$HOME/.claude-tsi" command claude'

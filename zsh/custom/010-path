@@ -1,3 +1,16 @@
+# On macOS, /etc/paths.d/homebrew adds /opt/homebrew/bin, but path_helper (run from
+# /etc/zprofile) appends it *after* /usr/bin, so Homebrew tools get shadowed by the
+# system ones (e.g. rsync). Re-prepend Homebrew here so its binaries win. Guarded so
+# this is a no-op on Linux/ml4w where brew isn't installed.
+if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# Repo-local scripts (this settings repo's zsh/bin). Resolved from this file's own
+# path (%x), with :A following the custom/ symlink back to the real repo location,
+# so it works regardless of where the repo is cloned.
+export PATH="${${(%):-%x}:A:h:h}/bin:$PATH"
+
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/tsi/bin:$HOME/.composer/vendor/bin:$HOME/.local/bin:$HOME/bin:$HOME/go/bin:$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH
 
