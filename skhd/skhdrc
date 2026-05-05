@@ -1,43 +1,63 @@
-# Apparently order matters here! That means cmd + alt with the same keys need to come before alt keys!
+# ----------------------------------------------------------------------------
+# Modifier scheme (mirrors hypr/conf/nerdo-keybindings.conf $navMod/$moveMod/
+# $wmMod/$shipMod). skhd v0.3.9 has no `.define`, so modifiers are inlined.
+#
+#   alt              — nav   : move focus to adjacent window/display element
+#   shift + alt      — move  : mutate focused window in place (swap)
+#   alt  + ctrl      — wm    : window state toggles + cross-display focus
+#   shift + alt + ctrl — ship : ship focused window across displays
+#
+# skhd matches the FIRST binding that fits a keypress, so multi-modifier
+# combos must come before single-modifier ones that share the trigger key
+# (e.g. alt+ctrl - h before alt - h).
+# ----------------------------------------------------------------------------
 
-# Move windows to displays
-# shift + cmd + ctrl - j : yabai -m window --display south; yabai -m display --focus south
-# shift + cmd + ctrl - k : yabai -m window --display north; yabai -m display --focus north
-# shift + cmd + ctrl - h : yabai -m window --display west ; yabai -m display --focus west
-# shift + cmd + ctrl - l : yabai -m window --display east ; yabai -m display --focus east
+# Cross-display: ship window to another display (3 modifiers)
+shift + alt + ctrl - h : yabai -m window --display west;  yabai -m display --focus west
+shift + alt + ctrl - j : yabai -m window --display south; yabai -m display --focus south
+shift + alt + ctrl - k : yabai -m window --display north; yabai -m display --focus north
+shift + alt + ctrl - l : yabai -m window --display east;  yabai -m display --focus east
 
-# Changing displays.
-cmd + alt - j : yabai -m display --focus south
-cmd + alt - k : yabai -m display --focus north
-cmd + alt - h : yabai -m display --focus west
-cmd + alt - l : yabai -m display --focus east
+# Display focus (2 modifiers, hjkl)
+alt + ctrl - h : yabai -m display --focus west
+alt + ctrl - j : yabai -m display --focus south
+alt + ctrl - k : yabai -m display --focus north
+alt + ctrl - l : yabai -m display --focus east
 
-# Move windows in current space, and if no adjacent slot can be found, move to the next display.
+# Swap window in current space; if no adjacent slot, move to next display
+shift + alt - h : yabai -m window --swap west  || (yabai -m window --display west;  yabai -m display --focus west)
 shift + alt - j : yabai -m window --swap south || (yabai -m window --display south; yabai -m display --focus south)
 shift + alt - k : yabai -m window --swap north || (yabai -m window --display north; yabai -m display --focus north)
-shift + alt - h : yabai -m window --swap west  || (yabai -m window --display west ; yabai -m display --focus west )
-shift + alt - l : yabai -m window --swap east  || (yabai -m window --display east ; yabai -m display --focus east )
+shift + alt - l : yabai -m window --swap east  || (yabai -m window --display east;  yabai -m display --focus east)
 
-# Move and split windows in current space.
+# Warp window in current space (yabai-only; no Hyprland counterpart)
+shift + ctrl - h : yabai -m window --warp west
 shift + ctrl - j : yabai -m window --warp south
 shift + ctrl - k : yabai -m window --warp north
-shift + ctrl - h : yabai -m window --warp west
 shift + ctrl - l : yabai -m window --warp east
 
-# Changing window focus within a space, and if no adjacent window exists, move to the next display.
-alt - j : [[ "$(yabai -m query --spaces --space | jq -r '.type')" == "bsp" ]] && (yabai -m window --focus south || (yabai -m display --focus south)) || (yabai -m window --focus stack.prev || yabai -m window --focus stack.last)
-alt - k : [[ "$(yabai -m query --spaces --space | jq -r '.type')" == "bsp" ]] && (yabai -m window --focus north || (yabai -m display --focus north)) || (yabai -m window --focus stack.next || yabai -m window --focus stack.first)
-alt - h : yabai -m window --focus west  || (yabai -m display --focus west )
-alt - l : yabai -m window --focus east  || (yabai -m display --focus east )
+# Window state toggles (alt+ctrl, letter keys)
+alt + ctrl - f      : yabai -m window --toggle float --grid 4:4:1:1:2:2
+alt + ctrl - return : yabai -m window --toggle native-fullscreen
+alt + ctrl - m      : yabai -m window --toggle zoom-fullscreen
+alt + ctrl - o      : yabai -m window --toggle split
+alt + ctrl - q      : yabai -m window --close
+alt + ctrl - b      : yabai -m space  --balance
+alt + ctrl - s      : [[ "$(yabai -m query --spaces --space | jq -r '.type')" == "bsp" ]] && (yabai -m space --layout stack) || (yabai -m space --layout bsp)
 
-# Toggle window float.
-shift + cmd - f : yabai -m window --toggle float --grid 4:4:1:1:2:2
+# Resize active window (alt+ctrl, arrow keys)
+# Falls back to the opposite edge when the window is at the screen boundary.
+alt + ctrl - right : yabai -m window --resize right:100:0  || yabai -m window --resize left:-100:0
+alt + ctrl - left  : yabai -m window --resize right:-100:0 || yabai -m window --resize left:100:0
+alt + ctrl - down  : yabai -m window --resize bottom:0:100 || yabai -m window --resize top:0:-100
+alt + ctrl - up    : yabai -m window --resize bottom:0:-100 || yabai -m window --resize top:0:100
 
-# Toggle fullscreen.
-alt - up : yabai -m window --toggle zoom-fullscreen
+# Window focus within a space; if no adjacent window in bsp, hop to display.
+# In stack layouts, fall through to stack.prev/next.
+alt - h : yabai -m window --focus west  || yabai -m display --focus west
+alt - j : [[ "$(yabai -m query --spaces --space | jq -r '.type')" == "bsp" ]] && (yabai -m window --focus south || yabai -m display --focus south) || (yabai -m window --focus stack.prev || yabai -m window --focus stack.last)
+alt - k : [[ "$(yabai -m query --spaces --space | jq -r '.type')" == "bsp" ]] && (yabai -m window --focus north || yabai -m display --focus north) || (yabai -m window --focus stack.next || yabai -m window --focus stack.first)
+alt - l : yabai -m window --focus east  || yabai -m display --focus east
 
-# Re-balance windows in current space.
-shift + cmd - b : yabai -m space --balance
-
-# Toggle bsp and stack layout on current space
-alt - space : [[ "$(yabai -m query --spaces --space | jq -r '.type')" == "bsp" ]] && (yabai -m space --layout stack) || (yabai -m space --layout bsp)
+# Cycle windows in current space
+alt - tab : yabai -m window --focus next || yabai -m window --focus first
