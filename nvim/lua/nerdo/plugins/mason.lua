@@ -167,6 +167,17 @@ return {
 				"/opt/homebrew/bin/php",
 				vim.fn.stdpath("data") .. "/mason/packages/psalm/vendor/bin/psalm-language-server",
 			},
+			-- Only start Psalm in projects that are actually set up for it.
+			-- Without a psalm.xml the language server exits immediately, and on
+			-- legacy codebases (e.g. PHP 7.0 projects) Psalm's analyzer crashes.
+			-- phpactor is the primary PHP LSP; Psalm is opt-in per project.
+			root_dir = function(bufnr, on_dir)
+				local fname = vim.api.nvim_buf_get_name(bufnr)
+				local root = vim.fs.root(fname, { "psalm.xml", "psalm.xml.dist" })
+				if root then
+					on_dir(root)
+				end
+			end,
 		})
 		vim.lsp.enable('psalm')
 
