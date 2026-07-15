@@ -3,3 +3,9 @@ alias wake-relentless='wakeonlan 9c:6b:00:c4:e5:c3'
 # Claude Code with isolated config dirs (see zsh/bin/claude-custom-setup to seed MCP servers).
 alias claude='CLAUDE_CONFIG_DIR="$HOME/.claude" command claude'
 alias claude-tsi='CLAUDE_CONFIG_DIR="$HOME/.claude-tsi" command claude'
+
+# omp (@oh-my-pi/pi-coding-agent): hide kitty from omp inside tmux so it skips the OSC 99
+# notification capability probe — under tmux its reply leaks into the pane as text and
+# switches panes. `env` execs the real binary from PATH, so no alias recursion.
+# Reported upstream: https://github.com/can1357/oh-my-pi/issues/5582
+alias omp='env -u KITTY_WINDOW_ID omp'
