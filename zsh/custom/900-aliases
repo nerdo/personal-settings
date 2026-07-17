@@ -1,11 +1,38 @@
 alias wake-relentless='wakeonlan 9c:6b:00:c4:e5:c3'
 
 # Claude Code with isolated config dirs (see zsh/bin/claude-custom-setup to seed MCP servers).
-alias claude='CLAUDE_CONFIG_DIR="$HOME/.claude" command claude'
-alias claude-tsi='CLAUDE_CONFIG_DIR="$HOME/.claude-tsi" command claude'
+# Functions (not aliases) so a caller can override any of these per-invocation while the
+# defaults still apply otherwise, e.g. `LANGFUSE_TRACING_ENVIRONMENT=scratch claude`.
+# `${VAR:-default}` only sees a caller's prefix assignment when it's read inside a function
+# body; an alias would expand it before the assignment takes effect. `command` runs the real
+# binary, bypassing this function (no recursion).
+claude() {
+  PRIME_DIRECTIVE_CLI_INIT_FLAGS="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---no-required-reading-contents}" \
+  LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-personal}" \
+  CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}" \
+    command claude "$@"
+}
+claude-tsi() {
+  PRIME_DIRECTIVE_CLI_INIT_FLAGS="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---no-required-reading-contents}" \
+  LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-tsi}" \
+  CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-tsi}" \
+    command claude "$@"
+}
 
 # omp (@oh-my-pi/pi-coding-agent): hide kitty from omp inside tmux so it skips the OSC 99
 # notification capability probe — under tmux its reply leaks into the pane as text and
-# switches panes. `env` execs the real binary from PATH, so no alias recursion.
+# switches panes. `env` execs the real binary from PATH, so no alias/function recursion.
 # Reported upstream: https://github.com/can1357/oh-my-pi/issues/5582
-alias omp='env -u KITTY_WINDOW_ID omp'
+# Defaults below are overridable per-call, e.g. `LANGFUSE_TRACING_ENVIRONMENT=scratch omp`
+# or `PI_LANGFUSE_MAX_STRING_LENGTH=40000 omp` — anything you don't set keeps the default.
+omp() {
+  env -u KITTY_WINDOW_ID \
+    LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-omp}" \
+    PI_LANGFUSE_MAX_STRING_LENGTH="${PI_LANGFUSE_MAX_STRING_LENGTH:-off}" \
+    PI_LANGFUSE_MAX_TOOL_PAYLOAD_LENGTH="${PI_LANGFUSE_MAX_TOOL_PAYLOAD_LENGTH:-off}" \
+    PI_LANGFUSE_MAX_DEPTH="${PI_LANGFUSE_MAX_DEPTH:-off}" \
+    PI_LANGFUSE_MAX_ARRAY_ITEMS="${PI_LANGFUSE_MAX_ARRAY_ITEMS:-off}" \
+    PI_LANGFUSE_MAX_OBJECT_KEYS="${PI_LANGFUSE_MAX_OBJECT_KEYS:-off}" \
+    PI_LANGFUSE_MAX_PAYLOAD_NODES="${PI_LANGFUSE_MAX_PAYLOAD_NODES:-off}" \
+    omp "$@"
+}
