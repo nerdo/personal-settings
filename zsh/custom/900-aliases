@@ -19,7 +19,30 @@ alias wake-relentless='wakeonlan 9c:6b:00:c4:e5:c3'
 # recognized no-op naming the CLI's manifest-only default — the model then fetches documents live
 # with `get`/`triage` as today). Fails loudly: if the CLI errors or returns nothing, the real
 # `claude`/`claude-tsi` binary is never invoked with a broken or empty system prompt.
+#
+# --append-system-prompt is only valid for the default (launch-the-agent) invocation — not for
+# `claude`'s own subcommands (`claude mcp add`, `claude plugin ...`, etc.), which have their own
+# arg parsers that reject it outright (observed via `omp plugin marketplace update ...`, the same
+# failure applies to claude's subcommands). When $1 is one of those, skip baking entirely and
+# pass through untouched — no need to pay for a prime-directive call on a management command.
+_pd_is_subcommand() {
+  local first="$1"
+  shift
+  local candidate
+  for candidate in "$@"; do
+    [[ "$first" == "$candidate" ]] && return 0
+  done
+  return 1
+}
+# Kept in sync by hand against `claude --help`'s Commands: section.
+_PD_CLAUDE_SUBCOMMANDS=(agents auth auto-mode doctor gateway install mcp plugin plugins project setup-token ultrareview update upgrade)
 claude() {
+  if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_CLAUDE_SUBCOMMANDS[@]}"; then
+    LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-personal}" \
+    CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}" \
+      command claude "$@"
+    return $?
+  fi
   local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
   local -a init_flags
   init_flags=(${=flags_str})
@@ -37,6 +60,12 @@ claude() {
     command claude --append-system-prompt "$prompt" "$@"
 }
 claude-tsi() {
+  if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_CLAUDE_SUBCOMMANDS[@]}"; then
+    LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-tsi}" \
+    CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-tsi}" \
+      command claude "$@"
+    return $?
+  fi
   local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
   local -a init_flags
   init_flags=(${=flags_str})
@@ -68,7 +97,25 @@ claude-tsi() {
 # --required-reading-contents default, same fail-loud behavior. This is what makes the
 # prime-directive-cli-harness omp extension (hooks/pre/pd-cli-protocol.ts) unnecessary for
 # omp too — pair with the nudge-only prime-directive-nudge-harness extension instead.
+#
+# Same subcommand caveat as claude() above: --append-system-prompt is rejected by omp's
+# management subcommands (confirmed: `omp plugin marketplace update ...` errors with
+# "Unknown option '--append-system-prompt'"). Skip baking and pass through untouched when $1
+# names one of those. Kept in sync by hand against `omp --help`'s COMMANDS section.
+_PD_OMP_SUBCOMMANDS=(acp agents auth-broker auth-gateway bench cleanse commit completions config dry-balance gallery gc grep grievances install join models plugin read say search setup shell ssh stats tiny-models token ttsr update usage)
 omp() {
+  if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_OMP_SUBCOMMANDS[@]}"; then
+    env -u KITTY_WINDOW_ID \
+      LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-omp}" \
+      PI_LANGFUSE_MAX_STRING_LENGTH="${PI_LANGFUSE_MAX_STRING_LENGTH:-off}" \
+      PI_LANGFUSE_MAX_TOOL_PAYLOAD_LENGTH="${PI_LANGFUSE_MAX_TOOL_PAYLOAD_LENGTH:-off}" \
+      PI_LANGFUSE_MAX_DEPTH="${PI_LANGFUSE_MAX_DEPTH:-off}" \
+      PI_LANGFUSE_MAX_ARRAY_ITEMS="${PI_LANGFUSE_MAX_ARRAY_ITEMS:-off}" \
+      PI_LANGFUSE_MAX_OBJECT_KEYS="${PI_LANGFUSE_MAX_OBJECT_KEYS:-off}" \
+      PI_LANGFUSE_MAX_PAYLOAD_NODES="${PI_LANGFUSE_MAX_PAYLOAD_NODES:-off}" \
+      omp "$@"
+    return $?
+  fi
   local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
   local -a init_flags
   init_flags=(${=flags_str})
