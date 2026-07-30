@@ -6,17 +6,52 @@ alias wake-relentless='wakeonlan 9c:6b:00:c4:e5:c3'
 # `${VAR:-default}` only sees a caller's prefix assignment when it's read inside a function
 # body; an alias would expand it before the assignment takes effect. `command` runs the real
 # binary, bypassing this function (no recursion).
+#
+# Both functions bake the prime-directive corpus into Claude Code's system prompt via a live
+# `prime-directive tools initialize` command substitution, passed through `--append-system-prompt`.
+# This is a system-prompt-level injection: it survives /compact untouched (unlike the retired
+# prime-directive-cli-harness plugin's SessionStart/PreCompact hook dance, which lived in message
+# history and could be summarized away) and is regenerated fresh on every invocation, so it can
+# never go stale within a session — no snapshot file, no separate regen chain to remember.
+# PRIME_DIRECTIVE_CLI_INIT_FLAGS defaults to --required-reading-contents (inline every required
+# document's full body, ~124KB); override per-call to go back to the manifest-only primer, e.g.
+# `PRIME_DIRECTIVE_CLI_INIT_FLAGS=--no-required-reading-contents claude` (that flag is a
+# recognized no-op naming the CLI's manifest-only default — the model then fetches documents live
+# with `get`/`triage` as today). Fails loudly: if the CLI errors or returns nothing, the real
+# `claude`/`claude-tsi` binary is never invoked with a broken or empty system prompt.
 claude() {
-  PRIME_DIRECTIVE_CLI_INIT_FLAGS="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---no-required-reading-contents}" \
+  local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
+  local -a init_flags
+  init_flags=(${=flags_str})
+  local prompt
+  prompt="$(prime-directive tools initialize "${init_flags[@]}")" || {
+    echo "claude: prime-directive tools initialize failed; aborting" >&2
+    return 1
+  }
+  if [[ -z "$prompt" ]]; then
+    echo "claude: prime-directive tools initialize returned no output; aborting" >&2
+    return 1
+  fi
   LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-personal}" \
   CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}" \
-    command claude "$@"
+    command claude --append-system-prompt "$prompt" "$@"
 }
 claude-tsi() {
-  PRIME_DIRECTIVE_CLI_INIT_FLAGS="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---no-required-reading-contents}" \
+  local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
+  local -a init_flags
+  init_flags=(${=flags_str})
+  local prompt
+  prompt="$(prime-directive tools initialize "${init_flags[@]}")" || {
+    echo "claude-tsi: prime-directive tools initialize failed; aborting" >&2
+    return 1
+  }
+  if [[ -z "$prompt" ]]; then
+    echo "claude-tsi: prime-directive tools initialize returned no output; aborting" >&2
+    return 1
+  fi
   LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-tsi}" \
   CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-tsi}" \
-    command claude "$@"
+    command claude --append-system-prompt "$prompt" "$@"
 }
 
 # omp (@oh-my-pi/pi-coding-agent): hide kitty from omp inside tmux so it skips the OSC 99
@@ -25,9 +60,28 @@ claude-tsi() {
 # Reported upstream: https://github.com/can1357/oh-my-pi/issues/5582
 # Defaults below are overridable per-call, e.g. `LANGFUSE_TRACING_ENVIRONMENT=scratch omp`
 # or `PI_LANGFUSE_MAX_STRING_LENGTH=40000 omp` — anything you don't set keeps the default.
+#
+# Bakes the prime-directive corpus into omp's system prompt the same way the claude()/
+# claude-tsi() functions above do — a live `prime-directive tools initialize` command
+# substitution passed through omp's own `--append-system-prompt` flag — instead of an
+# extension calling the CLI itself. Same PRIME_DIRECTIVE_CLI_INIT_FLAGS override, same
+# --required-reading-contents default, same fail-loud behavior. This is what makes the
+# prime-directive-cli-harness omp extension (hooks/pre/pd-cli-protocol.ts) unnecessary for
+# omp too — pair with the nudge-only prime-directive-nudge-harness extension instead.
 omp() {
+  local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
+  local -a init_flags
+  init_flags=(${=flags_str})
+  local prompt
+  prompt="$(prime-directive tools initialize "${init_flags[@]}")" || {
+    echo "omp: prime-directive tools initialize failed; aborting" >&2
+    return 1
+  }
+  if [[ -z "$prompt" ]]; then
+    echo "omp: prime-directive tools initialize returned no output; aborting" >&2
+    return 1
+  fi
   env -u KITTY_WINDOW_ID \
-    PRIME_DIRECTIVE_CLI_INIT_FLAGS="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---no-required-reading-contents}" \
     LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-omp}" \
     PI_LANGFUSE_MAX_STRING_LENGTH="${PI_LANGFUSE_MAX_STRING_LENGTH:-off}" \
     PI_LANGFUSE_MAX_TOOL_PAYLOAD_LENGTH="${PI_LANGFUSE_MAX_TOOL_PAYLOAD_LENGTH:-off}" \
@@ -35,5 +89,5 @@ omp() {
     PI_LANGFUSE_MAX_ARRAY_ITEMS="${PI_LANGFUSE_MAX_ARRAY_ITEMS:-off}" \
     PI_LANGFUSE_MAX_OBJECT_KEYS="${PI_LANGFUSE_MAX_OBJECT_KEYS:-off}" \
     PI_LANGFUSE_MAX_PAYLOAD_NODES="${PI_LANGFUSE_MAX_PAYLOAD_NODES:-off}" \
-    omp "$@"
+    omp --append-system-prompt "$prompt" "$@"
 }
