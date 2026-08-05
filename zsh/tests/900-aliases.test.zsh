@@ -68,6 +68,32 @@ assert_child_env() {
   fi
 }
 
+# --- hermetic environment ----------------------------------------------------
+
+# The suite runs in a developer's own shell, where 100-secrets has already
+# exported the real TSI_ values. The mapping under test enumerates exactly those
+# names, so a failing assertion would print live API keys to the terminal.
+# Everything below must see only its own fixtures.
+assert_no_real_tsi_vars() {
+  local -a leftover
+  leftover=(${(ko)parameters[(I)TSI_*]})
+
+  if (( ${#leftover} == 0 )); then
+    pass "the suite sees no TSI_ variables beyond its own fixtures"
+  else
+    # Names only. Printing the values here is the leak this guards against.
+    fail "the suite sees no TSI_ variables beyond its own fixtures" \
+      "inherited from the real environment: ${leftover[*]}"
+  fi
+}
+
+for _real in ${(ko)parameters[(I)TSI_*]}; do
+  unset "$_real"
+done
+unset _real
+
+assert_no_real_tsi_vars
+
 # --- walking skeleton: the mapping reaches the binary at all -----------------
 
 export TSI_SKELETON=wired
