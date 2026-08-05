@@ -59,11 +59,42 @@ claude() {
   CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}" \
     command claude --append-system-prompt "$prompt" "$@"
 }
+# Work-context environment for the -tsi commands.
+#
+# ~/.secrets/export/ (loaded by custom/100-secrets) holds both halves of each
+# split value — N8N_API_URL alongside TSI_N8N_API_URL — and exports both into
+# every shell. This maps the TSI_-prefixed half onto the unprefixed name for the
+# duration of one -tsi invocation, so adding a TSI_FOO file to that directory
+# starts applying with no edit here.
+#
+# The prefixed originals are left in place: anything that reads TSI_FOO directly
+# keeps working.
+#
+# The value wins unconditionally rather than through the `${VAR:-default}` idiom
+# the other functions use. That idiom only fills a variable that is unset, and
+# 100-secrets always sets the unprefixed name, so it would never fire. The cost
+# is that `N8N_API_URL=x claude-tsi` no longer overrides per-invocation — zsh
+# offers no way to tell a caller's prefix assignment apart from an inherited one.
+#
+# ${(tP)name} is the type of the variable that `name` names; only `*export*`
+# types are real environment variables, which keeps a stray local TSI_-prefixed
+# shell variable out of the child. Results go into a global array rather than
+# stdout so values containing whitespace survive intact.
+_tsi_env_overrides() {
+  local name
+  _TSI_ENV_OVERRIDES=()
+  for name in ${(ko)parameters[(I)TSI_*]}; do
+    [[ ${(tP)name} == *export* ]] || continue
+    _TSI_ENV_OVERRIDES+=("${name#TSI_}=${(P)name}")
+  done
+}
 claude-tsi() {
   if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_CLAUDE_SUBCOMMANDS[@]}"; then
-    LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-tsi}" \
-    CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-tsi}" \
-      command claude "$@"
+    _tsi_env_overrides
+    env "${_TSI_ENV_OVERRIDES[@]}" \
+      LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-tsi}" \
+      CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-tsi}" \
+      claude "$@"
     return $?
   fi
   local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
@@ -78,9 +109,11 @@ claude-tsi() {
     echo "claude-tsi: prime-directive tools initialize returned no output; aborting" >&2
     return 1
   fi
-  LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-tsi}" \
-  CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-tsi}" \
-    command claude --append-system-prompt "$prompt" "$@"
+  _tsi_env_overrides
+  env "${_TSI_ENV_OVERRIDES[@]}" \
+    LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-tsi}" \
+    CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-tsi}" \
+    claude --append-system-prompt "$prompt" "$@"
 }
 
 # omp (@oh-my-pi/pi-coding-agent): hide kitty from omp inside tmux so it skips the OSC 99
