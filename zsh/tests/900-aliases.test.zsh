@@ -79,10 +79,10 @@ assert_no_real_tsi_vars() {
   leftover=(${(ko)parameters[(I)TSI_*]})
 
   if (( ${#leftover} == 0 )); then
-    pass "the suite sees no TSI_ variables beyond its own fixtures"
+    pass "the suite's visible TSI_ set is exactly its own fixtures"
   else
     # Names only. Printing the values here is the leak this guards against.
-    fail "the suite sees no TSI_ variables beyond its own fixtures" \
+    fail "the suite's visible TSI_ set is exactly its own fixtures" \
       "inherited from the real environment: ${leftover[*]}"
   fi
 }
