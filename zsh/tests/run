@@ -1,0 +1,33 @@
+#!/usr/bin/env zsh
+# Runs every zsh test suite in this directory.
+# Usage: zsh/tests/run
+#
+# Exits non-zero if any suite fails, so it is usable as a gate.
+
+set -u
+
+tests_dir="${0:A:h}"
+suites=("$tests_dir"/*.test.zsh(N))
+failed=()
+
+if (( ${#suites} == 0 )); then
+  print -r -- "no test suites found in $tests_dir"
+  exit 1
+fi
+
+for suite in "${suites[@]}"; do
+  print -r -- "=== ${suite:t} ==="
+  if zsh "$suite"; then
+    :
+  else
+    failed+=("${suite:t}")
+  fi
+  print -r -- ""
+done
+
+if (( ${#failed} > 0 )); then
+  print -r -- "${#failed} suite(s) failed: ${failed[*]}"
+  exit 1
+fi
+
+print -r -- "${#suites} suite(s) passed"
