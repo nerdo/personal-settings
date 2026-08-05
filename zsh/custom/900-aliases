@@ -72,8 +72,8 @@ claude() {
 #
 # The value wins unconditionally rather than through the `${VAR:-default}` idiom
 # the other functions use. That idiom only fills a variable that is unset, and
-# 100-secrets always sets the unprefixed name, so it would never fire. The cost
-# is that `N8N_API_URL=x claude-tsi` no longer overrides per-invocation — zsh
+# 100-secrets always sets the unprefixed name, so it would never fire. As a
+# result `N8N_API_URL=x claude-tsi` no longer overrides per-invocation — zsh
 # offers no way to tell a caller's prefix assignment apart from an inherited one.
 #
 # ${(tP)name} is the type of the variable that `name` names; only `*export*`
