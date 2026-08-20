@@ -176,6 +176,78 @@ assert_child_env "claude-tsi given a management subcommand runs the binary with 
 assert_child_args "claude-tsi given a management subcommand reaches the binary without a baked system prompt" \
   "mcp"
 
+# --- dsh (@deepseek-ai/dsh) --------------------------------------------------
+
+# The DeepSeek Harness launcher has no --append-system-prompt flag: it parses
+# only its own options and hands everything after them to the booted profile's
+# app. The corpus therefore travels in PRIME_DIRECTIVE_PROMPT, which the
+# home-level $DSH_HOME/cordis.patch.yml reads through a `!!js` expression to
+# build the order-0 deployment persona. These assertions cover what the binary
+# receives, which is the contract that file depends on.
+
+cat > "$tmp_dir/bin/dsh" <<FAKE
+#!/usr/bin/env zsh
+print -r -- "ARGS: \$*" > "$dump_file"
+env >> "$dump_file"
+FAKE
+chmod +x "$tmp_dir/bin/dsh"
+
+# Walking skeleton: the corpus reaches the binary at all.
+dsh >/dev/null 2>&1
+assert_child_env "dsh carries the corpus to the binary in PRIME_DIRECTIVE_PROMPT" \
+  PRIME_DIRECTIVE_PROMPT "fake corpus"
+
+# No flag is injected, because the launcher has none to inject into.
+dsh --profile web >/dev/null 2>&1
+assert_child_args "dsh passes its arguments through untouched" \
+  "--profile web"
+
+# `web` boots an agent, so it is not a management subcommand and still bakes.
+dsh web --no-open >/dev/null 2>&1
+assert_child_env "dsh web bakes the corpus, because web boots an agent" \
+  PRIME_DIRECTIVE_PROMPT "fake corpus"
+
+# `plugin` forwards to pnpm and boots no agent, so baking it would spend a
+# prime-directive call on a package install.
+dsh plugin add some-package >/dev/null 2>&1
+assert_child_env "dsh plugin skips baking, because it boots no agent" \
+  PRIME_DIRECTIVE_PROMPT "<unset>"
+assert_child_args "dsh plugin reaches the binary with its arguments intact" \
+  "plugin add some-package"
+
+# The flags override reaches the CLI, so a caller can go back to the
+# manifest-only primer.
+cat > "$tmp_dir/bin/prime-directive" <<'FAKE'
+#!/usr/bin/env zsh
+print -r -- "flags: $*"
+FAKE
+PRIME_DIRECTIVE_CLI_INIT_FLAGS=--no-required-reading-contents dsh >/dev/null 2>&1
+assert_child_env "dsh forwards PRIME_DIRECTIVE_CLI_INIT_FLAGS to the prime-directive CLI" \
+  PRIME_DIRECTIVE_PROMPT "flags: tools initialize --no-required-reading-contents"
+
+# Fail loud: an unbuildable corpus must never reach the model as a silent
+# empty persona.
+cat > "$tmp_dir/bin/prime-directive" <<'FAKE'
+#!/usr/bin/env zsh
+print -r -- "corpus unreachable" >&2
+exit 1
+FAKE
+rm -f "$dump_file"
+dsh >/dev/null 2>&1
+dsh_status=$?
+if (( dsh_status != 0 )) && [[ ! -e "$dump_file" ]]; then
+  pass "dsh aborts without invoking the binary when the corpus cannot be built"
+else
+  fail "dsh aborts without invoking the binary when the corpus cannot be built" \
+    "returned $dsh_status; dump file $([[ -e "$dump_file" ]] && print -n written || print -n absent)"
+fi
+
+# Restore the succeeding fake for anything added after this block.
+cat > "$tmp_dir/bin/prime-directive" <<'FAKE'
+#!/usr/bin/env zsh
+print -r -- "fake corpus"
+FAKE
+
 if (( failures > 0 )); then
   print -r -- ""
   print -r -- "$failures assertion(s) failed"

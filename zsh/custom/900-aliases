@@ -171,3 +171,45 @@ omp() {
     PI_LANGFUSE_MAX_PAYLOAD_NODES="${PI_LANGFUSE_MAX_PAYLOAD_NODES:-off}" \
     omp --append-system-prompt "$prompt" "$@"
 }
+
+# dsh (@deepseek-ai/dsh, the DeepSeek Harness): bake the prime-directive corpus
+# into the harness system prompt, the same live `prime-directive tools
+# initialize` substitution the claude()/claude-tsi()/omp() functions above use,
+# with the same PRIME_DIRECTIVE_CLI_INIT_FLAGS override, the same
+# --required-reading-contents default, and the same fail-loud behavior.
+#
+# The delivery differs. dsh has no --append-system-prompt flag: its launcher
+# parses only its own options (--profile, --patch, --dump-config) and hands
+# everything after the first token it does not recognize to the booted
+# profile's app. So the corpus travels in PRIME_DIRECTIVE_PROMPT, and the
+# home-level ~/.dsh/cordis.patch.yml reads that variable through a `!!js`
+# expression to build the order-0 `deployment:persona` section. Both halves are
+# required: this function without that file exports a variable nothing reads.
+#
+# `env` execs the real binary from PATH, so no function recursion.
+#
+# Arguments that boot no agent, and therefore should not spend a
+# prime-directive call: the `plugin` subcommand (it forwards to pnpm) and the
+# launcher's own help and version flags. `web` is NOT one of them — it is an
+# alias for `--profile web` and boots an agent, so it bakes like a bare launch.
+# Kept in sync by hand against `dsh --help`'s Commands and Options sections.
+_PD_DSH_NO_BOOT_ARGS=(plugin --help -h --version -V)
+dsh() {
+  if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_DSH_NO_BOOT_ARGS[@]}"; then
+    command dsh "$@"
+    return $?
+  fi
+  local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
+  local -a init_flags
+  init_flags=(${=flags_str})
+  local prompt
+  prompt="$(prime-directive tools initialize "${init_flags[@]}")" || {
+    echo "dsh: prime-directive tools initialize failed; aborting" >&2
+    return 1
+  }
+  if [[ -z "$prompt" ]]; then
+    echo "dsh: prime-directive tools initialize returned no output; aborting" >&2
+    return 1
+  fi
+  env PRIME_DIRECTIVE_PROMPT="$prompt" dsh "$@"
+}
