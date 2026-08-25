@@ -215,6 +215,29 @@ assert_child_env "dsh plugin skips baking, because it boots no agent" \
 assert_child_args "dsh plugin reaches the binary with its arguments intact" \
   "plugin add some-package"
 
+# --- dsh Langfuse labelling ------------------------------------------------
+
+# dsh-plugin-langfuse takes its Langfuse environment from cordis config rather
+# than from the process environment, so this variable only does anything in
+# company with the `metadata.environment` row in
+# $DSH_HOME/profiles/web/cordis.patch.yml that reads it. These assertions
+# cover the half this file owns: what the binary is invoked with.
+#
+# The suite runs in a developer's own shell, which may already carry a
+# LANGFUSE_TRACING_ENVIRONMENT exported by an outer harness. The default under
+# test is only observable when nothing is inherited.
+unset LANGFUSE_TRACING_ENVIRONMENT
+
+dsh >/dev/null 2>&1
+assert_child_env "dsh labels its traces dsh when the caller names no environment" \
+  LANGFUSE_TRACING_ENVIRONMENT dsh
+
+# The same per-invocation override the claude()/omp() functions offer, so one
+# session can be filed somewhere else without editing this file.
+LANGFUSE_TRACING_ENVIRONMENT=scratch dsh >/dev/null 2>&1
+assert_child_env "dsh carries a caller's environment through in place of the default" \
+  LANGFUSE_TRACING_ENVIRONMENT scratch
+
 # The flags override reaches the CLI, so a caller can go back to the
 # manifest-only primer.
 cat > "$tmp_dir/bin/prime-directive" <<'FAKE'

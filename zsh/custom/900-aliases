@@ -186,6 +186,17 @@ omp() {
 # expression to build the order-0 `deployment:persona` section. Both halves are
 # required: this function without that file exports a variable nothing reads.
 #
+# Langfuse labelling travels the same two-halves route, and for the same
+# reason. dsh-plugin-langfuse reads no environment variable for it:
+# `metadata.environment` is static cordis config, stamped on every exported
+# span as the `langfuse.environment` attribute. So this function sets
+# LANGFUSE_TRACING_ENVIRONMENT (default `dsh`, overridable per-call like the
+# claude()/omp() defaults above) and the `session-telemetry-langfuse` row in
+# $DSH_HOME/profiles/web/cordis.patch.yml reads it into that config. Without
+# that row this variable reaches a binary nothing reads it in. The plugin
+# rejects a value outside ^(?!langfuse)[a-z0-9-_]+$ at load, so a malformed
+# override stops the boot rather than mislabelling a session.
+#
 # `env` execs the real binary from PATH, so no function recursion.
 #
 # Arguments that boot no agent, and therefore should not spend a
@@ -211,5 +222,6 @@ dsh() {
     echo "dsh: prime-directive tools initialize returned no output; aborting" >&2
     return 1
   fi
-  env PRIME_DIRECTIVE_PROMPT="$prompt" dsh "$@"
+  env LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-dsh}" \
+    PRIME_DIRECTIVE_PROMPT="$prompt" dsh "$@"
 }
