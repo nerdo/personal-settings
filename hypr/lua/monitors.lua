@@ -24,9 +24,15 @@ hl.monitor({
     scale = 1.0,
 })
 
+-- 60Hz, not 119.88, deliberately. At 4K@120 this panel drops to "no signal" and
+-- sleeps within seconds — the compositor and DRM both report a healthy modeset,
+-- so the failure is link bandwidth, not config. 3840x2160@120 needs ~25.9 Gbps,
+-- right at the DP 1.4 HBR3 ceiling, so it only works with DSC or a cable that
+-- can actually hold HBR3. Replugging fixed a total blackout; the rate cap fixed
+-- the dropouts. Retry 119.88 after swapping in a VESA-certified DP 1.4/2.1 cable.
 hl.monitor({
     output = "DP-2",
-    mode = "3840x2160@119.88",
+    mode = "3840x2160@60",
     position = "-2160x-1680",
     scale = 1.0,
     transform = 1,

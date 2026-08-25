@@ -73,4 +73,9 @@ hl.workspace_rule({
 -- replacement (same semantics: fires at compositor start, not on config reload).
 hl.on("hyprland.start", function()
     hl.exec_cmd("sleep 1 && xrandr --output DP-3 --primary")
+
+    -- Keep the portrait wallpaper on the vertical monitor. ML4W applies one
+    -- wallpaper to every output, so DP-2 is overwritten at login and on each
+    -- wallpaper change; this watches and puts it back. See the script header.
+    hl.exec_cmd("~/personal/settings/hypr/scripts/wallpaper-per-monitor.sh --watch")
 end)
