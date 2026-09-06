@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
-# Tests for the eza aliases in ./100-eza.
-# Run: zsh zsh/custom/100-eza.test.zsh
+# Tests for the eza aliases in ./900-eza.
+# Run: zsh zsh/tests/900-eza.test.zsh
 
 set -u
 
@@ -20,7 +20,7 @@ fail() { print "FAIL - $1"; print "       $2"; (( failures++ )) }
 
 # Source the production aliases. Nothing here re-declares them: the file under
 # test is the only definition, so a change to it is what these assertions see.
-source "$custom_dir/100-eza"
+source "$custom_dir/900-eza"
 
 # custom/ is a load path, not a test path. A test file placed there is sourced
 # at every shell startup, printing its output into the user's session.

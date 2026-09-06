@@ -1,0 +1,9 @@
+# Numbered into the alias tier, not the 100- tool tier, because ml4w's
+# 25-aliases also aliases ls. Module names sort through the locale's collation,
+# which ignores the "-", so ml4w's 25-aliases lands after every 200- module and
+# would overwrite an eza alias set at 100-. Anything that has to beat an ml4w
+# default needs a number above ml4w's own.
+if (( $+commands[eza] )); then
+    alias ls='eza --icons=auto'
+    alias l='eza -al -g --header --git --icons=auto'
+fi

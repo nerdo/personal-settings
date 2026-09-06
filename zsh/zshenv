@@ -1,0 +1,52 @@
+#            _
+#    _______| |__   ___ _ ____   __
+#   |_  / __| '_ \ / _ \ '_ \ \ / /
+#  _ / /\__ \ | | |  __/ | | \ V /
+# (_)___|___/_| |_|\___|_| |_|\_/
+#
+# -----------------------------------------------------
+# Startup anchor, outside ml4w's reach
+# -----------------------------------------------------
+
+# ml4w owns ~/.zshrc and ~/.config/zshrc — both are symlinks into ~/.mydotfiles,
+# so an ml4w update reverts the loader and can take the ~/.config/zshrc/custom
+# symlink with it. Its loader also sources a custom/ module only when the name
+# shadows one of ml4w's own, so additive modules never run under it at all.
+#
+# ml4w ships no .zshenv, and zsh reads ~/.zshenv for every shell — interactive or
+# not. This file is therefore the one place that survives an ml4w update, and it
+# is what repairs the rest.
+#
+# Keep the exports here to what is safe to load everywhere: nothing that prints,
+# nothing that assumes a terminal. Aliases, prompts, and keybindings need an
+# interactive shell and belong in custom/, loaded by zshrc.
+#
+# Setup: ln -sf ~/personal/settings/zsh/zshenv ~/.zshenv
+
+# Resolve the repo from this file's own path (%x), with :A following the
+# ~/.zshenv symlink back to the real location, so nothing here reaches through an
+# ml4w-owned path. Sourced unguarded: a missing module means a broken checkout,
+# and silence is what hid the unset secrets in the first place.
+_zshenv_dir="${${(%):-%x}:A:h}"
+
+# Also picked up by zshrc's custom/ loop when that loader is active. Re-exporting
+# the same values is a no-op, so both paths can load it.
+source "$_zshenv_dir/custom/100-secrets"
+
+# -----------------------------------------------------
+# Repair ~/.zshrc
+# -----------------------------------------------------
+
+# An ml4w update points ~/.zshrc back at its own loader, which drops every
+# additive module in custom/. zsh reads .zshenv before .zshrc, so repointing the
+# link here fixes the very shell that noticed — there is no manual step after an
+# update, and no window where the modules are missing.
+#
+# Set ZSHRC_NO_SELF_HEAL=1 to leave ~/.zshrc alone and run ml4w's loader as it
+# ships. -ef compares the resolved files, so a link that already points here
+# costs two stats and no write.
+if [[ -z ${ZSHRC_NO_SELF_HEAL:-} && ! $HOME/.zshrc -ef $_zshenv_dir/zshrc ]]; then
+    ln -sfn -- "$_zshenv_dir/zshrc" "$HOME/.zshrc"
+fi
+
+unset _zshenv_dir

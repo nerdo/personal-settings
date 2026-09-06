@@ -8,36 +8,53 @@
 # zshrc loader (compatible with ml4w)
 # -----------------------------------------------------
 
-# Loads modules from ~/.config/zshrc/ and ~/.config/zshrc/custom/.
-# When both dirs contain a file with the same name, the custom/ version wins.
-# Files only in custom/ are also sourced (additions).
-# This lets ml4w manage its defaults while personal config lives in custom/.
-# On macOS (no ml4w), just populate custom/ — everything still loads.
+# Loads modules from ~/.config/zshrc/ and this repo's custom/.
+# When both contain a module with the same name, custom/ wins. Modules only in
+# custom/ are also sourced (additions) — this is the part ml4w's own loader
+# cannot do, and why ~/.zshrc is pointed here.
+# On macOS (no ml4w), ~/.config/zshrc/ is absent and everything loads from custom/.
 
 # -----------------------------------------------------
 # Load modular configuration
 # -----------------------------------------------------
 
 _zshrc_dir="$HOME/.config/zshrc"
-_custom_dir="$_zshrc_dir/custom"
 
-# Collect all filenames from both dirs, sorted and deduplicated
+# Resolve custom/ from this file's own path (%x), with :A following the ~/.zshrc
+# symlink back to the repo. Going through ~/.config/zshrc/custom instead would
+# reach the modules through a symlink that lives inside ml4w's own tree, which an
+# ml4w update rebuilds — the link is not guaranteed to survive, and this is.
+_custom_dir="${${(%):-%x}:A:h}/custom"
+
+# Collect all module names from both dirs, sorted and deduplicated
 _modules=()
-for f in "$_zshrc_dir"/* "$_custom_dir"/*; do
-    [[ -d $f || ! -f $f ]] && continue
-    _modules+=("$(basename "$f")")
+for f in "$_zshrc_dir"/*(N) "$_custom_dir"/*(N); do
+    [[ -f $f ]] || continue
+    _modules+=("${f:t}")
 done
 _modules=($(printf '%s\n' "${_modules[@]}" | sort -u))
 
-# Source each, preferring custom/ version
+# ml4w numbers its modules with two digits (20-customization) where this repo
+# zero-pads to three (020-customization). The names never match, so preferring
+# custom/ by name alone sources both: oh-my-zsh, fzf, and the prompt get set up
+# twice, and whichever lands last wins — ml4w's, since the unpadded name sorts
+# after most of custom/. Collapsing the padding puts the two in one slot. The
+# zero-padded name sorts first, so custom/ claims the slot and ml4w's copy is
+# skipped.
+typeset -A _zshrc_claimed
 for name in "${_modules[@]}"; do
+    slot=$name
+    while [[ $slot == 0?* ]]; do slot=${slot#0}; done
+    [[ -n ${_zshrc_claimed[$slot]-} ]] && continue
+    _zshrc_claimed[$slot]=1
+
     if [[ -f "$_custom_dir/$name" ]]; then
         source "$_custom_dir/$name"
     elif [[ -f "$_zshrc_dir/$name" ]]; then
         source "$_zshrc_dir/$name"
     fi
 done
-unset _zshrc_dir _custom_dir _modules name
+unset _zshrc_dir _custom_dir _modules _zshrc_claimed name slot f
 
 # -----------------------------------------------------
 # Load single customization file (if exists)
@@ -46,10 +63,3 @@ unset _zshrc_dir _custom_dir _modules name
 if [ -f ~/.zshrc_custom ]; then
     source ~/.zshrc_custom
 fi
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# bun completions
-[ -s "/Users/nerdo/.bun/_bun" ] && source "/Users/nerdo/.bun/_bun"
