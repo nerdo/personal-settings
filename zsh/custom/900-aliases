@@ -77,7 +77,7 @@ _PD_OMP_OUTPUT_MAX_BYTES=51200
 _PD_CLAUDE_CEILING_BYTES=25000
 _PD_OMP_CEILING_BYTES=42000
 _pd_host_cap_notice() {
-  print -r -- "Your host shows one shell command's output whole only up to $1 bytes. Pass --max-bytes $2 on every prime-directive command, which leaves headroom under that limit."
+  print -r -- "Your host shows one shell command's output whole only up to $1 bytes. That limit governs commands you run, not this system prompt. Pass --max-bytes $2 on every prime-directive command, which leaves headroom under that limit."
 }
 _PD_CLAUDE_SUBCOMMANDS=(agents auth auto-mode doctor gateway install mcp plugin plugins project setup-token ultrareview update upgrade)
 claude() {
