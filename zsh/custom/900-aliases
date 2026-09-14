@@ -61,7 +61,9 @@ _pd_init_flags() {
 }
 # The line appended after the corpus, naming the ceiling the host's shell tool
 # shows output whole up to. The CLI cannot see that number, and the model cannot
-# pass a --max-bytes it was never told.
+# pass a --max-bytes it was never told. The ceiling passed sits below the host's
+# limit, so a command that also writes to stderr, or a host that counts a few
+# bytes differently, still arrives whole.
 #
 # Claude Code 2.1.270: 30000 bytes of stdout plus stderr; more is saved to a file
 # with a 2KB preview. The `bashOutputMaxChars` setting changes it; update the
@@ -70,8 +72,12 @@ _pd_init_flags() {
 # configurable for bash.
 _PD_CLAUDE_OUTPUT_MAX_BYTES=30000
 _PD_OMP_OUTPUT_MAX_BYTES=51200
+# 25000 leaves headroom under 30000. 42000 takes omp's limit down by the same
+# share, rounded down (51200 * 25000 / 30000 = 42666.67).
+_PD_CLAUDE_CEILING_BYTES=25000
+_PD_OMP_CEILING_BYTES=42000
 _pd_host_cap_notice() {
-  print -r -- "Your host shows one shell command's output whole only up to $1 bytes. Pass --max-bytes $1 on every prime-directive command."
+  print -r -- "Your host shows one shell command's output whole only up to $1 bytes. Pass --max-bytes $2 on every prime-directive command, which leaves headroom under that limit."
 }
 _PD_CLAUDE_SUBCOMMANDS=(agents auth auto-mode doctor gateway install mcp plugin plugins project setup-token ultrareview update upgrade)
 claude() {
@@ -93,7 +99,7 @@ claude() {
     echo "claude: prime-directive tools initialize returned no output; aborting" >&2
     return 1
   fi
-  prompt+=$'\n\n'"$(_pd_host_cap_notice "$_PD_CLAUDE_OUTPUT_MAX_BYTES")"
+  prompt+=$'\n\n'"$(_pd_host_cap_notice "$_PD_CLAUDE_OUTPUT_MAX_BYTES" "$_PD_CLAUDE_CEILING_BYTES")"
   LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-personal}" \
   CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}" \
     command claude --append-system-prompt "$prompt" "$@"
@@ -148,7 +154,7 @@ claude-tsi() {
     echo "claude-tsi: prime-directive tools initialize returned no output; aborting" >&2
     return 1
   fi
-  prompt+=$'\n\n'"$(_pd_host_cap_notice "$_PD_CLAUDE_OUTPUT_MAX_BYTES")"
+  prompt+=$'\n\n'"$(_pd_host_cap_notice "$_PD_CLAUDE_OUTPUT_MAX_BYTES" "$_PD_CLAUDE_CEILING_BYTES")"
   _tsi_env_overrides
   env "${_TSI_ENV_OVERRIDES[@]}" \
     LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-tsi}" \
@@ -201,7 +207,7 @@ omp() {
     echo "omp: prime-directive tools initialize returned no output; aborting" >&2
     return 1
   fi
-  prompt+=$'\n\n'"$(_pd_host_cap_notice "$_PD_OMP_OUTPUT_MAX_BYTES")"
+  prompt+=$'\n\n'"$(_pd_host_cap_notice "$_PD_OMP_OUTPUT_MAX_BYTES" "$_PD_OMP_CEILING_BYTES")"
   env -u KITTY_WINDOW_ID \
     LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-omp}" \
     PI_LANGFUSE_MAX_STRING_LENGTH="${PI_LANGFUSE_MAX_STRING_LENGTH:-off}" \

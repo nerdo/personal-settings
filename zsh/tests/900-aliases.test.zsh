@@ -204,17 +204,17 @@ assert_prompt_ends_with() {
 }
 
 claude >/dev/null 2>&1
-assert_prompt_ends_with "claude hands the binary a system prompt whose last line tells the model to pass --max-bytes 30000 on every prime-directive command" \
-  "Your host shows one shell command's output whole only up to 30000 bytes. Pass --max-bytes 30000 on every prime-directive command."
+assert_prompt_ends_with "claude hands the binary a system prompt whose last line tells the model to pass --max-bytes 25000 on every prime-directive command" \
+  "Your host shows one shell command's output whole only up to 30000 bytes. Pass --max-bytes 25000 on every prime-directive command, which leaves headroom under that limit."
 
 cp "$tmp_dir/bin/claude" "$tmp_dir/bin/omp"
 omp >/dev/null 2>&1
-assert_prompt_ends_with "omp hands the binary a system prompt whose last line tells the model to pass --max-bytes 51200 on every prime-directive command" \
-  "Your host shows one shell command's output whole only up to 51200 bytes. Pass --max-bytes 51200 on every prime-directive command."
+assert_prompt_ends_with "omp hands the binary a system prompt whose last line tells the model to pass --max-bytes 42000 on every prime-directive command" \
+  "Your host shows one shell command's output whole only up to 51200 bytes. Pass --max-bytes 42000 on every prime-directive command, which leaves headroom under that limit."
 
 claude-tsi >/dev/null 2>&1
-assert_prompt_ends_with "claude-tsi hands the binary a system prompt whose last line tells the model to pass --max-bytes 30000 on every prime-directive command" \
-  "Your host shows one shell command's output whole only up to 30000 bytes. Pass --max-bytes 30000 on every prime-directive command."
+assert_prompt_ends_with "claude-tsi hands the binary a system prompt whose last line tells the model to pass --max-bytes 25000 on every prime-directive command" \
+  "Your host shows one shell command's output whole only up to 30000 bytes. Pass --max-bytes 25000 on every prime-directive command, which leaves headroom under that limit."
 
 # --- dsh (@deepseek-ai/dsh) --------------------------------------------------
 
