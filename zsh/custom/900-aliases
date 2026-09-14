@@ -35,6 +35,32 @@ _pd_is_subcommand() {
   return 1
 }
 # Kept in sync by hand against `claude --help`'s Commands: section.
+# Every prime-directive subcommand now requires --max-bytes: the ceiling, in
+# bytes, that the host running the command allows one command's output to reach.
+#
+# THE HOST HERE IS THIS SHELL, and a command substitution imposes no such
+# ceiling, so `unlimited` is the honest answer. It is also the only workable
+# one: the corpus is a single ~105 KB page, and ANY finite ceiling below that
+# splits it into parts - leaving --append-system-prompt holding page 1 and the
+# agent running on a silently truncated system prompt.
+#
+# DO NOT put Claude Code's 30,000 here. That number is BASH_MAX_OUTPUT_LENGTH
+# (default 30,000 characters, clamped 4,000-128,000) and it governs commands the
+# MODEL runs through its Bash tool. The dsh harness's equivalent is
+# `stdoutMaxBytes: 400000` in its own config. Those ceilings belong to the
+# model's own invocations, which the CLI's instructions tell it about; this one
+# belongs to the shell's, and the two are not the same number.
+#
+# A --max-bytes already present in PRIME_DIRECTIVE_CLI_INIT_FLAGS wins, so an
+# override can still say something else. PRIME_DIRECTIVE_CLI_MAX_BYTES changes
+# only the default.
+_pd_init_flags() {
+  local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
+  _PD_INIT_FLAGS=(${=flags_str})
+  if [[ " ${_PD_INIT_FLAGS[*]} " != *" --max-bytes "* ]]; then
+    _PD_INIT_FLAGS+=(--max-bytes "${PRIME_DIRECTIVE_CLI_MAX_BYTES:-unlimited}")
+  fi
+}
 _PD_CLAUDE_SUBCOMMANDS=(agents auth auto-mode doctor gateway install mcp plugin plugins project setup-token ultrareview update upgrade)
 claude() {
   if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_CLAUDE_SUBCOMMANDS[@]}"; then
@@ -43,9 +69,9 @@ claude() {
       command claude "$@"
     return $?
   fi
-  local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
+  _pd_init_flags
   local -a init_flags
-  init_flags=(${=flags_str})
+  init_flags=("${_PD_INIT_FLAGS[@]}")
   local prompt
   prompt="$(prime-directive tools initialize "${init_flags[@]}")" || {
     echo "claude: prime-directive tools initialize failed; aborting" >&2
@@ -97,9 +123,9 @@ claude-tsi() {
       claude "$@"
     return $?
   fi
-  local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
+  _pd_init_flags
   local -a init_flags
-  init_flags=(${=flags_str})
+  init_flags=("${_PD_INIT_FLAGS[@]}")
   local prompt
   prompt="$(prime-directive tools initialize "${init_flags[@]}")" || {
     echo "claude-tsi: prime-directive tools initialize failed; aborting" >&2
@@ -149,9 +175,9 @@ omp() {
       omp "$@"
     return $?
   fi
-  local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
+  _pd_init_flags
   local -a init_flags
-  init_flags=(${=flags_str})
+  init_flags=("${_PD_INIT_FLAGS[@]}")
   local prompt
   prompt="$(prime-directive tools initialize "${init_flags[@]}")" || {
     echo "omp: prime-directive tools initialize failed; aborting" >&2
@@ -172,26 +198,21 @@ omp() {
     omp --append-system-prompt "$prompt" "$@"
 }
 
-# dsh (@deepseek-ai/dsh, the DeepSeek Harness): bake the prime-directive corpus
-# into the harness system prompt, the same live `prime-directive tools
-# initialize` substitution the claude()/claude-tsi()/omp() functions above use,
-# with the same PRIME_DIRECTIVE_CLI_INIT_FLAGS override, the same
-# --required-reading-contents default, and the same fail-loud behavior.
+# dsh (@deepseek-ai/dsh, the DeepSeek Harness): the prime-directive corpus is
+# injected into the harness system prompt by the `prime-directive-prompt`
+# plugin, mounted in the home-level ~/.dsh/cordis.patch.yml. That plugin runs
+# `prime-directive tools initialize --required-reading-contents` itself at boot
+# and registers the output as an early prompt section (order -90 — right after
+# the fixed harness identity, before the volatile {{cwd}}/persona and history)
+# so the large stable block stays in the model provider's cached prefix. It
+# replaced the earlier PRIME_DIRECTIVE_PROMPT + persona-`!!js` two-half route,
+# so no environment export is needed here.
 #
-# The delivery differs. dsh has no --append-system-prompt flag: its launcher
-# parses only its own options (--profile, --patch, --dump-config) and hands
-# everything after the first token it does not recognize to the booted
-# profile's app. So the corpus travels in PRIME_DIRECTIVE_PROMPT, and the
-# home-level ~/.dsh/cordis.patch.yml reads that variable through a `!!js`
-# expression to build the order-0 `deployment:persona` section. Both halves are
-# required: this function without that file exports a variable nothing reads.
-#
-# Langfuse labelling travels the same two-halves route, and for the same
-# reason. dsh-plugin-langfuse reads no environment variable for it:
-# `metadata.environment` is static cordis config, stamped on every exported
-# span as the `langfuse.environment` attribute. So this function sets
-# LANGFUSE_TRACING_ENVIRONMENT (default `dsh`, overridable per-call like the
-# claude()/omp() defaults above) and the `session-telemetry-langfuse` row in
+# Langfuse labelling still travels a two-halves route: dsh-plugin-langfuse reads
+# no environment variable for it — `metadata.environment` is static cordis
+# config, stamped on every exported span as the `langfuse.environment`
+# attribute. So this function sets LANGFUSE_TRACING_ENVIRONMENT (default `dsh`,
+# overridable per-call) and the `session-telemetry-langfuse` row in
 # $DSH_HOME/profiles/web/cordis.patch.yml reads it into that config. Without
 # that row this variable reaches a binary nothing reads it in. The plugin
 # rejects a value outside ^(?!langfuse)[a-z0-9-_]+$ at load, so a malformed
@@ -199,29 +220,15 @@ omp() {
 #
 # `env` execs the real binary from PATH, so no function recursion.
 #
-# Arguments that boot no agent, and therefore should not spend a
-# prime-directive call: the `plugin` subcommand (it forwards to pnpm) and the
-# launcher's own help and version flags. `web` is NOT one of them — it is an
-# alias for `--profile web` and boots an agent, so it bakes like a bare launch.
-# Kept in sync by hand against `dsh --help`'s Commands and Options sections.
+# Arguments that boot no agent skip the env wrapper: the `plugin` subcommand (it
+# forwards to pnpm) and the launcher's own help and version flags. `web` is NOT
+# one of them — it is an alias for `--profile web` and boots an agent. Kept in
+# sync by hand against `dsh --help`'s Commands and Options sections.
 _PD_DSH_NO_BOOT_ARGS=(plugin --help -h --version -V)
 dsh() {
   if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_DSH_NO_BOOT_ARGS[@]}"; then
     command dsh "$@"
     return $?
   fi
-  local flags_str="${PRIME_DIRECTIVE_CLI_INIT_FLAGS:---required-reading-contents}"
-  local -a init_flags
-  init_flags=(${=flags_str})
-  local prompt
-  prompt="$(prime-directive tools initialize "${init_flags[@]}")" || {
-    echo "dsh: prime-directive tools initialize failed; aborting" >&2
-    return 1
-  }
-  if [[ -z "$prompt" ]]; then
-    echo "dsh: prime-directive tools initialize returned no output; aborting" >&2
-    return 1
-  fi
-  env LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-dsh}" \
-    PRIME_DIRECTIVE_PROMPT="$prompt" dsh "$@"
+  env LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-dsh}" dsh "$@"
 }
