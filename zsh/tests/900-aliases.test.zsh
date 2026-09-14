@@ -22,10 +22,15 @@ dump_file="$tmp_dir/child-env"
 
 # The dump path is baked into the script text rather than passed through the
 # environment, because the environment is the thing under test.
+prompt_file="$tmp_dir/system-prompt"
+
 cat > "$tmp_dir/bin/claude" <<FAKE
 #!/usr/bin/env zsh
 print -r -- "ARGS: \$*" > "$dump_file"
 env >> "$dump_file"
+rm -f "$prompt_file"
+[[ "\$1" == --append-system-prompt ]] && print -r -- "\$2" > "$prompt_file"
+true
 FAKE
 
 cat > "$tmp_dir/bin/prime-directive" <<'FAKE'
@@ -175,6 +180,41 @@ assert_child_env "claude-tsi given a management subcommand runs the binary with 
   N8N_API_URL work
 assert_child_args "claude-tsi given a management subcommand reaches the binary without a baked system prompt" \
   "mcp"
+
+# --- the host's output ceiling in the system prompt ---------------------------
+
+# The model runs prime-directive through its own shell tool, and that tool shows
+# output whole only up to the host's ceiling. The CLI cannot see that number, so
+# the function that launches the host states it after the corpus.
+assert_prompt_ends_with() {
+  local label="$1"
+  local expected="$2"
+  local last_line="<no system prompt>"
+  local -a prompt_lines
+  if [[ -e "$prompt_file" ]]; then
+    prompt_lines=("${(@f)$(<"$prompt_file")}")
+    last_line="${prompt_lines[-1]}"
+  fi
+
+  if [[ "$last_line" == "$expected" ]]; then
+    pass "$label"
+  else
+    fail "$label" "expected last line '$expected', binary received '$last_line'"
+  fi
+}
+
+claude >/dev/null 2>&1
+assert_prompt_ends_with "claude hands the binary a system prompt whose last line tells the model to pass --max-bytes 30000 on every prime-directive command" \
+  "Your host shows one shell command's output whole only up to 30000 bytes. Pass --max-bytes 30000 on every prime-directive command."
+
+cp "$tmp_dir/bin/claude" "$tmp_dir/bin/omp"
+omp >/dev/null 2>&1
+assert_prompt_ends_with "omp hands the binary a system prompt whose last line tells the model to pass --max-bytes 51200 on every prime-directive command" \
+  "Your host shows one shell command's output whole only up to 51200 bytes. Pass --max-bytes 51200 on every prime-directive command."
+
+claude-tsi >/dev/null 2>&1
+assert_prompt_ends_with "claude-tsi hands the binary a system prompt whose last line tells the model to pass --max-bytes 30000 on every prime-directive command" \
+  "Your host shows one shell command's output whole only up to 30000 bytes. Pass --max-bytes 30000 on every prime-directive command."
 
 # --- dsh (@deepseek-ai/dsh) --------------------------------------------------
 
