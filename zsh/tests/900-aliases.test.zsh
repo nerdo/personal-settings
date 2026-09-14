@@ -209,8 +209,8 @@ assert_prompt_ends_with "claude hands the binary a system prompt whose last line
 
 cp "$tmp_dir/bin/claude" "$tmp_dir/bin/omp"
 omp >/dev/null 2>&1
-assert_prompt_ends_with "omp hands the binary a system prompt whose last line tells the model to pass --max-bytes 42000 on every prime-directive command" \
-  "Your host shows one shell command's output whole only up to 51200 bytes. That limit governs commands you run, not this system prompt. Pass --max-bytes 42000 on every prime-directive command, which leaves headroom under that limit."
+assert_prompt_ends_with "omp hands the binary a system prompt whose last line tells the model to pass --max-bytes 42000 --max-line-bytes 640 on every prime-directive command" \
+  "Your host shows one shell command's output whole only up to 51200 bytes, and shortens any line longer than 768 bytes. Those limits govern commands you run, not this system prompt. Pass --max-bytes 42000 --max-line-bytes 640 on every prime-directive command, which leaves headroom under those limits."
 
 claude-tsi >/dev/null 2>&1
 assert_prompt_ends_with "claude-tsi hands the binary a system prompt whose last line tells the model to pass --max-bytes 25000 on every prime-directive command" \
