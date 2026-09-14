@@ -218,12 +218,11 @@ assert_prompt_ends_with "claude-tsi hands the binary a system prompt whose last 
 
 # --- dsh (@deepseek-ai/dsh) --------------------------------------------------
 
-# The DeepSeek Harness launcher has no --append-system-prompt flag: it parses
-# only its own options and hands everything after them to the booted profile's
-# app. The corpus therefore travels in PRIME_DIRECTIVE_PROMPT, which the
-# home-level $DSH_HOME/cordis.patch.yml reads through a `!!js` expression to
-# build the order-0 deployment persona. These assertions cover what the binary
-# receives, which is the contract that file depends on.
+# The corpus reaches dsh through the `prime-directive-prompt` plugin mounted in
+# the home-level $DSH_HOME/cordis.patch.yml. The plugin runs the prime-directive
+# CLI at boot and registers its output as a system-prompt section, so this
+# function hands the binary no corpus and runs no prime-directive command. These
+# assertions cover what the binary receives, which is the half this file owns.
 
 cat > "$tmp_dir/bin/dsh" <<FAKE
 #!/usr/bin/env zsh
@@ -232,25 +231,24 @@ env >> "$dump_file"
 FAKE
 chmod +x "$tmp_dir/bin/dsh"
 
-# Walking skeleton: the corpus reaches the binary at all.
+# Walking skeleton: the binary boots, and the corpus is not in its environment.
 dsh >/dev/null 2>&1
-assert_child_env "dsh carries the corpus to the binary in PRIME_DIRECTIVE_PROMPT" \
-  PRIME_DIRECTIVE_PROMPT "fake corpus"
+assert_child_env "dsh boots the binary with no corpus in its environment, leaving injection to the plugin" \
+  PRIME_DIRECTIVE_PROMPT "<unset>"
 
 # No flag is injected, because the launcher has none to inject into.
 dsh --profile web >/dev/null 2>&1
 assert_child_args "dsh passes its arguments through untouched" \
   "--profile web"
 
-# `web` boots an agent, so it is not a management subcommand and still bakes.
+# `web` boots an agent, and that agent gets its corpus from the plugin too.
 dsh web --no-open >/dev/null 2>&1
-assert_child_env "dsh web bakes the corpus, because web boots an agent" \
-  PRIME_DIRECTIVE_PROMPT "fake corpus"
+assert_child_env "dsh web boots the binary with no corpus in its environment" \
+  PRIME_DIRECTIVE_PROMPT "<unset>"
 
-# `plugin` forwards to pnpm and boots no agent, so baking it would spend a
-# prime-directive call on a package install.
+# `plugin` forwards to pnpm and boots no agent.
 dsh plugin add some-package >/dev/null 2>&1
-assert_child_env "dsh plugin skips baking, because it boots no agent" \
+assert_child_env "dsh plugin reaches the binary with no corpus in its environment" \
   PRIME_DIRECTIVE_PROMPT "<unset>"
 assert_child_args "dsh plugin reaches the binary with its arguments intact" \
   "plugin add some-package"
@@ -278,30 +276,32 @@ LANGFUSE_TRACING_ENVIRONMENT=scratch dsh >/dev/null 2>&1
 assert_child_env "dsh carries a caller's environment through in place of the default" \
   LANGFUSE_TRACING_ENVIRONMENT scratch
 
-# The flags override reaches the CLI, so a caller can go back to the
-# manifest-only primer.
-cat > "$tmp_dir/bin/prime-directive" <<'FAKE'
+# The plugin, not this function, runs the CLI. A fake CLI that records being run
+# and then fails shows both halves: dsh never calls it, and a broken CLI does not
+# stop the harness from booting.
+cli_ran="$tmp_dir/cli-ran"
+cat > "$tmp_dir/bin/prime-directive" <<FAKE
 #!/usr/bin/env zsh
-print -r -- "flags: $*"
-FAKE
-PRIME_DIRECTIVE_CLI_INIT_FLAGS=--no-required-reading-contents dsh >/dev/null 2>&1
-assert_child_env "dsh forwards PRIME_DIRECTIVE_CLI_INIT_FLAGS to the prime-directive CLI" \
-  PRIME_DIRECTIVE_PROMPT "flags: tools initialize --no-required-reading-contents"
-
-# Fail loud: an unbuildable corpus must never reach the model as a silent
-# empty persona.
-cat > "$tmp_dir/bin/prime-directive" <<'FAKE'
-#!/usr/bin/env zsh
+: > "$cli_ran"
 print -r -- "corpus unreachable" >&2
 exit 1
 FAKE
+
+rm -f "$cli_ran" "$dump_file"
+dsh >/dev/null 2>&1
+if [[ ! -e "$cli_ran" ]]; then
+  pass "dsh runs no prime-directive command of its own"
+else
+  fail "dsh runs no prime-directive command of its own" "the prime-directive CLI was invoked"
+fi
+
 rm -f "$dump_file"
 dsh >/dev/null 2>&1
 dsh_status=$?
-if (( dsh_status != 0 )) && [[ ! -e "$dump_file" ]]; then
-  pass "dsh aborts without invoking the binary when the corpus cannot be built"
+if (( dsh_status == 0 )) && [[ -e "$dump_file" ]]; then
+  pass "dsh boots the binary even when the prime-directive CLI would fail"
 else
-  fail "dsh aborts without invoking the binary when the corpus cannot be built" \
+  fail "dsh boots the binary even when the prime-directive CLI would fail" \
     "returned $dsh_status; dump file $([[ -e "$dump_file" ]] && print -n written || print -n absent)"
 fi
 
