@@ -185,7 +185,28 @@ assert_child_args "claude-tsi given a management subcommand reaches the binary w
 
 # The model runs prime-directive through its own shell tool, and that tool shows
 # output whole only up to the host's ceiling. The CLI cannot see that number, so
-# the function that launches the host states it after the corpus.
+# the function that launches the host passes it to `initialize`, which prints it
+# inside the CLI's own tags. A notice appended after the corpus sat outside them.
+pd_args_file="$tmp_dir/pd-args"
+cat > "$tmp_dir/bin/prime-directive" <<FAKE
+#!/usr/bin/env zsh
+print -r -- "\$*" > "$pd_args_file"
+print -r -- "fake corpus"
+FAKE
+chmod +x "$tmp_dir/bin/prime-directive"
+
+assert_init_args_contain() {
+  local label="$1"
+  local expected="$2"
+  local received="<prime-directive never ran>"
+  [[ -e "$pd_args_file" ]] && received="$(<"$pd_args_file")"
+  if [[ " $received " == *" $expected "* ]]; then
+    pass "$label"
+  else
+    fail "$label" "expected initialize arguments to contain '$expected', received '$received'"
+  fi
+}
+
 assert_prompt_ends_with() {
   local label="$1"
   local expected="$2"
@@ -203,18 +224,27 @@ assert_prompt_ends_with() {
   fi
 }
 
+rm -f "$pd_args_file"
 claude >/dev/null 2>&1
-assert_prompt_ends_with "claude hands the binary a system prompt whose last line tells the model to pass --max-bytes 25000 on every prime-directive command" \
-  "Your host shows one shell command's output whole only up to 30000 bytes. That limit governs commands you run, not this system prompt. Pass --max-bytes 25000 on every prime-directive command, which leaves headroom under that limit."
+assert_init_args_contain "claude passes --host-max-bytes 25000 to initialize" \
+  "--host-max-bytes 25000"
+assert_prompt_ends_with "claude hands the binary the corpus with nothing appended after it" \
+  "fake corpus"
 
+rm -f "$pd_args_file"
 cp "$tmp_dir/bin/claude" "$tmp_dir/bin/omp"
 omp >/dev/null 2>&1
-assert_prompt_ends_with "omp hands the binary a system prompt whose last line tells the model to pass --max-bytes 42000 --max-line-bytes 640 on every prime-directive command" \
-  "Your host shows one shell command's output whole only up to 51200 bytes, and shortens any line longer than 768 bytes. Those limits govern commands you run, not this system prompt. Pass --max-bytes 42000 --max-line-bytes 640 on every prime-directive command, which leaves headroom under those limits."
+assert_init_args_contain "omp passes --host-max-bytes 42000 --host-max-line-bytes 640 to initialize" \
+  "--host-max-bytes 42000 --host-max-line-bytes 640"
+assert_prompt_ends_with "omp hands the binary the corpus with nothing appended after it" \
+  "fake corpus"
 
+rm -f "$pd_args_file"
 claude-tsi >/dev/null 2>&1
-assert_prompt_ends_with "claude-tsi hands the binary a system prompt whose last line tells the model to pass --max-bytes 25000 on every prime-directive command" \
-  "Your host shows one shell command's output whole only up to 30000 bytes. That limit governs commands you run, not this system prompt. Pass --max-bytes 25000 on every prime-directive command, which leaves headroom under that limit."
+assert_init_args_contain "claude-tsi passes --host-max-bytes 25000 to initialize" \
+  "--host-max-bytes 25000"
+assert_prompt_ends_with "claude-tsi hands the binary the corpus with nothing appended after it" \
+  "fake corpus"
 
 # --- dsh (@deepseek-ai/dsh) --------------------------------------------------
 
