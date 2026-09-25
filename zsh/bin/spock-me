@@ -1,8 +1,16 @@
 #!/usr/bin/env zsh
-if [[ -z "${SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL:-}" ]]; then
-  print -ru2 -- "spock-me: SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL is not set. Put the webhook URL in ~/.secrets/export/SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL and open a new shell."
-  exit 1
-fi
+# Both settings come from ~/.secrets/export/ (loaded by custom/100-secrets
+# through ~/.zshenv), so a missing one names the file that would set it.
+require_setting() {
+  local name="$1" what="$2"
+  if [[ -z "${(P)name:-}" ]]; then
+    print -ru2 -- "spock-me: $name is not set. Put $what in ~/.secrets/export/$name and open a new shell."
+    exit 1
+  fi
+}
+
+require_setting SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL "the webhook URL"
+require_setting SPOCK_TELEGRAM_MESSAGE_WEBHOOK_AUTH_HEADER "the 'Name: value' auth header"
 
 print -r -- "$SPOCK_TELEGRAM_MESSAGE_WEBHOOK_AUTH_HEADER" |
   curl --silent --get -H @- \
