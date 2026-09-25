@@ -180,6 +180,14 @@ assert_status "spock-me whose auth header Spock rejects exits with status 1" 1
 assert_stderr_contains "spock-me whose auth header Spock rejects reports the HTTP status" \
   "Spock refused the message (HTTP 403)"
 
+# A fake that has stopped leaves its port closed, so nothing answers the URL.
+start_webhook
+stop_webhook
+run_spock_me -- "deploy finished"
+assert_stderr_contains "spock-me that cannot reach Spock says Spock could not be reached" \
+  "could not reach Spock"
+assert_status "spock-me that cannot reach Spock exits with status 1" 1
+
 stop_webhook
 
 if (( failures > 0 )); then

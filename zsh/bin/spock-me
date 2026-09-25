@@ -19,6 +19,12 @@ http_status="$(
       --output /dev/null --write-out '%{http_code}' \
       "$SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL"
 )"
+curl_status=$?
+
+if (( curl_status != 0 )); then
+  print -ru2 -- "spock-me: could not reach Spock at the webhook URL (curl exit $curl_status). Check the network and that n8n is up."
+  exit 1
+fi
 
 if [[ "$http_status" != 2* ]]; then
   print -ru2 -- "spock-me: Spock refused the message (HTTP $http_status). On 403, check that SPOCK_TELEGRAM_MESSAGE_WEBHOOK_AUTH_HEADER matches the workflow's Header Auth credential."
