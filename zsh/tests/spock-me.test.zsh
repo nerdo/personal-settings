@@ -138,6 +138,34 @@ start_webhook
 run_spock_me -- "deploy finished"
 assert_delivered "spock-me with a message delivers that message to Spock" "deploy finished"
 
+assert_status() {
+  local label="$1" expected="$2"
+  if [[ "$last_status" == "$expected" ]]; then
+    pass "$label"
+  else
+    fail "$label" "expected exit status $expected, got $last_status (stderr: $last_err)"
+  fi
+}
+
+assert_stderr_contains() {
+  local label="$1" expected="$2"
+  if [[ "$last_err" == *"$expected"* ]]; then
+    pass "$label"
+  else
+    fail "$label" "expected stderr to contain '$expected', got '$last_err'"
+  fi
+}
+
+# --- error scenarios ----------------------------------------------------------
+
+# An empty assignment after the fake's own stands for a variable that
+# ~/.secrets/export never set: env keeps the last assignment of a name.
+start_webhook
+run_spock_me SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL= -- "deploy finished"
+assert_status "spock-me with no webhook URL set exits with status 1" 1
+assert_stderr_contains "spock-me with no webhook URL set names the variable to set" \
+  "SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL is not set"
+
 stop_webhook
 
 if (( failures > 0 )); then
