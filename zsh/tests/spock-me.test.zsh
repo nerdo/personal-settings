@@ -172,6 +172,14 @@ assert_status "spock-me with no auth header set exits with status 1" 1
 assert_stderr_contains "spock-me with no auth header set names the variable to set" \
   "SPOCK_TELEGRAM_MESSAGE_WEBHOOK_AUTH_HEADER is not set"
 
+# n8n answers a header that does not match its credential with 403.
+start_webhook
+run_spock_me SPOCK_TELEGRAM_MESSAGE_WEBHOOK_AUTH_HEADER="$fake_header_name: wrong-value" \
+  -- "deploy finished"
+assert_status "spock-me whose auth header Spock rejects exits with status 1" 1
+assert_stderr_contains "spock-me whose auth header Spock rejects reports the HTTP status" \
+  "Spock refused the message (HTTP 403)"
+
 stop_webhook
 
 if (( failures > 0 )); then
