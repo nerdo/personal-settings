@@ -194,6 +194,11 @@ assert_delivered "spock-me with a message delivers that message to Spock" "deplo
 start_webhook
 run_spock_me -- "deploy finished"
 assert_status "spock-me that delivers its message exits with status 0" 0
+if [[ -z "$last_out" ]]; then
+  pass "spock-me that delivers its message prints an empty stdout"
+else
+  fail "spock-me that delivers its message prints an empty stdout" "stdout was '$last_out'"
+fi
 
 # --- error scenarios ----------------------------------------------------------
 
