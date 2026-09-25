@@ -216,6 +216,20 @@ assert_status "spock-me with no message exits with status 2" 2
 assert_stderr_contains "spock-me with no message prints its usage" \
   "usage: spock-me <message>"
 
+# --- edge cases ---------------------------------------------------------------
+
+start_webhook
+run_spock_me -- build is done
+assert_delivered "spock-me given several words delivers them joined by single spaces" "build is done"
+
+# The message rides in a query string, where & = # + % and a newline all mean
+# something unless they are encoded.
+tricky_message=$'tests: 12 passed & 0 failed = 100% #ci + ✅\nsecond line'
+start_webhook
+run_spock_me -- "$tricky_message"
+assert_delivered "spock-me delivers URL-special characters, emoji, and newlines unchanged" \
+  "$tricky_message"
+
 stop_webhook
 
 if (( failures > 0 )); then
