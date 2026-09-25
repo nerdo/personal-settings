@@ -188,6 +188,34 @@ assert_stderr_contains "spock-me that cannot reach Spock says Spock could not be
   "could not reach Spock"
 assert_status "spock-me that cannot reach Spock exits with status 1" 1
 
+# Number of requests the fake received, authorized or not.
+request_count() {
+  if [[ -f "$webhook_dir/requests.log" ]]; then
+    local -a lines
+    lines=("${(@f)$(<"$webhook_dir/requests.log")}")
+    print -r -- "${#lines}"
+  else
+    print -r -- 0
+  fi
+}
+
+assert_request_count() {
+  local label="$1" expected="$2"
+  local actual; actual="$(request_count)"
+  if [[ "$actual" == "$expected" ]]; then
+    pass "$label"
+  else
+    fail "$label" "expected the webhook to receive $expected request(s), it received $actual"
+  fi
+}
+
+start_webhook
+run_spock_me --
+assert_request_count "spock-me with no message sends zero requests to Spock" 0
+assert_status "spock-me with no message exits with status 2" 2
+assert_stderr_contains "spock-me with no message prints its usage" \
+  "usage: spock-me <message>"
+
 stop_webhook
 
 if (( failures > 0 )); then
