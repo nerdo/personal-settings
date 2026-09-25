@@ -216,6 +216,16 @@ assert_status "spock-me with no message exits with status 2" 2
 assert_stderr_contains "spock-me with no message prints its usage" \
   "usage: spock-me <message>"
 
+start_webhook
+run_spock_me -- --help
+assert_request_count "spock-me --help sends zero requests to Spock" 0
+assert_status "spock-me --help exits with status 0" 0
+if [[ "$last_out" == "usage: spock-me <message>"* ]]; then
+  pass "spock-me --help prints its usage on stdout"
+else
+  fail "spock-me --help prints its usage on stdout" "stdout was '$last_out'"
+fi
+
 # --- edge cases ---------------------------------------------------------------
 
 start_webhook

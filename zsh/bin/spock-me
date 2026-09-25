@@ -17,6 +17,11 @@ if (( $# == 0 )); then
   exit 2
 fi
 
+if [[ "$*" == (-h|--help) ]]; then
+  usage
+  exit 0
+fi
+
 # Both settings come from ~/.secrets/export/ (loaded by custom/100-secrets
 # through ~/.zshenv), so a missing one names the file that would set it.
 require_setting() {
