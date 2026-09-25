@@ -1,4 +1,9 @@
 #!/usr/bin/env zsh
+# Sends a Telegram message to Dannel through the n8n workflow "Send message via
+# Spock to me": a GET webhook behind Header Auth that reads the text from the
+# `message` query parameter.
+# Tests: ../tests/spock-me.test.zsh
+
 usage() {
   print -r -- "usage: spock-me <message>
 
@@ -35,6 +40,8 @@ require_setting() {
 require_setting SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL "the webhook URL"
 require_setting SPOCK_TELEGRAM_MESSAGE_WEBHOOK_AUTH_HEADER "the 'Name: value' auth header"
 
+# The header reaches curl on stdin (-H @-) rather than as an argument, so the
+# secret never shows in another user's `ps` listing.
 http_status="$(
   print -r -- "$SPOCK_TELEGRAM_MESSAGE_WEBHOOK_AUTH_HEADER" |
     curl --silent --get -H @- \
