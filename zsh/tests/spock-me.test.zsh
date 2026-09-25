@@ -14,6 +14,18 @@ fail() { print -r -- "FAIL - $1"; print -r -- "       $2"; (( failures++ )) }
 
 tmp_dir="$(mktemp -d)"
 
+# A misspelled or not-yet-defined assertion would otherwise print "command not
+# found" and let the suite report success with that case never checked. zsh runs
+# this handler in a child process, where `(( failures++ ))` is lost, so it
+# leaves a file that the end of the suite counts instead.
+missing_commands_file="$tmp_dir/missing-commands"
+command_not_found_handler() {
+  print -r -- "FAIL - every command the suite calls exists"
+  print -r -- "       command not found: $1"
+  print -r -- "$1" >> "$missing_commands_file"
+  return 127
+}
+
 # --- a local stand-in for the n8n webhook -------------------------------------
 
 # The real webhook is a GET endpoint behind n8n's Header Auth: a request whose
@@ -132,12 +144,6 @@ assert_delivered() {
   fi
 }
 
-# --- walking skeleton ---------------------------------------------------------
-
-start_webhook
-run_spock_me -- "deploy finished"
-assert_delivered "spock-me with a message delivers that message to Spock" "deploy finished"
-
 assert_status() {
   local label="$1" expected="$2"
   if [[ "$last_status" == "$expected" ]]; then
@@ -155,6 +161,39 @@ assert_stderr_contains() {
     fail "$label" "expected stderr to contain '$expected', got '$last_err'"
   fi
 }
+
+# Number of requests the fake received, authorized or not.
+request_count() {
+  if [[ -f "$webhook_dir/requests.log" ]]; then
+    local -a lines
+    lines=("${(@f)$(<"$webhook_dir/requests.log")}")
+    print -r -- "${#lines}"
+  else
+    print -r -- 0
+  fi
+}
+
+assert_request_count() {
+  local label="$1" expected="$2"
+  local actual; actual="$(request_count)"
+  if [[ "$actual" == "$expected" ]]; then
+    pass "$label"
+  else
+    fail "$label" "expected the webhook to receive $expected request(s), it received $actual"
+  fi
+}
+
+# --- walking skeleton ---------------------------------------------------------
+
+start_webhook
+run_spock_me -- "deploy finished"
+assert_delivered "spock-me with a message delivers that message to Spock" "deploy finished"
+
+# --- happy path ---------------------------------------------------------------
+
+start_webhook
+run_spock_me -- "deploy finished"
+assert_status "spock-me that delivers its message exits with status 0" 0
 
 # --- error scenarios ----------------------------------------------------------
 
@@ -188,27 +227,6 @@ assert_stderr_contains "spock-me that cannot reach Spock says Spock could not be
   "could not reach Spock"
 assert_status "spock-me that cannot reach Spock exits with status 1" 1
 
-# Number of requests the fake received, authorized or not.
-request_count() {
-  if [[ -f "$webhook_dir/requests.log" ]]; then
-    local -a lines
-    lines=("${(@f)$(<"$webhook_dir/requests.log")}")
-    print -r -- "${#lines}"
-  else
-    print -r -- 0
-  fi
-}
-
-assert_request_count() {
-  local label="$1" expected="$2"
-  local actual; actual="$(request_count)"
-  if [[ "$actual" == "$expected" ]]; then
-    pass "$label"
-  else
-    fail "$label" "expected the webhook to receive $expected request(s), it received $actual"
-  fi
-}
-
 start_webhook
 run_spock_me --
 assert_request_count "spock-me with no message sends zero requests to Spock" 0
@@ -241,6 +259,11 @@ assert_delivered "spock-me delivers URL-special characters, emoji, and newlines 
   "$tricky_message"
 
 stop_webhook
+
+if [[ -f "$missing_commands_file" ]]; then
+  missing_commands=("${(@f)$(<"$missing_commands_file")}")
+  (( failures += ${#missing_commands} ))
+fi
 
 if (( failures > 0 )); then
   print -r -- ""
