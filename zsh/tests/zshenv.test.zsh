@@ -108,8 +108,13 @@ assert_ml4w_zshrc_is_repaired_in_the_same_shell() {
 
   local output
   output="$(run_zsh "$root" -i -c 'true' 2>/dev/null)"
+  # -ef compares the files, not the spellings. mktemp hands out /var/folders/…,
+  # which on macOS is a symlink to /private/var/folders/…, so a resolved path and
+  # $root name the same loader in two different strings.
   local zshrc_link="$root/home/.zshrc"
   local resolved="${zshrc_link:A}"
+  local points_at_repo_loader=no
+  [[ "$zshrc_link" -ef "$root/repo/zshrc" ]] && points_at_repo_loader=yes
   rm -rf "$root"
 
   if [[ "$output" == *REPO_LOADER_RAN* && "$output" != *ML4W_LOADER_RAN* ]]; then
@@ -118,7 +123,7 @@ assert_ml4w_zshrc_is_repaired_in_the_same_shell() {
     fail "an ml4w-owned ~/.zshrc is repaired in the same shell" "got: ${(qqq)output}"
   fi
 
-  if [[ "$resolved" == "$root/repo/zshrc" ]]; then
+  if [[ "$points_at_repo_loader" == yes ]]; then
     pass "the repaired ~/.zshrc points at the repo loader"
   else
     fail "the repaired ~/.zshrc points at the repo loader" "got: $resolved"
