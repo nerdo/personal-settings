@@ -152,17 +152,22 @@ assert_missing_zshrc_is_created() {
 assert_repair_is_a_no_op_when_already_linked() {
   local root; root="$(new_fixture)"
   ln -sfn "$root/repo/zshrc" "$root/home/.zshrc"
-  # GNU stat reports the symlink's own mtime; it does not follow without -L.
-  local before; before="$(stat -c %Y "$root/home/.zshrc")"
+  # `ln -sfn` replaces the link with a new one, so a rewrite shows as a new inode.
+  # The mtime would not do: it has one-second resolution, and a rewrite inside
+  # the same second leaves it unchanged. zstat is zsh's own module, so this reads
+  # the same on macOS and Linux, where `stat` takes different flags. -L reads the
+  # link itself rather than the loader it points at.
+  zmodload -F zsh/stat b:zstat
+  local before; before="$(zstat -L +inode "$root/home/.zshrc")"
 
   run_zsh "$root" -i -c 'true' >/dev/null 2>&1
-  local after; after="$(stat -c %Y "$root/home/.zshrc")"
+  local after; after="$(zstat -L +inode "$root/home/.zshrc")"
   rm -rf "$root"
 
-  if [[ "$before" == "$after" ]]; then
+  if [[ -n "$before" && "$before" == "$after" ]]; then
     pass "the repair does not rewrite an already-correct link"
   else
-    fail "the repair does not rewrite an already-correct link" "mtime $before -> $after"
+    fail "the repair does not rewrite an already-correct link" "inode '$before' -> '$after'"
   fi
 }
 
