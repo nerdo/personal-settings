@@ -42,6 +42,8 @@ hl.bind(wmMod .. " + O", hl.dsp.layout("togglesplit"), { description = "Toggle s
 -- Note this takes CTRL+left/right from every app (e.g. word-jump in terminals).
 hl.bind("CTRL + left", hl.dsp.focus({ workspace = "r-1" }), { description = "Previous workspace" })
 hl.bind("CTRL + right", hl.dsp.focus({ workspace = "r+1" }), { description = "Next workspace" })
+hl.bind("CTRL + SHIFT + left", hl.dsp.window.move({ workspace = "r-1" }), { description = "Move window to previous workspace" })
+hl.bind("CTRL + SHIFT + right", hl.dsp.window.move({ workspace = "r+1" }), { description = "Move window to next workspace" })
 
 -- Window focus (within space)
 hl.bind(navMod .. " + h", hl.dsp.focus({ direction = "left" }), { description = "Focus window left" })
