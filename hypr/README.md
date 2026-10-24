@@ -1,5 +1,19 @@
 # Setup
 
+## Omarchy
+
+Omarchy machines use the files in `omarchy/` instead of the ML4W ones below.
+`~/personal/omarchy` (step `40-personal-settings`) symlinks them in:
+
+* `ln -s ~/personal/settings/hypr/omarchy/bindings.lua ~/.config/hypr/bindings.lua`
+* `ln -s ~/personal/settings/hypr/omarchy/input.lua ~/.config/hypr/input.lua`
+
+Omarchy requires both after its own defaults and doesn't rewrite them on
+update. Only the portable window-management binds are ported; Omarchy already
+covers workspaces, mouse drag/resize, ALT+Tab and the Fn keys.
+
+## ML4W
+
 * Using [ML4W Dotfiles](https://github.com/mylinuxforwork/dotfiles) for Hyprland base configuration
 * Symlink custom config files into the ML4W Hyprland config directory:
   * `ln -s ~/personal/settings/hypr/lua/custom.lua ~/.config/hypr/custom.lua`
