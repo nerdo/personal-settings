@@ -85,7 +85,7 @@ claude() {
   if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_CLAUDE_SUBCOMMANDS[@]}"; then
     LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-personal}" \
     CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}" \
-      command claude "$@"
+      with_secrets claude claude "$@"
     return $?
   fi
   _pd_init_flags
@@ -102,9 +102,13 @@ claude() {
   fi
   LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-personal}" \
   CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}" \
-    command claude --append-system-prompt "$prompt" "$@"
+    with_secrets claude claude --append-system-prompt "$prompt" "$@"
 }
 # Work-context environment for the -tsi commands.
+#
+# Keys: claude, claude-tsi, omp and dsh start their program through with_secrets (../../secretspec/aliases.zsh,
+# loaded by 150-secretspec), so each gets its SecretSpec profile's keys: claude, claude-tsi, harness, harness.
+# The TSI_ mapping below still covers work keys that are not in a profile yet.
 #
 # ~/.secrets/export/ (loaded by custom/100-secrets) holds both halves of each
 # split value — N8N_API_URL alongside TSI_N8N_API_URL — and exports both into
@@ -136,7 +140,7 @@ _tsi_env_overrides() {
 claude-tsi() {
   if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_CLAUDE_SUBCOMMANDS[@]}"; then
     _tsi_env_overrides
-    env "${_TSI_ENV_OVERRIDES[@]}" \
+    with_secrets claude-tsi env "${_TSI_ENV_OVERRIDES[@]}" \
       LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-tsi}" \
       CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-tsi}" \
       claude "$@"
@@ -155,7 +159,7 @@ claude-tsi() {
     return 1
   fi
   _tsi_env_overrides
-  env "${_TSI_ENV_OVERRIDES[@]}" \
+  with_secrets claude-tsi env "${_TSI_ENV_OVERRIDES[@]}" \
     LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-tsi}" \
     CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-tsi}" \
     claude --append-system-prompt "$prompt" "$@"
@@ -183,7 +187,7 @@ claude-tsi() {
 _PD_OMP_SUBCOMMANDS=(acp agents auth-broker auth-gateway bench cleanse commit completions config dry-balance gallery gc grep grievances install join models plugin read say search setup shell ssh stats tiny-models token ttsr update usage)
 omp() {
   if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_OMP_SUBCOMMANDS[@]}"; then
-    env -u KITTY_WINDOW_ID \
+    with_secrets harness env -u KITTY_WINDOW_ID \
       LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-omp}" \
       PI_LANGFUSE_MAX_STRING_LENGTH="${PI_LANGFUSE_MAX_STRING_LENGTH:-off}" \
       PI_LANGFUSE_MAX_TOOL_PAYLOAD_LENGTH="${PI_LANGFUSE_MAX_TOOL_PAYLOAD_LENGTH:-off}" \
@@ -206,7 +210,7 @@ omp() {
     echo "omp: prime-directive tools initialize returned no output; aborting" >&2
     return 1
   fi
-  env -u KITTY_WINDOW_ID \
+  with_secrets harness env -u KITTY_WINDOW_ID \
     LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-omp}" \
     PI_LANGFUSE_MAX_STRING_LENGTH="${PI_LANGFUSE_MAX_STRING_LENGTH:-off}" \
     PI_LANGFUSE_MAX_TOOL_PAYLOAD_LENGTH="${PI_LANGFUSE_MAX_TOOL_PAYLOAD_LENGTH:-off}" \
@@ -249,5 +253,5 @@ dsh() {
     command dsh "$@"
     return $?
   fi
-  env LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-dsh}" dsh "$@"
+  with_secrets harness env LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-dsh}" dsh "$@"
 }

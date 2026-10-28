@@ -41,6 +41,13 @@ FAKE
 chmod +x "$tmp_dir/bin/claude" "$tmp_dir/bin/prime-directive"
 PATH="$tmp_dir/bin:$PATH"
 
+# The harness functions start their program through with_secrets (secretspec/aliases.zsh). SecretSpec reads a
+# fixture instead of OpenBao here, holding every name the profiles declare, so no real key is read.
+_ss_fixture="$tmp_dir/secretspec-fixture.env"
+bun -e "const m = Bun.TOML.parse(await Bun.file('${script_dir:h:h}/secretspec/secretspec.toml').text()); for (const n of new Set(Object.values(m.profiles).flatMap(Object.keys))) console.log(n + '=fx-' + n)" > "$_ss_fixture"
+export SECRETSPEC_PROVIDER="dotenv:$_ss_fixture"
+source "${script_dir:h:h}/secretspec/aliases.zsh"
+
 # Source the production file. Nothing here re-declares the functions: the file
 # under test is the only definition, so a change to it is what these see.
 source "$custom_dir/900-aliases"
