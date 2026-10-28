@@ -1,7 +1,10 @@
 # Names in ~/.secrets/export/ that 100-secrets does not export: SecretSpec loads them per command instead
 # (secretspec.toml beside this file; aliases.zsh). One name per line. A test checks every profile name is here.
+COMMAND_RUNNER_SLACK_TOKEN
 CONTEXT7_API_KEY
+COOLIFY_API_KEY
 FONTAWESOME_TOKEN
+GITHUB_MCP_TOKEN
 GITHUB_PERSONAL_ACCESS_TOKEN
 GITHUB_TOKEN
 HOMEASSISTANT_TOKEN

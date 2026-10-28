@@ -19,7 +19,7 @@ managed=(CONTEXT7_API_KEY LANGFUSE_BASE_URL LANGFUSE_HOST LANGFUSE_PUBLIC_KEY LA
   GITHUB_PERSONAL_ACCESS_TOKEN NPMJS_TOKEN FONTAWESOME_TOKEN N8N_API_KEY N8N_API_URL UNIFI_API_KEY UNIFI_NETWORK_HOST
   UNIFI_NETWORK_USERNAME UNIFI_NETWORK_PASSWORD HOMEASSISTANT_TOKEN HOMEASSISTANT_URL JIRA_API_TOKEN SEMGREP_APP_TOKEN
   SPOCK_TELEGRAM_MESSAGE_WEBHOOK_AUTH_HEADER SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL TSI_N8N_API_KEY TSI_N8N_API_URL
-  NTFY_TOKEN OPENAI_API_KEY TSI_NTFY_TOKEN TSI_OPENAI_API_KEY)
+  NTFY_TOKEN OPENAI_API_KEY TSI_NTFY_TOKEN TSI_OPENAI_API_KEY COMMAND_RUNNER_SLACK_TOKEN COOLIFY_API_KEY GITHUB_MCP_TOKEN)
 unset $managed CLAUDE_CONFIG_DIR LANGFUSE_TRACING_ENVIRONMENT
 
 tmp_dir="$(mktemp -d)"
@@ -74,7 +74,13 @@ run claude;                expect_env "claude gets HOMEASSISTANT_TOKEN from Secr
 run claude;                expect_env "claude still gets its tracing environment" LANGFUSE_TRACING_ENVIRONMENT claude-code-personal
 run claude-tsi;            expect_env "claude-tsi gets JIRA_API_TOKEN from SecretSpec" JIRA_API_TOKEN fx-JIRA_API_TOKEN
 run claude-tsi;            expect_env "claude-tsi still gets its own config dir" CLAUDE_CONFIG_DIR "$HOME/.claude-tsi"
-run claude-tsi;            expect_env "claude-tsi gets OPENAI_API_KEY from SecretSpec" OPENAI_API_KEY fx-OPENAI_API_KEY
+run claude-tsi;            expect_env "claude-tsi gets no OPENAI_API_KEY (on demand only)" OPENAI_API_KEY "<unset>"
+# Keys no command loads by itself: each has its own profile, used explicitly with with_secrets.
+run with_secrets openai npm;          expect_env "with_secrets openai gives OPENAI_API_KEY" OPENAI_API_KEY fx-OPENAI_API_KEY
+run with_secrets openai npm;          expect_env "with_secrets openai gives nothing else" NPMJS_TOKEN "<unset>"
+run with_secrets slack npm;           expect_env "with_secrets slack gives COMMAND_RUNNER_SLACK_TOKEN" COMMAND_RUNNER_SLACK_TOKEN fx-COMMAND_RUNNER_SLACK_TOKEN
+run with_secrets coolify npm;         expect_env "with_secrets coolify gives COOLIFY_API_KEY" COOLIFY_API_KEY fx-COOLIFY_API_KEY
+run with_secrets github-mcp npm;      expect_env "with_secrets github-mcp gives GITHUB_MCP_TOKEN" GITHUB_MCP_TOKEN fx-GITHUB_MCP_TOKEN
 run claude;                expect_env "claude gets NTFY_TOKEN from SecretSpec" NTFY_TOKEN fx-NTFY_TOKEN
 run claude;                expect_env "claude gets no OPENAI_API_KEY (work only)" OPENAI_API_KEY "<unset>"
 # A name inherited from the parent shell must not win over the profile's value.
@@ -98,7 +104,10 @@ expect_ref "jira's JIRA_API_TOKEN is the work Jira token" jira JIRA_API_TOKEN "d
 expect_ref "GITHUB_TOKEN reads the personal access token" npm GITHUB_TOKEN "dannel/github GITHUB_PERSONAL_ACCESS_TOKEN"
 expect_ref "claude's NTFY_TOKEN is the personal one" claude NTFY_TOKEN "dannel/ntfy NTFY_TOKEN"
 expect_ref "claude-tsi's NTFY_TOKEN is the work one" claude-tsi NTFY_TOKEN "dannel/tsi/ntfy NTFY_TOKEN"
-expect_ref "claude-tsi's OPENAI_API_KEY is the work one" claude-tsi OPENAI_API_KEY "dannel/tsi/openai OPENAI_API_KEY"
+expect_ref "the openai profile's OPENAI_API_KEY is the work one" openai OPENAI_API_KEY "dannel/tsi/openai OPENAI_API_KEY"
+expect_ref "the slack profile reads the command-runner Slack token" slack COMMAND_RUNNER_SLACK_TOKEN "dannel/slack COMMAND_RUNNER_SLACK_TOKEN"
+expect_ref "the coolify profile reads Dannel's Coolify key" coolify COOLIFY_API_KEY "dannel/coolify COOLIFY_API_KEY"
+expect_ref "the github-mcp profile reads the GitHub MCP token" github-mcp GITHUB_MCP_TOKEN "dannel/github GITHUB_MCP_TOKEN"
 
 # 100-secrets skips the names in secretspec/not-exported. A profile name missing from that list would be both
 # exported to every program and served per command.
