@@ -93,6 +93,13 @@ export TSI_NTFY_TOKEN=prefixed
 run claude-tsi;            expect_env "claude-tsi does not turn a TSI_ variable into the plain name" NTFY_TOKEN fx-NTFY_TOKEN
 unset TSI_NTFY_TOKEN
 
+# The first word after the profile is the program. A missing program gets a plain message with the right form.
+msg="$(with_secrets gh auth status 2>&1)"
+[[ $msg == *"'auth' is not a program"* && $msg == *"gh auth status"* ]] && pass "with_secrets names a missing program and shows the right form" \
+  || fail "with_secrets names a missing program and shows the right form" "got: $msg"
+with_secrets gh auth status >/dev/null 2>&1; code=$?
+(( code == 127 )) && pass "with_secrets exits 127 for a missing program, like the shell" || fail "with_secrets exits 127 for a missing program, like the shell" "exit $code"
+
 # Where each name points in OpenBao is the manifest's job; SecretSpec's fixture override bypasses it, so these read
 # the parsed manifest.
 manifest_ref() {  # PROFILE NAME -> item/field the bao alias reads

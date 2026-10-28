@@ -7,6 +7,12 @@ SECRETSPEC_MANIFEST="${SECRETSPEC_MANIFEST:-${${(%):-%x}:A:h}/secretspec.toml}"
 
 with_secrets() {
   local profile="$1"; shift
+  # The word after the profile is the program; check it first so a slip like `with_secrets gh auth status` reads plainly.
+  if ! whence -p -- "${1:-}" >/dev/null; then
+    print -u2 "with_secrets: '${1:-}' is not a program. Usage: with_secrets PROFILE PROGRAM [ARGS…]"
+    print -u2 "  for example: with_secrets $profile $profile ${1:-} ${(j: :)@[2,-1]}   (or the wrapper alone: $profile ${1:-} ${(j: :)@[2,-1]})"
+    return 127
+  fi
   secretspec -f "$SECRETSPEC_MANIFEST" run --profile "$profile" \
     --reason "${SECRETSPEC_REASON:-$profile (settings alias)}" -- "$@"
 }
