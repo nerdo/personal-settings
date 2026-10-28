@@ -1,20 +1,34 @@
 # Per-command secrets through SecretSpec (secretspec.toml beside this file). Sourced by zsh/custom/150-secretspec.
 #
-# with_secrets PROFILE PROGRAM [ARGS…] runs PROGRAM, a program on PATH (never a shell function), with PROFILE's keys
-# added to its environment; nothing else gets them. The wrappers below give each command its profile; claude,
+# with_secrets PROFILE[,PROFILE…] PROGRAM [ARGS…] runs PROGRAM, a program on PATH (never a shell function), with
+# those profiles' keys added to its environment; nothing else gets them. with_secrets alone lists the profiles. The wrappers below give each command its profile; claude,
 # claude-tsi, omp and dsh call with_secrets from their own functions in custom/900-aliases, which load later.
 SECRETSPEC_MANIFEST="${SECRETSPEC_MANIFEST:-${${(%):-%x}:A:h}/secretspec.toml}"
 
 with_secrets() {
+  # No arguments: list each profile with its key names (never values).
+  if (( $# == 0 )); then
+    awk '/^\[profiles\./ { if (p != "") print p ": " k; p = $0; sub(/^\[profiles\./, "", p); sub(/\].*/, "", p); k = ""; next }
+         /^\[/            { if (p != "") print p ": " k; p = ""; next }
+         p != "" && /^[A-Za-z_][A-Za-z0-9_]* *=/ { k = k (k == "" ? "" : " ") $1 }
+         END              { if (p != "") print p ": " k }' "$SECRETSPEC_MANIFEST"
+    return 0
+  fi
   local profile="$1"; shift
   # The word after the profile is the program; check it first so a slip like `with_secrets gh auth status` reads plainly.
   if ! whence -p -- "${1:-}" >/dev/null; then
-    print -u2 "with_secrets: '${1:-}' is not a program. Usage: with_secrets PROFILE PROGRAM [ARGS…]"
+    print -u2 "with_secrets: '${1:-}' is not a program. Usage: with_secrets PROFILE[,PROFILE…] PROGRAM [ARGS…]"
     print -u2 "  for example: with_secrets $profile $profile ${1:-} ${(j: :)@[2,-1]}   (or the wrapper alone: $profile ${1:-} ${(j: :)@[2,-1]})"
     return 127
   fi
-  secretspec -f "$SECRETSPEC_MANIFEST" run --profile "$profile" \
-    --reason "${SECRETSPEC_REASON:-$profile (settings alias)}" -- "$@"
+  # Several profiles, comma-separated: one secretspec run per profile, nested, so the program gets all of them (a name
+  # in two profiles takes the last one's value).
+  local -a run=()
+  local p
+  for p in ${(s:,:)profile}; do
+    run+=(secretspec -f "$SECRETSPEC_MANIFEST" run --profile "$p" --reason "${SECRETSPEC_REASON:-$p (settings alias)}" --)
+  done
+  "${run[@]}" "$@"
 }
 
 # Every profile named after an installed program wraps that program: `gh` runs `with_secrets gh gh`. To make a new

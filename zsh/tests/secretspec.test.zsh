@@ -119,6 +119,17 @@ auto_result="$(SECRETSPEC_MANIFEST="$auto_manifest" SECRETSPEC_PROVIDER="dotenv:
 [[ $auto_result == *"no-such-program:0"* ]] && pass "a profile with no program of that name gets no wrapper" \
   || fail "a profile with no program of that name gets no wrapper" "got: $auto_result"
 
+# with_secrets with no arguments lists the profiles and their key names (never values).
+listing="$(with_secrets 2>&1)"
+[[ $listing == *"gh: GITHUB_TOKEN"* && $listing == *"openai: OPENAI_API_KEY"* ]] && pass "with_secrets alone lists each profile with its key names" \
+  || fail "with_secrets alone lists each profile with its key names" "got: $listing"
+[[ $listing != *fx-* ]] && pass "the profile list shows no values" || fail "the profile list shows no values" "listing contained a value"
+
+# Several profiles, comma-separated, are all loaded for one program.
+run with_secrets openai,slack npm;   expect_env "with_secrets openai,slack gives OPENAI_API_KEY" OPENAI_API_KEY fx-OPENAI_API_KEY
+run with_secrets openai,slack npm;   expect_env "with_secrets openai,slack also gives COMMAND_RUNNER_SLACK_TOKEN" COMMAND_RUNNER_SLACK_TOKEN fx-COMMAND_RUNNER_SLACK_TOKEN
+run with_secrets openai,slack npm;   expect_env "with_secrets openai,slack gives nothing outside those profiles" NPMJS_TOKEN "<unset>"
+
 # The first word after the profile is the program. A missing program gets a plain message with the right form.
 msg="$(with_secrets gh auth status 2>&1)"
 [[ $msg == *"'auth' is not a program"* && $msg == *"gh auth status"* ]] && pass "with_secrets names a missing program and shows the right form" \
