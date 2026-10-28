@@ -125,6 +125,19 @@ listing="$(with_secrets 2>&1)"
   || fail "with_secrets alone lists each profile with its key names" "got: $listing"
 [[ $listing != *fx-* ]] && pass "the profile list shows no values" || fail "the profile list shows no values" "listing contained a value"
 
+# Profiles with no program: list the keys a command would get, each with the profile it comes from.
+keys="$(with_secrets harness,claude 2>&1)"
+[[ $keys == *"GITHUB_PERSONAL_ACCESS_TOKEN"*"claude"* && $keys == *"CONTEXT7_API_KEY"* ]] && pass "with_secrets harness,claude lists the combined keys" \
+  || fail "with_secrets harness,claude lists the combined keys" "got: $keys"
+[[ "$(print -r -- $keys | rg '^CONTEXT7_API_KEY')" == *claude* ]] && pass "a key in several profiles shows the last one, which provides it" \
+  || fail "a key in several profiles shows the last one, which provides it" "got: $(print -r -- $keys | rg '^CONTEXT7_API_KEY')"
+[[ "$(with_secrets gh 2>&1)" == *GITHUB_TOKEN* ]] && pass "with_secrets with one profile and no program lists its keys" \
+  || fail "with_secrets with one profile and no program lists its keys" "got: $(with_secrets gh 2>&1)"
+[[ $keys != *fx-* ]] && pass "the key list shows no values" || fail "the key list shows no values" "listing contained a value"
+msg="$(with_secrets harness,nope 2>&1)"; code=$?
+(( code != 0 )) && [[ $msg == *"nope"* ]] && pass "an unknown profile name is an error that names it" \
+  || fail "an unknown profile name is an error that names it" "exit $code: $msg"
+
 # Several profiles, comma-separated, are all loaded for one program.
 run with_secrets openai,slack npm;   expect_env "with_secrets openai,slack gives OPENAI_API_KEY" OPENAI_API_KEY fx-OPENAI_API_KEY
 run with_secrets openai,slack npm;   expect_env "with_secrets openai,slack also gives COMMAND_RUNNER_SLACK_TOKEN" COMMAND_RUNNER_SLACK_TOKEN fx-COMMAND_RUNNER_SLACK_TOKEN

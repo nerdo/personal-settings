@@ -1,7 +1,8 @@
 # Per-command secrets through SecretSpec (secretspec.toml beside this file). Sourced by zsh/custom/150-secretspec.
 #
 # with_secrets PROFILE[,PROFILE…] PROGRAM [ARGS…] runs PROGRAM, a program on PATH (never a shell function), with
-# those profiles' keys added to its environment; nothing else gets them. with_secrets alone lists the profiles. The wrappers below give each command its profile; claude,
+# those profiles' keys added to its environment; nothing else gets them. with_secrets alone lists the profiles;
+# with_secrets PROFILE[,PROFILE…] alone lists the keys a command would get, and which profile provides each. The wrappers below give each command its profile; claude,
 # claude-tsi, omp and dsh call with_secrets from their own functions in custom/900-aliases, which load later.
 SECRETSPEC_MANIFEST="${SECRETSPEC_MANIFEST:-${${(%):-%x}:A:h}/secretspec.toml}"
 
@@ -12,6 +13,26 @@ with_secrets() {
          /^\[/            { if (p != "") print p ": " k; p = ""; next }
          p != "" && /^[A-Za-z_][A-Za-z0-9_]* *=/ { k = k (k == "" ? "" : " ") $1 }
          END              { if (p != "") print p ": " k }' "$SECRETSPEC_MANIFEST"
+    return 0
+  fi
+  # Profiles and no program: list the keys a command would get, each with the profile that provides it (the last
+  # profile listed wins for a name in several, as when running).
+  if (( $# == 1 )); then
+    local -a pairs=(${(f)"$(awk '/^\[profiles\./ { p = $0; sub(/^\[profiles\./, "", p); sub(/\].*/, "", p); next }
+                                   /^\[/ { p = ""; next }
+                                   p != "" && /^[A-Za-z_][A-Za-z0-9_]* *=/ { print p " " $1 }' "$SECRETSPEC_MANIFEST")"})
+    local -A from=(); local -a order=(); local p pair k found
+    for p in ${(s:,:)1}; do
+      found=0
+      for pair in $pairs; do
+        [[ ${pair%% *} == $p ]] || continue
+        found=1; k=${pair#* }
+        (( ${+from[$k]} )) || order+=($k)
+        from[$k]=$p
+      done
+      (( found )) || { print -u2 "with_secrets: no profile '$p' (with_secrets alone lists them)"; return 1; }
+    done
+    for k in $order; do printf '%-44s %s\n' "$k" "${from[$k]}"; done
     return 0
   fi
   local profile="$1"; shift
