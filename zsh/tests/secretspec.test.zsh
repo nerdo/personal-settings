@@ -93,6 +93,32 @@ export TSI_NTFY_TOKEN=prefixed
 run claude-tsi;            expect_env "claude-tsi does not turn a TSI_ variable into the plain name" NTFY_TOKEN fx-NTFY_TOKEN
 unset TSI_NTFY_TOKEN
 
+# A profile named after an installed program gets a wrapper with no edit to aliases.zsh. A separate fixture
+# manifest declares a made-up program's profile; the program exists only as a fake on PATH.
+print -r -- "#!/usr/bin/env zsh
+env > '$dump_file'" > "$tmp_dir/bin/fx-tool"; chmod +x "$tmp_dir/bin/fx-tool"
+auto_manifest="$tmp_dir/auto.toml"
+print -r -- '[project]
+name = "auto-wrapper-test"
+revision = "1.0"
+[profiles.fx-tool]
+FX_TOOL_KEY = { description = "x" }
+[profiles.no-such-program]
+FX_OTHER_KEY = { description = "x" }' > "$auto_manifest"
+print -r -- "FX_TOOL_KEY=fx-FX_TOOL_KEY
+FX_OTHER_KEY=fx-FX_OTHER_KEY" > "$tmp_dir/auto.env"
+auto_result="$(SECRETSPEC_MANIFEST="$auto_manifest" SECRETSPEC_PROVIDER="dotenv:$tmp_dir/auto.env" zsh -f -c "
+  source '$repo_dir/secretspec/aliases.zsh'
+  print -r -- \"fx-tool:\${+functions[fx-tool]} no-such-program:\${+functions[no-such-program]}\"
+  rm -f '$dump_file'; fx-tool >/dev/null 2>&1; rg --no-line-number '^FX_TOOL_KEY=' '$dump_file' || print -r -- 'FX_TOOL_KEY=<unset>'
+" 2>&1)"
+[[ $auto_result == *"fx-tool:1"* ]] && pass "a profile named after an installed program gets a wrapper automatically" \
+  || fail "a profile named after an installed program gets a wrapper automatically" "got: $auto_result"
+[[ $auto_result == *"FX_TOOL_KEY=fx-FX_TOOL_KEY"* ]] && pass "the automatic wrapper gives the program its profile's keys" \
+  || fail "the automatic wrapper gives the program its profile's keys" "got: $auto_result"
+[[ $auto_result == *"no-such-program:0"* ]] && pass "a profile with no program of that name gets no wrapper" \
+  || fail "a profile with no program of that name gets no wrapper" "got: $auto_result"
+
 # The first word after the profile is the program. A missing program gets a plain message with the right form.
 msg="$(with_secrets gh auth status 2>&1)"
 [[ $msg == *"'auth' is not a program"* && $msg == *"gh auth status"* ]] && pass "with_secrets names a missing program and shows the right form" \
