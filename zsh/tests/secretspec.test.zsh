@@ -86,4 +86,9 @@ expect_ref "claude-tsi's N8N_API_KEY is the work one" claude-tsi N8N_API_KEY "da
 expect_ref "jira's JIRA_API_TOKEN is the work Jira token" jira JIRA_API_TOKEN "dannel/tsi/jira JIRA_API_TOKEN"
 expect_ref "GITHUB_TOKEN reads the personal access token" npm GITHUB_TOKEN "dannel/github GITHUB_PERSONAL_ACCESS_TOKEN"
 
+# 100-secrets skips the names in secretspec/not-exported. A profile name missing from that list would be both
+# exported to every program and served per command.
+missing="$("$real_bun" -e "const m = Bun.TOML.parse(await Bun.file('$repo_dir/secretspec/secretspec.toml').text()); const served = new Set(Object.values(m.profiles).flatMap(Object.keys)); const list = new Set((await Bun.file('$repo_dir/secretspec/not-exported').text().catch(() => '')).split('\\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))); console.log([...served].filter((n) => !list.has(n)).join(' '))" 2>&1)"
+[[ -z $missing ]] && pass "every name a profile serves is in secretspec/not-exported" || fail "every name a profile serves is in secretspec/not-exported" "missing: $missing"
+
 (( failures == 0 )) && print -r -- "all assertions passed" || { print -r -- "$failures assertion(s) failed"; exit 1; }

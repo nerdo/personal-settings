@@ -96,8 +96,52 @@ assert_missing_export_dir_is_a_no_op() {
   fi
 }
 
+# Names SecretSpec serves per command (../../secretspec/not-exported) stay out of the environment, so only the
+# commands whose profile holds them get them. The list path is injectable so a case can use its own.
+secrets_export_with_list() {
+  local fixture_home="$1" list="$2" var_name="$3"
+  (
+    HOME="$fixture_home"
+    SECRETS_NOT_EXPORTED_LIST="$list"
+    source "$custom_dir/100-secrets"
+    print -r -- "${(P)var_name:-<unset>}"
+  )
+}
+
+assert_listed_name_is_not_exported() {
+  local fixture_home; fixture_home="$(new_fixture_home)"
+  print -rn -- "fixture_value" > "$fixture_home/.secrets/export/SERVED_TOKEN"
+  print -r -- "SERVED_TOKEN" > "$fixture_home/not-exported"
+
+  local actual; actual="$(secrets_export_with_list "$fixture_home" "$fixture_home/not-exported" SERVED_TOKEN)"
+  rm -rf "$fixture_home"
+
+  if [[ "$actual" == "<unset>" ]]; then
+    pass "a name in the not-exported list is not exported"
+  else
+    fail "a name in the not-exported list is not exported" "got: $actual"
+  fi
+}
+
+assert_unlisted_name_is_still_exported() {
+  local fixture_home; fixture_home="$(new_fixture_home)"
+  print -rn -- "fixture_value" > "$fixture_home/.secrets/export/OTHER_TOKEN"
+  print -r -- "SERVED_TOKEN" > "$fixture_home/not-exported"
+
+  local actual; actual="$(secrets_export_with_list "$fixture_home" "$fixture_home/not-exported" OTHER_TOKEN)"
+  rm -rf "$fixture_home"
+
+  if [[ "$actual" == "fixture_value" ]]; then
+    pass "a name not in the not-exported list is still exported"
+  else
+    fail "a name not in the not-exported list is still exported" "got: $actual"
+  fi
+}
+
 assert_file_becomes_env_var
 assert_trailing_newline_is_stripped
+assert_listed_name_is_not_exported
+assert_unlisted_name_is_still_exported
 assert_directories_are_skipped
 assert_missing_export_dir_is_a_no_op
 
