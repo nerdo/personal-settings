@@ -24,7 +24,10 @@ and scripts. ml4w ships no `.zshenv`, so nothing it does can clobber this file.
 It does two things:
 
 - Loads `custom/100-secrets`, which exports one env var per file in
-  `~/.secrets/export/` (filename → var name, contents → value). Because this
+  `~/.secrets/export/` (filename → var name, contents → value), except the names in
+  [`../secretspec/not-exported`](../secretspec/not-exported): SecretSpec loads those per
+  command from OpenBao ([`../secretspec/`](../secretspec/), `custom/150-secretspec`), so only
+  the command whose profile holds a key gets it. Because this
   runs outside `.zshrc`, the values also reach scripts, editors, and tools
   started outside a login shell.
 - Repairs `~/.zshrc` when it is not pointing at this repo's loader.
