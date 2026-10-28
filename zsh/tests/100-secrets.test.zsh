@@ -138,10 +138,50 @@ assert_unlisted_name_is_still_exported() {
   fi
 }
 
+# A shell started from an older process (a tmux server, a terminal opened before a name left export/) inherits the
+# old value. Interactive shells drop inherited names on the list; non-interactive ones keep them, because that is how
+# a program started through with_secrets hands its keys to its own children. -f skips every rc file, so only the
+# module under test runs.
+inherited_after_module() {  # MODE (-i or empty) LIST NAME VALUE -> what NAME holds after the module ran
+  local fixture_home; fixture_home="$(new_fixture_home)"
+  print -r -- "$2" > "$fixture_home/not-exported"
+  env HOME="$fixture_home" SECRETS_NOT_EXPORTED_LIST="$fixture_home/not-exported" "$3=$4" \
+    zsh -f $1 -c "source '$custom_dir/100-secrets'; print -r -- \"\${$3:-<unset>}\"" 2>/dev/null | tail -1
+  rm -rf "$fixture_home"
+}
+
+assert_interactive_shell_drops_inherited_listed_name() {
+  local actual; actual="$(inherited_after_module -i SERVED_TOKEN SERVED_TOKEN inherited)"
+  [[ "$actual" == "<unset>" ]] && pass "an interactive shell drops an inherited name that is in the list" \
+    || fail "an interactive shell drops an inherited name that is in the list" "got: $actual"
+}
+
+assert_interactive_shell_drops_inherited_admin_token() {
+  local actual; actual="$(inherited_after_module -i SERVED_TOKEN BAO_ADMIN_TOKEN inherited)"
+  [[ "$actual" == "<unset>" ]] && pass "an interactive shell drops an inherited BAO_ADMIN_TOKEN" \
+    || fail "an interactive shell drops an inherited BAO_ADMIN_TOKEN" "got: $actual"
+}
+
+assert_interactive_shell_keeps_inherited_unlisted_name() {
+  local actual; actual="$(inherited_after_module -i SERVED_TOKEN OTHER_VAR inherited)"
+  [[ "$actual" == "inherited" ]] && pass "an interactive shell keeps an inherited name that is not in the list" \
+    || fail "an interactive shell keeps an inherited name that is not in the list" "got: $actual"
+}
+
+assert_noninteractive_shell_keeps_inherited_listed_name() {
+  local actual; actual="$(inherited_after_module "" SERVED_TOKEN SERVED_TOKEN inherited)"
+  [[ "$actual" == "inherited" ]] && pass "a non-interactive shell keeps an inherited listed name (with_secrets children)" \
+    || fail "a non-interactive shell keeps an inherited listed name (with_secrets children)" "got: $actual"
+}
+
 assert_file_becomes_env_var
 assert_trailing_newline_is_stripped
 assert_listed_name_is_not_exported
 assert_unlisted_name_is_still_exported
+assert_interactive_shell_drops_inherited_listed_name
+assert_interactive_shell_drops_inherited_admin_token
+assert_interactive_shell_keeps_inherited_unlisted_name
+assert_noninteractive_shell_keeps_inherited_listed_name
 assert_directories_are_skipped
 assert_missing_export_dir_is_a_no_op
 
