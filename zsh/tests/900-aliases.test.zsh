@@ -106,55 +106,6 @@ unset _real
 
 assert_no_real_tsi_vars
 
-# --- walking skeleton: the mapping reaches the binary at all -----------------
-
-export TSI_SKELETON=wired
-claude-tsi >/dev/null 2>&1
-assert_child_env "claude-tsi carries a mapped assignment through to the binary" \
-  SKELETON wired
-
-# --- the mapping itself ------------------------------------------------------
-
-# Reports the whole emitted list on failure, so a miss names what the function
-# produced instead of only that the expected entry was absent.
-assert_emits() {
-  local label="$1"
-  local expected="$2"
-  _tsi_env_overrides
-
-  if (( ${_TSI_ENV_OVERRIDES[(I)$expected]} )); then
-    pass "$label"
-  else
-    fail "$label" "expected '$expected'; emitted: ${_TSI_ENV_OVERRIDES[*]:-<nothing>}"
-  fi
-}
-
-assert_omits() {
-  local label="$1"
-  local unwanted="$2"
-  _tsi_env_overrides
-
-  if (( ${_TSI_ENV_OVERRIDES[(I)$unwanted]} )); then
-    fail "$label" "emitted '$unwanted'; full list: ${_TSI_ENV_OVERRIDES[*]}"
-  else
-    pass "$label"
-  fi
-}
-
-export TSI_ALPHA=one
-assert_emits "an exported TSI_-prefixed variable produces an unprefixed assignment carrying its value" \
-  "ALPHA=one"
-
-export PLAIN=nope
-assert_omits "a variable without the TSI_ prefix produces no assignment" \
-  "PLAIN=nope"
-
-# A plain shell variable, never exported. Without a type check it would leak
-# into the child alongside the real secrets.
-TSI_LOCAL=notexported
-assert_omits "a TSI_-prefixed variable that is not exported produces no assignment" \
-  "LOCAL=notexported"
-
 # --- what the -tsi command hands to the binary -------------------------------
 
 assert_child_args() {
@@ -171,20 +122,18 @@ assert_child_args() {
   fi
 }
 
-# Both halves are exported, exactly as 100-secrets leaves them in a real shell.
+# The work keys come from the claude-tsi SecretSpec profile (the fixture's fx- values here), under their plain
+# names. A personal value left in the parent shell must not reach the binary.
 export N8N_API_URL=personal
-export TSI_N8N_API_URL=work
 
 claude-tsi >/dev/null 2>&1
-assert_child_env "claude-tsi runs the binary with the unprefixed name holding the TSI_ value" \
-  N8N_API_URL work
-assert_child_env "claude-tsi leaves the TSI_-prefixed name visible to the binary" \
-  TSI_N8N_API_URL work
+assert_child_env "claude-tsi runs the binary with the claude-tsi profile's N8N_API_URL, not the parent shell's" \
+  N8N_API_URL fx-N8N_API_URL
 
 # `mcp` is in _PD_CLAUDE_SUBCOMMANDS, so this takes the pass-through branch.
 claude-tsi mcp >/dev/null 2>&1
-assert_child_env "claude-tsi given a management subcommand runs the binary with the mapped value too" \
-  N8N_API_URL work
+assert_child_env "claude-tsi given a management subcommand gets the profile's N8N_API_URL too" \
+  N8N_API_URL fx-N8N_API_URL
 assert_child_args "claude-tsi given a management subcommand reaches the binary without a baked system prompt" \
   "mcp"
 

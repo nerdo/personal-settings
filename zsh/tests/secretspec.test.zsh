@@ -18,7 +18,8 @@ fail() { print -r -- "FAIL - $1"; print -r -- "       $2"; (( failures++ )) }
 managed=(CONTEXT7_API_KEY LANGFUSE_BASE_URL LANGFUSE_HOST LANGFUSE_PUBLIC_KEY LANGFUSE_SECRET_KEY GITHUB_TOKEN
   GITHUB_PERSONAL_ACCESS_TOKEN NPMJS_TOKEN FONTAWESOME_TOKEN N8N_API_KEY N8N_API_URL UNIFI_API_KEY UNIFI_NETWORK_HOST
   UNIFI_NETWORK_USERNAME UNIFI_NETWORK_PASSWORD HOMEASSISTANT_TOKEN HOMEASSISTANT_URL JIRA_API_TOKEN SEMGREP_APP_TOKEN
-  SPOCK_TELEGRAM_MESSAGE_WEBHOOK_AUTH_HEADER SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL TSI_N8N_API_KEY TSI_N8N_API_URL)
+  SPOCK_TELEGRAM_MESSAGE_WEBHOOK_AUTH_HEADER SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL TSI_N8N_API_KEY TSI_N8N_API_URL
+  NTFY_TOKEN OPENAI_API_KEY TSI_NTFY_TOKEN TSI_OPENAI_API_KEY)
 unset $managed CLAUDE_CONFIG_DIR LANGFUSE_TRACING_ENVIRONMENT
 
 tmp_dir="$(mktemp -d)"
@@ -73,6 +74,16 @@ run claude;                expect_env "claude gets HOMEASSISTANT_TOKEN from Secr
 run claude;                expect_env "claude still gets its tracing environment" LANGFUSE_TRACING_ENVIRONMENT claude-code-personal
 run claude-tsi;            expect_env "claude-tsi gets JIRA_API_TOKEN from SecretSpec" JIRA_API_TOKEN fx-JIRA_API_TOKEN
 run claude-tsi;            expect_env "claude-tsi still gets its own config dir" CLAUDE_CONFIG_DIR "$HOME/.claude-tsi"
+run claude-tsi;            expect_env "claude-tsi gets OPENAI_API_KEY from SecretSpec" OPENAI_API_KEY fx-OPENAI_API_KEY
+run claude;                expect_env "claude gets NTFY_TOKEN from SecretSpec" NTFY_TOKEN fx-NTFY_TOKEN
+run claude;                expect_env "claude gets no OPENAI_API_KEY (work only)" OPENAI_API_KEY "<unset>"
+# A name inherited from the parent shell must not win over the profile's value.
+NTFY_TOKEN=from-parent-shell run claude-tsi
+expect_env "claude-tsi's NTFY_TOKEN comes from its profile even when the parent shell has one" NTFY_TOKEN fx-NTFY_TOKEN
+# The TSI_ prefix only existed while both copies were exported at once.
+export TSI_NTFY_TOKEN=prefixed
+run claude-tsi;            expect_env "claude-tsi does not turn a TSI_ variable into the plain name" NTFY_TOKEN fx-NTFY_TOKEN
+unset TSI_NTFY_TOKEN
 
 # Where each name points in OpenBao is the manifest's job; SecretSpec's fixture override bypasses it, so these read
 # the parsed manifest.
@@ -85,6 +96,9 @@ expect_ref "claude's N8N_API_KEY is the personal one" claude N8N_API_KEY "dannel
 expect_ref "claude-tsi's N8N_API_KEY is the work one" claude-tsi N8N_API_KEY "dannel/tsi/n8n N8N_API_KEY"
 expect_ref "jira's JIRA_API_TOKEN is the work Jira token" jira JIRA_API_TOKEN "dannel/tsi/jira JIRA_API_TOKEN"
 expect_ref "GITHUB_TOKEN reads the personal access token" npm GITHUB_TOKEN "dannel/github GITHUB_PERSONAL_ACCESS_TOKEN"
+expect_ref "claude's NTFY_TOKEN is the personal one" claude NTFY_TOKEN "dannel/ntfy NTFY_TOKEN"
+expect_ref "claude-tsi's NTFY_TOKEN is the work one" claude-tsi NTFY_TOKEN "dannel/tsi/ntfy NTFY_TOKEN"
+expect_ref "claude-tsi's OPENAI_API_KEY is the work one" claude-tsi OPENAI_API_KEY "dannel/tsi/openai OPENAI_API_KEY"
 
 # 100-secrets skips the names in secretspec/not-exported. A profile name missing from that list would be both
 # exported to every program and served per command.

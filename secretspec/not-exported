@@ -14,6 +14,8 @@ LANGFUSE_SECRET_KEY
 N8N_API_KEY
 N8N_API_URL
 NPMJS_TOKEN
+NTFY_TOKEN
+OPENAI_API_KEY
 SEMGREP_APP_TOKEN
 SPOCK_TELEGRAM_MESSAGE_WEBHOOK_AUTH_HEADER
 SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL
@@ -21,6 +23,9 @@ UNIFI_API_KEY
 UNIFI_NETWORK_HOST
 UNIFI_NETWORK_PASSWORD
 UNIFI_NETWORK_USERNAME
-# The work n8n pair, served to claude-tsi under the plain N8N_ names.
+# The work copies, stored without the prefix in OpenBao (kv/dannel/tsi/...) and served to claude-tsi under the
+# plain names. The prefix only kept them apart while both copies were exported at once.
 TSI_N8N_API_KEY
 TSI_N8N_API_URL
+TSI_NTFY_TOKEN
+TSI_OPENAI_API_KEY
