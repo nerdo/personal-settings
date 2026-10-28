@@ -4,7 +4,7 @@ Dannel's keys, loaded per command from OpenBao (`kv/dannel/…` on `scrts.strflt
 shell. Names and paths only; values never live in this repository.
 
 - [`secretspec.toml`](secretspec.toml): one profile per command (`claude`, `claude-tsi`, `harness` for omp and dsh,
-  `npm` for npm/npx/bun/bunx, `jira`, `semgrep`, `spock-me`), and on-demand profiles no command loads by itself
+  `npm` for npm/npx/bun/bunx, `gh`, `jira`, `semgrep`, `spock-me`), and on-demand profiles no command loads by itself
   (`openai`, `slack`, `coolify`, `github-mcp`): `with_secrets openai <command>`. Login: the `dannel` AppRole login SecretSpec reads from
   the Keychain (`strflt-openbao-dannel`); cache: the keyring, 1 day.
 - [`aliases.zsh`](aliases.zsh): `with_secrets PROFILE PROGRAM [ARGS…]` and the command wrappers, loaded by

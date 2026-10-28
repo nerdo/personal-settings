@@ -15,6 +15,7 @@ npm()      { with_secrets npm npm "$@" }
 npx()      { with_secrets npm npx "$@" }
 bun()      { with_secrets npm bun "$@" }
 bunx()     { with_secrets npm bunx "$@" }
+gh()       { with_secrets gh gh "$@" }
 jira()     { with_secrets jira jira "$@" }
 semgrep()  { with_secrets semgrep semgrep "$@" }
 spock-me() { with_secrets spock-me spock-me "$@" }

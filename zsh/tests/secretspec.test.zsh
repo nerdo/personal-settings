@@ -26,7 +26,7 @@ tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
 mkdir -p "$tmp_dir/bin"
 dump_file="$tmp_dir/child-env"
-for name in npm npx bun bunx jira semgrep spock-me claude omp dsh prime-directive; do
+for name in npm npx bun bunx gh jira semgrep spock-me claude omp dsh prime-directive; do
   print -r -- "#!/usr/bin/env zsh
 env > '$dump_file'
 [[ \${0:t} == prime-directive ]] && print 'fake corpus'
@@ -61,6 +61,8 @@ run npm whoami;            expect_env "npm gets no key outside its profile" LANG
 run npx -v;                expect_env "npx gets FONTAWESOME_TOKEN from SecretSpec" FONTAWESOME_TOKEN fx-FONTAWESOME_TOKEN
 run bun -v;                expect_env "bun gets NPMJS_TOKEN from SecretSpec" NPMJS_TOKEN fx-NPMJS_TOKEN
 run bunx -v;               expect_env "bunx gets NPMJS_TOKEN from SecretSpec" NPMJS_TOKEN fx-NPMJS_TOKEN
+run gh auth status;        expect_env "gh gets GITHUB_TOKEN from SecretSpec" GITHUB_TOKEN fx-GITHUB_TOKEN
+run gh auth status;        expect_env "gh gets no key outside its profile" NPMJS_TOKEN "<unset>"
 run jira issue list;       expect_env "jira gets JIRA_API_TOKEN from SecretSpec" JIRA_API_TOKEN fx-JIRA_API_TOKEN
 run semgrep ci;            expect_env "semgrep gets SEMGREP_APP_TOKEN from SecretSpec" SEMGREP_APP_TOKEN fx-SEMGREP_APP_TOKEN
 run spock-me hi;           expect_env "spock-me gets the webhook URL from SecretSpec" SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL fx-SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL
@@ -102,6 +104,7 @@ expect_ref "claude's N8N_API_KEY is the personal one" claude N8N_API_KEY "dannel
 expect_ref "claude-tsi's N8N_API_KEY is the work one" claude-tsi N8N_API_KEY "dannel/tsi/n8n N8N_API_KEY"
 expect_ref "jira's JIRA_API_TOKEN is the work Jira token" jira JIRA_API_TOKEN "dannel/tsi/jira JIRA_API_TOKEN"
 expect_ref "GITHUB_TOKEN reads the personal access token" npm GITHUB_TOKEN "dannel/github GITHUB_PERSONAL_ACCESS_TOKEN"
+expect_ref "gh's GITHUB_TOKEN reads the personal access token" gh GITHUB_TOKEN "dannel/github GITHUB_PERSONAL_ACCESS_TOKEN"
 expect_ref "claude's NTFY_TOKEN is the personal one" claude NTFY_TOKEN "dannel/ntfy NTFY_TOKEN"
 expect_ref "claude-tsi's NTFY_TOKEN is the work one" claude-tsi NTFY_TOKEN "dannel/tsi/ntfy NTFY_TOKEN"
 expect_ref "the openai profile's OPENAI_API_KEY is the work one" openai OPENAI_API_KEY "dannel/tsi/openai OPENAI_API_KEY"
