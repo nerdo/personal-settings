@@ -1,5 +1,0 @@
-# ~/.local/bin ahead of everything else in the desktop session, and so in every user service: uwsm exports this
-# session's PATH to systemd. Omarchy's env.d (sourced before this one) puts mise's shims first; ~/.local/bin holds
-# this repo's commands (zsh/bin/link-local-bin), which find the real program further along PATH.
-# Linked to ~/.config/uwsm/env.d/ by zsh/bin/link-local-bin. Takes effect at the next desktop login.
-export PATH="$HOME/.local/bin:$PATH"

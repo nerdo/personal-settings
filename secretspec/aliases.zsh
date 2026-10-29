@@ -3,8 +3,8 @@
 # with_secrets PROFILE[,PROFILE…] PROGRAM [ARGS…] runs PROGRAM, a program on PATH (never a shell function), with
 # those profiles' keys added to its environment; nothing else gets them. with_secrets alone lists the profiles;
 # with_secrets PROFILE[,PROFILE…] alone lists the keys a command would get, and which profile provides each.
-# Programs with a profile of their own (gh, npm, npx, bun, bunx, jira, semgrep, spock-me) are commands in this repo's
-# bin/, symlinks to commands/with-secrets, so programs outside zsh get their keys too. claude and claude-tsi are
+# Programs with a profile of their own are commands in this repo's bin/, symlinks to commands/with-secrets: gh, and
+# npm+, npx+, bun+, bunx+, jira+, semgrep+, spock-me+ (the + marks keys only for a person typing it). claude and claude-tsi are
 # commands of their own; omp and dsh call with_secrets from their functions in custom/900-aliases, which load later.
 SECRETSPEC_MANIFEST="${SECRETSPEC_MANIFEST:-${${(%):-%x}:A:h}/secretspec.toml}"
 
@@ -55,4 +55,4 @@ with_secrets() {
 }
 
 # To give a new program its keys: add a profile named after it to secretspec.toml, then
-# `ln -s ../commands/with-secrets/with-secrets bin/<program>` and run zsh/bin/link-local-bin.
+# `ln -s ../commands/with-secrets/with-secrets bin/<program>+`.

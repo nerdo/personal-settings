@@ -1,0 +1,32 @@
+#!/usr/bin/env zsh
+# install-bin-path: put this repo's bin/ first on the PATH of programs started outside zsh, so they run its commands
+# (gh with its keys, claude with the prime directives) ahead of mise's shims and ~/.local/bin. Programs that copy an
+# interactive zsh's PATH (Orca's `zsh -ilc`) already get bin/ first from zsh/custom/990-commands.
+#
+# Linux, where each exists:
+#   ~/.config/uwsm/env.d/50-settings-bin-first        desktop login; uwsm hands this PATH to every user service.
+#                                                     Sourced after Omarchy's file, which puts mise's shims first.
+#   ~/.config/environment.d/50-settings-bin-first.conf  user services started before any desktop login.
+# macOS has neither; nothing is written there.
+# Both take effect at the next login, or at once with `systemctl --user set-environment PATH=<repo>/bin:$PATH`.
+# Safe to rerun: a file that is already right is left alone, and nothing is printed for it.
+# Usage: install-bin-path
+set -u
+
+bin="${0:A:h:h:h}/bin"
+generator=/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator
+
+write() {  # FILE CONTENT
+  [[ -f "$1" && "$(<"$1")" == "$2" ]] && return 0
+  mkdir -p "${1:h}"
+  print -r -- "$2" > "$1" && print -r -- "wrote $1"
+}
+
+if whence -p uwsm >/dev/null; then
+  write "$HOME/.config/uwsm/env.d/50-settings-bin-first" "# From install-bin-path in ${bin:h}: its bin/ first on PATH.
+export PATH=\"$bin:\$PATH\""
+fi
+if [[ -x $generator ]]; then
+  write "$HOME/.config/environment.d/50-settings-bin-first.conf" "# From install-bin-path in ${bin:h}: its bin/ first on PATH.
+PATH=$bin:\${PATH}"
+fi

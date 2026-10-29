@@ -68,17 +68,21 @@ expect_env() {  # LABEL NAME EXPECTED
   [[ "$(whence -w claude)" == "claude: command" ]] ) \
   && pass "aliases.zsh leaves claude unwrapped when another claude is ahead of bin/ on PATH" \
   || fail "aliases.zsh leaves claude unwrapped when another claude is ahead of bin/ on PATH" "claude was wrapped"
-run npm whoami;            expect_env "npm gets NPMJS_TOKEN from SecretSpec" NPMJS_TOKEN fx-NPMJS_TOKEN
-run npm whoami;            expect_env "npm gets GITHUB_TOKEN for ~/.npmrc" GITHUB_TOKEN fx-GITHUB_TOKEN
-run npm whoami;            expect_env "npm gets no key outside its profile" LANGFUSE_SECRET_KEY "<unset>"
-run npx -v;                expect_env "npx gets FONTAWESOME_TOKEN from SecretSpec" FONTAWESOME_TOKEN fx-FONTAWESOME_TOKEN
-run bun -v;                expect_env "bun gets NPMJS_TOKEN from SecretSpec" NPMJS_TOKEN fx-NPMJS_TOKEN
-run bunx -v;               expect_env "bunx gets NPMJS_TOKEN from SecretSpec" NPMJS_TOKEN fx-NPMJS_TOKEN
+# The keys-only commands carry a + (npm+, bun+, …); the plain name is the program alone, so a script started with
+# `#!/usr/bin/env bun`, or any program that runs npm, gets no keys.
+run npm+ whoami;           expect_env "npm+ gets NPMJS_TOKEN from SecretSpec" NPMJS_TOKEN fx-NPMJS_TOKEN
+run npm+ whoami;           expect_env "npm+ gets GITHUB_TOKEN for ~/.npmrc" GITHUB_TOKEN fx-GITHUB_TOKEN
+run npm+ whoami;           expect_env "npm+ gets no key outside its profile" LANGFUSE_SECRET_KEY "<unset>"
+run npx+ -v;               expect_env "npx+ gets FONTAWESOME_TOKEN from SecretSpec" FONTAWESOME_TOKEN fx-FONTAWESOME_TOKEN
+run bun+ -v;               expect_env "bun+ gets NPMJS_TOKEN from SecretSpec" NPMJS_TOKEN fx-NPMJS_TOKEN
+run bunx+ -v;              expect_env "bunx+ gets NPMJS_TOKEN from SecretSpec" NPMJS_TOKEN fx-NPMJS_TOKEN
+run npm whoami;            expect_env "plain npm gets no key" NPMJS_TOKEN "<unset>"
+run bun -v;                expect_env "plain bun gets no key" NPMJS_TOKEN "<unset>"
 run gh auth status;        expect_env "gh gets GITHUB_TOKEN from SecretSpec" GITHUB_TOKEN fx-GITHUB_TOKEN
 run gh auth status;        expect_env "gh gets no key outside its profile" NPMJS_TOKEN "<unset>"
-run jira issue list;       expect_env "jira gets JIRA_API_TOKEN from SecretSpec" JIRA_API_TOKEN fx-JIRA_API_TOKEN
-run semgrep ci;            expect_env "semgrep gets SEMGREP_APP_TOKEN from SecretSpec" SEMGREP_APP_TOKEN fx-SEMGREP_APP_TOKEN
-run spock-me hi;           expect_env "spock-me gets the webhook URL from SecretSpec" SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL fx-SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL
+run jira+ issue list;      expect_env "jira+ gets JIRA_API_TOKEN from SecretSpec" JIRA_API_TOKEN fx-JIRA_API_TOKEN
+run semgrep+ ci;           expect_env "semgrep+ gets SEMGREP_APP_TOKEN from SecretSpec" SEMGREP_APP_TOKEN fx-SEMGREP_APP_TOKEN
+run spock-me+ hi;          expect_env "spock-me+ gets the webhook URL from SecretSpec" SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL fx-SPOCK_TELEGRAM_MESSAGE_WEBHOOK_URL
 run omp;                   expect_env "omp gets LANGFUSE_SECRET_KEY from SecretSpec" LANGFUSE_SECRET_KEY fx-LANGFUSE_SECRET_KEY
 run omp;                   expect_env "omp gets CONTEXT7_API_KEY from SecretSpec" CONTEXT7_API_KEY fx-CONTEXT7_API_KEY
 run omp;                   expect_env "omp gets no key outside its profile" UNIFI_NETWORK_PASSWORD "<unset>"
@@ -91,7 +95,7 @@ run claude-tsi;            expect_env "claude-tsi gets JIRA_API_TOKEN from Secre
 run claude-tsi;            expect_env "claude-tsi still gets its own config dir" CLAUDE_CONFIG_DIR "$HOME/.claude-tsi"
 run claude-tsi;            expect_env "claude-tsi gets no OPENAI_API_KEY (on demand only)" OPENAI_API_KEY "<unset>"
 # Keys no command loads by itself: each has its own profile, used explicitly with with_secrets. plain is a program
-# with no profile of its own (npm is a with-secrets command now and would bring npm's keys).
+# with no profile of its own.
 run with_secrets openai plain;          expect_env "with_secrets openai gives OPENAI_API_KEY" OPENAI_API_KEY fx-OPENAI_API_KEY
 run with_secrets openai plain;          expect_env "with_secrets openai gives nothing else" NPMJS_TOKEN "<unset>"
 run with_secrets slack plain;           expect_env "with_secrets slack gives COMMAND_RUNNER_SLACK_TOKEN" COMMAND_RUNNER_SLACK_TOKEN fx-COMMAND_RUNNER_SLACK_TOKEN
@@ -107,12 +111,13 @@ export TSI_NTFY_TOKEN=prefixed
 run claude-tsi;            expect_env "claude-tsi does not turn a TSI_ variable into the plain name" NTFY_TOKEN fx-NTFY_TOKEN
 unset TSI_NTFY_TOKEN
 
-# Every profile is either a program's (a with-secrets command in bin/, or claude's own command) or used only on
-# demand with with_secrets. A new profile for a program needs its bin/ symlink, or the program never gets its keys.
+# Every profile is either a program's (a with-secrets command in bin/, as <program> or <program>+, or claude's own
+# command) or used only on demand with with_secrets. A new profile for a program needs its bin/ symlink, or the
+# program never gets its keys.
 on_demand=(harness openai slack coolify github-mcp)
 uncovered=()
 for p in ${(f)"$(grep -o '^\[profiles\.[^].]*' "$repo_dir/secretspec/secretspec.toml" | sed 's/^\[profiles\.//')"}; do
-  [[ -e "$repo_dir/bin/$p" ]] || (( ${on_demand[(Ie)$p]} )) || uncovered+=($p)
+  [[ -e "$repo_dir/bin/$p" || -e "$repo_dir/bin/$p+" ]] || (( ${on_demand[(Ie)$p]} )) || uncovered+=($p)
 done
 (( ${#uncovered} == 0 )) && pass "every profile has a bin/ command or is an on-demand profile" \
   || fail "every profile has a bin/ command or is an on-demand profile" "no bin/ command: ${uncovered[*]}"
