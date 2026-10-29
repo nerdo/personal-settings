@@ -26,15 +26,17 @@ tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
 mkdir -p "$tmp_dir/bin"
 dump_file="$tmp_dir/child-env"
-for name in npm npx bun bunx gh jira semgrep spock-me claude omp dsh prime-directive; do
+for name in npm npx bun bunx gh jira semgrep spock-me claude omp dsh prime-directive plain; do
   print -r -- "#!/usr/bin/env zsh
 env > '$dump_file'
 [[ \${0:t} == prime-directive ]] && print 'fake corpus'
 true" > "$tmp_dir/bin/$name"
   chmod +x "$tmp_dir/bin/$name"
 done
-# The real bun parses the manifest below; recorded before the fakes shadow it on PATH.
-real_bun="$(whence -p bun)"
+# The real bun parses the manifest below; recorded before the fakes shadow it on PATH. bin/bun is this repo's
+# with-secrets command, which would run the fake, so it is skipped.
+real_bun=""
+for candidate in $(whence -pa bun); do [[ ${candidate:A} == */commands/with-secrets/with-secrets ]] || { real_bun=$candidate; break }; done
 PATH="$tmp_dir/bin:$PATH"
 # claude and claude-tsi are this repo's commands (bin/), ahead of the fake real claude, as in a shell; they load
 # their own keys. Started from an interactive shell, so they do not load one themselves.
@@ -88,12 +90,13 @@ run claude;                expect_env "claude still gets its tracing environment
 run claude-tsi;            expect_env "claude-tsi gets JIRA_API_TOKEN from SecretSpec" JIRA_API_TOKEN fx-JIRA_API_TOKEN
 run claude-tsi;            expect_env "claude-tsi still gets its own config dir" CLAUDE_CONFIG_DIR "$HOME/.claude-tsi"
 run claude-tsi;            expect_env "claude-tsi gets no OPENAI_API_KEY (on demand only)" OPENAI_API_KEY "<unset>"
-# Keys no command loads by itself: each has its own profile, used explicitly with with_secrets.
-run with_secrets openai npm;          expect_env "with_secrets openai gives OPENAI_API_KEY" OPENAI_API_KEY fx-OPENAI_API_KEY
-run with_secrets openai npm;          expect_env "with_secrets openai gives nothing else" NPMJS_TOKEN "<unset>"
-run with_secrets slack npm;           expect_env "with_secrets slack gives COMMAND_RUNNER_SLACK_TOKEN" COMMAND_RUNNER_SLACK_TOKEN fx-COMMAND_RUNNER_SLACK_TOKEN
-run with_secrets coolify npm;         expect_env "with_secrets coolify gives COOLIFY_API_KEY" COOLIFY_API_KEY fx-COOLIFY_API_KEY
-run with_secrets github-mcp npm;      expect_env "with_secrets github-mcp gives GITHUB_MCP_TOKEN" GITHUB_MCP_TOKEN fx-GITHUB_MCP_TOKEN
+# Keys no command loads by itself: each has its own profile, used explicitly with with_secrets. plain is a program
+# with no profile of its own (npm is a with-secrets command now and would bring npm's keys).
+run with_secrets openai plain;          expect_env "with_secrets openai gives OPENAI_API_KEY" OPENAI_API_KEY fx-OPENAI_API_KEY
+run with_secrets openai plain;          expect_env "with_secrets openai gives nothing else" NPMJS_TOKEN "<unset>"
+run with_secrets slack plain;           expect_env "with_secrets slack gives COMMAND_RUNNER_SLACK_TOKEN" COMMAND_RUNNER_SLACK_TOKEN fx-COMMAND_RUNNER_SLACK_TOKEN
+run with_secrets coolify plain;         expect_env "with_secrets coolify gives COOLIFY_API_KEY" COOLIFY_API_KEY fx-COOLIFY_API_KEY
+run with_secrets github-mcp plain;      expect_env "with_secrets github-mcp gives GITHUB_MCP_TOKEN" GITHUB_MCP_TOKEN fx-GITHUB_MCP_TOKEN
 run claude;                expect_env "claude gets NTFY_TOKEN from SecretSpec" NTFY_TOKEN fx-NTFY_TOKEN
 run claude;                expect_env "claude gets no OPENAI_API_KEY (work only)" OPENAI_API_KEY "<unset>"
 # A name inherited from the parent shell must not win over the profile's value.
@@ -104,31 +107,15 @@ export TSI_NTFY_TOKEN=prefixed
 run claude-tsi;            expect_env "claude-tsi does not turn a TSI_ variable into the plain name" NTFY_TOKEN fx-NTFY_TOKEN
 unset TSI_NTFY_TOKEN
 
-# A profile named after an installed program gets a wrapper with no edit to aliases.zsh. A separate fixture
-# manifest declares a made-up program's profile; the program exists only as a fake on PATH.
-print -r -- "#!/usr/bin/env zsh
-env > '$dump_file'" > "$tmp_dir/bin/fx-tool"; chmod +x "$tmp_dir/bin/fx-tool"
-auto_manifest="$tmp_dir/auto.toml"
-print -r -- '[project]
-name = "auto-wrapper-test"
-revision = "1.0"
-[profiles.fx-tool]
-FX_TOOL_KEY = { description = "x" }
-[profiles.no-such-program]
-FX_OTHER_KEY = { description = "x" }' > "$auto_manifest"
-print -r -- "FX_TOOL_KEY=fx-FX_TOOL_KEY
-FX_OTHER_KEY=fx-FX_OTHER_KEY" > "$tmp_dir/auto.env"
-auto_result="$(SECRETSPEC_MANIFEST="$auto_manifest" SECRETSPEC_PROVIDER="dotenv:$tmp_dir/auto.env" zsh -f -c "
-  source '$repo_dir/secretspec/aliases.zsh'
-  print -r -- \"fx-tool:\${+functions[fx-tool]} no-such-program:\${+functions[no-such-program]}\"
-  rm -f '$dump_file'; fx-tool >/dev/null 2>&1; rg --no-line-number '^FX_TOOL_KEY=' '$dump_file' || print -r -- 'FX_TOOL_KEY=<unset>'
-" 2>&1)"
-[[ $auto_result == *"fx-tool:1"* ]] && pass "a profile named after an installed program gets a wrapper automatically" \
-  || fail "a profile named after an installed program gets a wrapper automatically" "got: $auto_result"
-[[ $auto_result == *"FX_TOOL_KEY=fx-FX_TOOL_KEY"* ]] && pass "the automatic wrapper gives the program its profile's keys" \
-  || fail "the automatic wrapper gives the program its profile's keys" "got: $auto_result"
-[[ $auto_result == *"no-such-program:0"* ]] && pass "a profile with no program of that name gets no wrapper" \
-  || fail "a profile with no program of that name gets no wrapper" "got: $auto_result"
+# Every profile is either a program's (a with-secrets command in bin/, or claude's own command) or used only on
+# demand with with_secrets. A new profile for a program needs its bin/ symlink, or the program never gets its keys.
+on_demand=(harness openai slack coolify github-mcp)
+uncovered=()
+for p in ${(f)"$(grep -o '^\[profiles\.[^].]*' "$repo_dir/secretspec/secretspec.toml" | sed 's/^\[profiles\.//')"}; do
+  [[ -e "$repo_dir/bin/$p" ]] || (( ${on_demand[(Ie)$p]} )) || uncovered+=($p)
+done
+(( ${#uncovered} == 0 )) && pass "every profile has a bin/ command or is an on-demand profile" \
+  || fail "every profile has a bin/ command or is an on-demand profile" "no bin/ command: ${uncovered[*]}"
 
 # with_secrets with no arguments lists the profiles and their key names (never values).
 listing="$(with_secrets 2>&1)"
@@ -150,9 +137,9 @@ msg="$(with_secrets harness,nope 2>&1)"; code=$?
   || fail "an unknown profile name is an error that names it" "exit $code: $msg"
 
 # Several profiles, comma-separated, are all loaded for one program.
-run with_secrets openai,slack npm;   expect_env "with_secrets openai,slack gives OPENAI_API_KEY" OPENAI_API_KEY fx-OPENAI_API_KEY
-run with_secrets openai,slack npm;   expect_env "with_secrets openai,slack also gives COMMAND_RUNNER_SLACK_TOKEN" COMMAND_RUNNER_SLACK_TOKEN fx-COMMAND_RUNNER_SLACK_TOKEN
-run with_secrets openai,slack npm;   expect_env "with_secrets openai,slack gives nothing outside those profiles" NPMJS_TOKEN "<unset>"
+run with_secrets openai,slack plain;   expect_env "with_secrets openai,slack gives OPENAI_API_KEY" OPENAI_API_KEY fx-OPENAI_API_KEY
+run with_secrets openai,slack plain;   expect_env "with_secrets openai,slack also gives COMMAND_RUNNER_SLACK_TOKEN" COMMAND_RUNNER_SLACK_TOKEN fx-COMMAND_RUNNER_SLACK_TOKEN
+run with_secrets openai,slack plain;   expect_env "with_secrets openai,slack gives nothing outside those profiles" NPMJS_TOKEN "<unset>"
 
 # The first word after the profile is the program. A missing program gets a plain message with the right form.
 msg="$(with_secrets gh auth status 2>&1)"

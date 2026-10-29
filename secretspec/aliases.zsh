@@ -2,8 +2,10 @@
 #
 # with_secrets PROFILE[,PROFILE…] PROGRAM [ARGS…] runs PROGRAM, a program on PATH (never a shell function), with
 # those profiles' keys added to its environment; nothing else gets them. with_secrets alone lists the profiles;
-# with_secrets PROFILE[,PROFILE…] alone lists the keys a command would get, and which profile provides each. The wrappers below give each command its profile; claude,
-# claude-tsi, omp and dsh call with_secrets from their own functions in custom/900-aliases, which load later.
+# with_secrets PROFILE[,PROFILE…] alone lists the keys a command would get, and which profile provides each.
+# Programs with a profile of their own (gh, npm, npx, bun, bunx, jira, semgrep, spock-me) are commands in this repo's
+# bin/, symlinks to commands/with-secrets, so programs outside zsh get their keys too. claude and claude-tsi are
+# commands of their own; omp and dsh call with_secrets from their functions in custom/900-aliases, which load later.
 SECRETSPEC_MANIFEST="${SECRETSPEC_MANIFEST:-${${(%):-%x}:A:h}/secretspec.toml}"
 
 with_secrets() {
@@ -52,18 +54,5 @@ with_secrets() {
   "${run[@]}" "$@"
 }
 
-# Every profile named after an installed program wraps that program: `gh` runs `with_secrets gh gh`. To make a new
-# command natural, add a profile named after it to secretspec.toml and open a new shell; nothing changes here.
-# A command from this repo's bin/ (claude, claude-tsi) loads its own keys, so it is left alone.
-_ss_repo_bin="${${(%):-%x}:A:h:h}/bin"
-for _ss_profile in ${(f)"$(grep -o '^\[profiles\.[^].]*' "$SECRETSPEC_MANIFEST" 2>/dev/null | sed 's/^\[profiles\.//')"}; do
-  [[ -e "$_ss_repo_bin/$_ss_profile" ]] && continue
-  whence -p -- "$_ss_profile" >/dev/null || continue
-  functions[$_ss_profile]="with_secrets ${(q)_ss_profile} ${(q)_ss_profile} \"\$@\""
-done
-unset _ss_profile _ss_repo_bin
-
-# Programs that share another program's profile.
-npx()  { with_secrets npm npx "$@" }
-bun()  { with_secrets npm bun "$@" }
-bunx() { with_secrets npm bunx "$@" }
+# To give a new program its keys: add a profile named after it to secretspec.toml, then
+# `ln -s ../commands/with-secrets/with-secrets bin/<program>` and run zsh/bin/link-local-bin.
