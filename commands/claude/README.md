@@ -1,8 +1,9 @@
 # claude
 
 Starts Claude Code the way Dannel runs it, whoever starts it: a terminal, or a program such as T3 Code. On PATH as
-`bin/claude` and `bin/claude-tsi` (symlinks to [`claude`](claude)); `zsh/custom/010-path` puts `bin/` first, so it wins
-over the real binary in `~/.local/bin`, which it then finds itself.
+`bin/claude` and `bin/claude-tsi` (symlinks to [`claude`](claude)), and as `~/.local/bin/claude` and `claude-tsi` (from
+`zsh/bin/link-local-bin`) for programs outside zsh. It finds the real binary itself: the first `claude` on PATH that
+is not this file (on frankenstein, mise's).
 
 | Name | SecretSpec profile | `LANGFUSE_TRACING_ENVIRONMENT` | `CLAUDE_CONFIG_DIR` |
 |---|---|---|---|

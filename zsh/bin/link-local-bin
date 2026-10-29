@@ -1,21 +1,28 @@
 #!/usr/bin/env zsh
 # link-local-bin: put this repo's commands (bin/) in ~/.local/bin as symlinks, so programs that start a command
 # directly, outside zsh (Orca, systemd services), get the command: ~/.local/bin is on their PATH, this repo is not.
-# A file already there is moved to ~/.local/share/settings/local-bin-backup/<time>/, never deleted. Safe to rerun.
+# Also links the two files that put ~/.local/bin ahead of mise's shims on those programs' PATH:
+# uwsm/env.d/50-local-bin-first (desktop session) and systemd/environment.d/50-local-bin-first.conf (user services).
+# A file already where a link goes is moved to ~/.local/share/settings/local-bin-backup/<time>/, never deleted.
+# Safe to rerun: a link that is already right is left alone, and nothing is printed for it.
 # Usage: link-local-bin
 set -u
 
 repo="${0:A:h:h:h}"
-target="$HOME/.local/bin"
 backup="$HOME/.local/share/settings/local-bin-backup/$(date +%Y%m%dT%H%M%S)"
-mkdir -p "$target"
+
+place() {  # SOURCE LINK
+  [[ -L "$2" && "$(readlink "$2")" == "$1" ]] && return 0
+  mkdir -p "${2:h}"
+  if [[ -e "$2" || -L "$2" ]]; then
+    mkdir -p "$backup"
+    mv "$2" "$backup/" && print -r -- "moved $2 to $backup/"
+  fi
+  ln -s "$1" "$2" && print -r -- "linked $2 -> $1"
+}
 
 for cmd in "$repo"/bin/*(N); do
-  link="$target/${cmd:t}"
-  [[ -L "$link" && "$(readlink "$link")" == "$cmd" ]] && continue
-  if [[ -e "$link" || -L "$link" ]]; then
-    mkdir -p "$backup"
-    mv "$link" "$backup/" && print -r -- "moved $link to $backup/"
-  fi
-  ln -s "$cmd" "$link" && print -r -- "linked $link -> $cmd"
+  place "$cmd" "$HOME/.local/bin/${cmd:t}"
 done
+place "$repo/uwsm/env.d/50-local-bin-first" "$HOME/.config/uwsm/env.d/50-local-bin-first"
+place "$repo/systemd/environment.d/50-local-bin-first.conf" "$HOME/.config/environment.d/50-local-bin-first.conf"
