@@ -16,7 +16,9 @@ _SEC_MANIFEST="${${(%):-%x}:A:h}/secretspec.toml"
 
 _sec_keyring() {  # ACCOUNT -> the value, for a pipe
   if (( $+commands[security] )); then security find-generic-password -s "$SEC_KEYRING_SERVICE" -a "$1" -w 2>/dev/null
-  else secret-tool lookup service "$SEC_KEYRING_SERVICE" account "$1" 2>/dev/null; fi
+  # SecretSpec (keyring-rs) stores the account as `username`; `account` is for entries made with secret-tool by hand.
+  else secret-tool lookup service "$SEC_KEYRING_SERVICE" username "$1" 2>/dev/null \
+    || secret-tool lookup service "$SEC_KEYRING_SERVICE" account "$1" 2>/dev/null; fi
 }
 _sec_copy()  { if (( $+commands[pbcopy] )); then pbcopy; elif (( $+commands[wl-copy] )); then wl-copy; else xclip -selection clipboard; fi }
 _sec_paste() { if (( $+commands[pbpaste] )); then pbpaste; elif (( $+commands[wl-paste] )); then wl-paste -n; else xclip -selection clipboard -o; fi }
