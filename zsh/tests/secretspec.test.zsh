@@ -36,6 +36,10 @@ done
 # The real bun parses the manifest below; recorded before the fakes shadow it on PATH.
 real_bun="$(whence -p bun)"
 PATH="$tmp_dir/bin:$PATH"
+# claude and claude-tsi are this repo's commands (bin/), ahead of the fake real claude, as in a shell; they load
+# their own keys. Started from an interactive shell, so they do not load one themselves.
+PATH="$repo_dir/bin:$PATH"
+export SETTINGS_ZSHRC_LOADED=1
 
 # One fixture value per name, named after it, so a wrong mapping shows as the wrong name.
 fixture="$tmp_dir/fixture.env"
@@ -55,6 +59,8 @@ expect_env() {  # LABEL NAME EXPECTED
   [[ "$actual" == "$3" ]] && pass "$1" || fail "$1" "$2: expected '$3', child received '$actual'"
 }
 
+[[ "$(whence -w claude)" == "claude: command" ]] && pass "aliases.zsh leaves claude, a command from this repo's bin/, unwrapped" \
+  || fail "aliases.zsh leaves claude, a command from this repo's bin/, unwrapped" "got: $(whence -w claude)"
 run npm whoami;            expect_env "npm gets NPMJS_TOKEN from SecretSpec" NPMJS_TOKEN fx-NPMJS_TOKEN
 run npm whoami;            expect_env "npm gets GITHUB_TOKEN for ~/.npmrc" GITHUB_TOKEN fx-GITHUB_TOKEN
 run npm whoami;            expect_env "npm gets no key outside its profile" LANGFUSE_SECRET_KEY "<unset>"

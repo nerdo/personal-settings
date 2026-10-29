@@ -54,10 +54,14 @@ with_secrets() {
 
 # Every profile named after an installed program wraps that program: `gh` runs `with_secrets gh gh`. To make a new
 # command natural, add a profile named after it to secretspec.toml and open a new shell; nothing changes here.
+# A command from this repo's bin/ (claude, claude-tsi) loads its own keys, so it is left alone.
+_ss_repo_bin="${${(%):-%x}:A:h:h}/bin"
 for _ss_profile in ${(f)"$(grep -o '^\[profiles\.[^].]*' "$SECRETSPEC_MANIFEST" 2>/dev/null | sed 's/^\[profiles\.//')"}; do
-  whence -p -- "$_ss_profile" >/dev/null && functions[$_ss_profile]="with_secrets ${(q)_ss_profile} ${(q)_ss_profile} \"\$@\""
+  _ss_path="$(whence -p -- "$_ss_profile")" || continue
+  [[ "${_ss_path:h}" == "$_ss_repo_bin" ]] && continue
+  functions[$_ss_profile]="with_secrets ${(q)_ss_profile} ${(q)_ss_profile} \"\$@\""
 done
-unset _ss_profile
+unset _ss_profile _ss_path _ss_repo_bin
 
 # Programs that share another program's profile.
 npx()  { with_secrets npm npx "$@" }

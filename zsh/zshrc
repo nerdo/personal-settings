@@ -56,6 +56,10 @@ for name in "${_modules[@]}"; do
 done
 unset _zshrc_dir _custom_dir _modules _zshrc_claimed name slot f
 
+# Marks an environment as set up by this interactive shell. commands/claude/claude reads it: started without it (by a
+# program such as T3 Code), the command loads this shell first, so it runs with the same PATH and variables.
+export SETTINGS_ZSHRC_LOADED=1
+
 # -----------------------------------------------------
 # Load single customization file (if exists)
 # -----------------------------------------------------

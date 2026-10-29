@@ -81,58 +81,9 @@ _PD_CLAUDE_CEILING_BYTES=25000
 _PD_OMP_CEILING_BYTES=42000
 _PD_OMP_LINE_CEILING_BYTES=640
 _PD_CLAUDE_SUBCOMMANDS=(agents auth auto-mode doctor gateway install mcp plugin plugins project setup-token ultrareview update upgrade)
-claude() {
-  if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_CLAUDE_SUBCOMMANDS[@]}"; then
-    LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-personal}" \
-    CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}" \
-      with_secrets claude claude "$@"
-    return $?
-  fi
-  _pd_init_flags
-  local -a init_flags
-  init_flags=("${_PD_INIT_FLAGS[@]}" --host-max-bytes "$_PD_CLAUDE_CEILING_BYTES")
-  local prompt
-  prompt="$(prime-directive tools initialize "${init_flags[@]}")" || {
-    echo "claude: prime-directive tools initialize failed; aborting" >&2
-    return 1
-  }
-  if [[ -z "$prompt" ]]; then
-    echo "claude: prime-directive tools initialize returned no output; aborting" >&2
-    return 1
-  fi
-  LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-personal}" \
-  CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}" \
-    with_secrets claude claude --append-system-prompt "$prompt" "$@"
-}
-# Work-context environment for the -tsi commands: the claude-tsi SecretSpec profile holds the work keys under their
-# plain names (N8N_API_KEY, NTFY_TOKEN, OPENAI_API_KEY, …), read from OpenBao kv/dannel/tsi/…, so nothing is
-# renamed here. claude, claude-tsi, omp and dsh start their program through with_secrets
-# (../../secretspec/aliases.zsh, loaded by 150-secretspec); their profiles: claude, claude-tsi, harness, harness.
-claude-tsi() {
-  if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_CLAUDE_SUBCOMMANDS[@]}"; then
-    with_secrets claude-tsi env \
-      LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-tsi}" \
-      CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-tsi}" \
-      claude "$@"
-    return $?
-  fi
-  _pd_init_flags
-  local -a init_flags
-  init_flags=("${_PD_INIT_FLAGS[@]}" --host-max-bytes "$_PD_CLAUDE_CEILING_BYTES")
-  local prompt
-  prompt="$(prime-directive tools initialize "${init_flags[@]}")" || {
-    echo "claude-tsi: prime-directive tools initialize failed; aborting" >&2
-    return 1
-  }
-  if [[ -z "$prompt" ]]; then
-    echo "claude-tsi: prime-directive tools initialize returned no output; aborting" >&2
-    return 1
-  fi
-  with_secrets claude-tsi env \
-    LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-claude-code-tsi}" \
-    CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-tsi}" \
-    claude --append-system-prompt "$prompt" "$@"
-}
+# claude and claude-tsi are commands now, not functions: commands/claude/claude (on PATH as bin/claude and
+# bin/claude-tsi), so programs that start `claude` directly, such as T3 Code, get the same setup as this shell.
+# The command sources this file for the helpers and ceilings above. omp, dsh and the rest below stay functions.
 
 # omp (@oh-my-pi/pi-coding-agent): hide kitty from omp inside tmux so it skips the OSC 99
 # notification capability probe — under tmux its reply leaks into the pane as text and

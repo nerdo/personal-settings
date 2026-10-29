@@ -1,0 +1,91 @@
+#!/usr/bin/env zsh
+# claude: start Claude Code the way Dannel runs it, from a terminal or from a program such as T3 Code.
+#
+# On PATH as bin/claude and bin/claude-tsi (symlinks to this file); the name picks the setup:
+#   claude      SecretSpec profile claude,     LANGFUSE_TRACING_ENVIRONMENT claude-code-personal, CLAUDE_CONFIG_DIR ~/.claude
+#   claude-tsi  SecretSpec profile claude-tsi, LANGFUSE_TRACING_ENVIRONMENT claude-code-tsi,      CLAUDE_CONFIG_DIR ~/.claude-tsi
+# A caller's LANGFUSE_TRACING_ENVIRONMENT or CLAUDE_CONFIG_DIR wins over the default.
+#
+# What it does, in order:
+# 1. Outside Dannel's interactive shell (no SETTINGS_ZSHRC_LOADED, which zsh/zshrc exports), it starts one with
+#    `zsh -i` and runs itself there, so a program that starts `claude` directly gets the same PATH and variables as a
+#    terminal. A guard variable keeps this to one round even when that shell sets no marker.
+# 2. Management subcommands (`claude mcp …`, `claude plugin …`) go straight to the real binary with the profile's keys:
+#    their parsers reject --append-system-prompt.
+# 3. Otherwise it bakes the prime-directive corpus into the system prompt (`prime-directive tools initialize`, the
+#    flags and ceilings in zsh/custom/900-aliases) and fails loudly, never starting Claude with an empty prompt.
+# 4. Under the Claude Agent SDK (`--input-format stream-json`, as T3 Code runs it), the SDK's initialize control
+#    request carries its own appendSystemPrompt, and Claude Code then drops the CLI's --append-system-prompt. So the
+#    corpus is also added to that request, after the SDK's own text. Every other input line passes through untouched.
+#
+# The real binary is the first `claude` on PATH that is not this file; CLAUDE_REAL_BIN overrides it.
+set -u
+
+self="${0:A}"
+name="${0:t}"
+repo="${self:h:h:h}"
+
+if [[ -z "${SETTINGS_ZSHRC_LOADED:-}" && -z "${_SETTINGS_CLAUDE_SHELL_LOADED:-}" ]]; then
+  export _SETTINGS_CLAUDE_SHELL_LOADED=1
+  exec zsh -ic 'exec "$@"' zsh "$0" "$@"
+fi
+unset _SETTINGS_CLAUDE_SHELL_LOADED
+
+case "$name" in
+  claude-tsi) profile=claude-tsi; langfuse_env=claude-code-tsi;      config_dir="$HOME/.claude-tsi" ;;
+  *)          profile=claude;     langfuse_env=claude-code-personal; config_dir="$HOME/.claude" ;;
+esac
+
+real="${CLAUDE_REAL_BIN:-}"
+if [[ -z "$real" ]]; then
+  for dir in $path; do
+    if [[ -x "$dir/claude" && "${${:-$dir/claude}:A}" != "$self" ]]; then real="$dir/claude"; break; fi
+  done
+fi
+[[ -n "$real" ]] || { print -u2 "$name: no claude binary on PATH besides $self"; exit 127 }
+
+# The prime-directive helpers and ceilings shared with omp: _pd_is_subcommand, _pd_init_flags,
+# _PD_CLAUDE_SUBCOMMANDS, _PD_CLAUDE_CEILING_BYTES. The file only defines them.
+source "$repo/zsh/custom/900-aliases"
+
+run_real() {
+  exec secretspec -f "$repo/secretspec/secretspec.toml" run --profile "$profile" --reason "$name (settings command)" -- \
+    env LANGFUSE_TRACING_ENVIRONMENT="${LANGFUSE_TRACING_ENVIRONMENT:-$langfuse_env}" \
+    CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$config_dir}" \
+    "$real" "$@"
+}
+
+if (( $# > 0 )) && _pd_is_subcommand "$1" "${_PD_CLAUDE_SUBCOMMANDS[@]}"; then
+  run_real "$@"
+fi
+
+_pd_init_flags
+prompt="$(prime-directive tools initialize "${_PD_INIT_FLAGS[@]}" --host-max-bytes "$_PD_CLAUDE_CEILING_BYTES")" || {
+  print -u2 "$name: prime-directive tools initialize failed; aborting"
+  exit 1
+}
+[[ -n "$prompt" ]] || { print -u2 "$name: prime-directive tools initialize returned no output; aborting"; exit 1 }
+
+# Copies standard input line by line, adding the corpus to the SDK's initialize request.
+merge_initialize() {
+  local line
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    if [[ "$line" == *'"control_request"'* && "$line" == *'"subtype":"initialize"'* ]]; then
+      print -r -- "$line" | jq -c --arg corpus "$prompt" \
+        '.request.appendSystemPrompt = ([.request.appendSystemPrompt, $corpus] | map(select(. != null and . != "")) | join("\n\n"))'
+    else
+      print -r -- "$line"
+    fi
+  done
+}
+
+sdk=0
+for (( i = 1; i <= $#; i++ )); do
+  [[ "${@[i]}" == --input-format=stream-json ]] && sdk=1
+  [[ "${@[i]}" == --input-format && "${@[i+1]:-}" == stream-json ]] && sdk=1
+done
+
+if (( sdk )); then
+  run_real --append-system-prompt "$prompt" "$@" < <(merge_initialize)
+fi
+run_real --append-system-prompt "$prompt" "$@"

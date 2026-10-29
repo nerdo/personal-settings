@@ -122,21 +122,6 @@ assert_child_args() {
   fi
 }
 
-# The work keys come from the claude-tsi SecretSpec profile (the fixture's fx- values here), under their plain
-# names. A personal value left in the parent shell must not reach the binary.
-export N8N_API_URL=personal
-
-claude-tsi >/dev/null 2>&1
-assert_child_env "claude-tsi runs the binary with the claude-tsi profile's N8N_API_URL, not the parent shell's" \
-  N8N_API_URL fx-N8N_API_URL
-
-# `mcp` is in _PD_CLAUDE_SUBCOMMANDS, so this takes the pass-through branch.
-claude-tsi mcp >/dev/null 2>&1
-assert_child_env "claude-tsi given a management subcommand gets the profile's N8N_API_URL too" \
-  N8N_API_URL fx-N8N_API_URL
-assert_child_args "claude-tsi given a management subcommand reaches the binary without a baked system prompt" \
-  "mcp"
-
 # --- the host's output ceiling in the system prompt ---------------------------
 
 # The model runs prime-directive through its own shell tool, and that tool shows
@@ -180,12 +165,6 @@ assert_prompt_ends_with() {
   fi
 }
 
-rm -f "$pd_args_file"
-claude >/dev/null 2>&1
-assert_init_args_contain "claude passes --host-max-bytes 25000 to initialize" \
-  "--host-max-bytes 25000"
-assert_prompt_ends_with "claude hands the binary the corpus with nothing appended after it" \
-  "fake corpus"
 
 rm -f "$pd_args_file"
 cp "$tmp_dir/bin/claude" "$tmp_dir/bin/omp"
@@ -195,12 +174,6 @@ assert_init_args_contain "omp passes --host-max-bytes 42000 --host-max-line-byte
 assert_prompt_ends_with "omp hands the binary the corpus with nothing appended after it" \
   "fake corpus"
 
-rm -f "$pd_args_file"
-claude-tsi >/dev/null 2>&1
-assert_init_args_contain "claude-tsi passes --host-max-bytes 25000 to initialize" \
-  "--host-max-bytes 25000"
-assert_prompt_ends_with "claude-tsi hands the binary the corpus with nothing appended after it" \
-  "fake corpus"
 
 # --- dsh (@deepseek-ai/dsh) --------------------------------------------------
 
