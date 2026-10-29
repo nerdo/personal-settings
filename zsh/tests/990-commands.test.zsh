@@ -29,8 +29,9 @@ received="$(foo a b 2>&1)"
 
 # Programs that copy the shell's PATH instead of its functions (Orca runs `zsh -ilc 'printf %s "$PATH"'`) must find
 # bin/ first too, ahead of the folders mise put in front of it.
-received="${path[1]}"
-[[ "$received" == "$tmp_dir/repo/bin" ]] && pass "bin/ is the first PATH entry once the shell has loaded" \
+# Compared as real paths: macOS's temp folder sits behind a symlink (/var -> /private/var).
+received="${path[1]:A}"
+[[ "$received" == "${tmp_dir:A}/repo/bin" ]] && pass "bin/ is the first PATH entry once the shell has loaded" \
   || fail "bin/ is the first PATH entry once the shell has loaded" "first PATH entry is '$received'"
 
 if (( failures == 0 )); then print -r -- "all assertions passed"; exit 0; fi

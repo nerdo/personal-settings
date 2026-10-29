@@ -37,12 +37,13 @@ print -r -- "GITHUB_TOKEN=fx-GITHUB_TOKEN
 NPMJS_TOKEN=fx-NPMJS_TOKEN
 FONTAWESOME_TOKEN=fx-FONTAWESOME_TOKEN" > "$fixture"
 
-# SecretSpec's own folder (Homebrew's on macOS), after the fakes.
-secretspec_dir="$(whence -p secretspec)"; secretspec_dir="${secretspec_dir:h}"
+# SecretSpec alone in a folder of its own, after the fakes: its real folder (Homebrew's on macOS) can hold a real gh.
+secretspec_dir="$tmp_dir/secretspec-only"
+mkdir -p "$secretspec_dir" && ln -s "$(whence -p secretspec)" "$secretspec_dir/secretspec"
 
 # Starts NAME the way a systemd service such as Orca does: a bare environment, no zsh, bin/ first.
 as_program() {
-  env -i HOME="$fake_home" PATH="$repo_dir/bin:$tmp_dir/real:$secretspec_dir:/usr/local/bin:/usr/bin:/bin" \
+  env -i HOME="$fake_home" PATH="$repo_dir/bin:$tmp_dir/real:$secretspec_dir:/usr/bin:/bin" \
     SECRETSPEC_PROVIDER="dotenv:$fixture" ${FAKE_EXIT:+FAKE_EXIT=$FAKE_EXIT} "$@" 2>&1
 }
 
