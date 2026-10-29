@@ -61,6 +61,11 @@ expect_env() {  # LABEL NAME EXPECTED
 
 [[ "$(whence -w claude)" == "claude: command" ]] && pass "aliases.zsh leaves claude, a command from this repo's bin/, unwrapped" \
   || fail "aliases.zsh leaves claude, a command from this repo's bin/, unwrapped" "got: $(whence -w claude)"
+# mise, volta and bun put their folders ahead of bin/ after 010-path: the skip must not depend on PATH order.
+( PATH="$tmp_dir/bin:$PATH"; unfunction claude 2>/dev/null; source "$repo_dir/secretspec/aliases.zsh"
+  [[ "$(whence -w claude)" == "claude: command" ]] ) \
+  && pass "aliases.zsh leaves claude unwrapped when another claude is ahead of bin/ on PATH" \
+  || fail "aliases.zsh leaves claude unwrapped when another claude is ahead of bin/ on PATH" "claude was wrapped"
 run npm whoami;            expect_env "npm gets NPMJS_TOKEN from SecretSpec" NPMJS_TOKEN fx-NPMJS_TOKEN
 run npm whoami;            expect_env "npm gets GITHUB_TOKEN for ~/.npmrc" GITHUB_TOKEN fx-GITHUB_TOKEN
 run npm whoami;            expect_env "npm gets no key outside its profile" LANGFUSE_SECRET_KEY "<unset>"
