@@ -2,7 +2,11 @@
 # 010-path puts bin/ first, but tools set up later (mise, volta, bun) put their own folders ahead of it, and mise
 # does so again at every prompt. A function per command, running it by its full path, wins regardless.
 # Programs that start a command directly (T3 Code) use its full path: <repo>/bin/<name>.
-for _cmd in "${${(%):-%x}:A:h:h:h}"/bin/*(N-*); do
+_cmd_bin="${${(%):-%x}:A:h:h:h}/bin"
+for _cmd in "$_cmd_bin"/*(N-*); do
   functions[${_cmd:t}]="${(q)_cmd} \"\$@\""
 done
-unset _cmd
+# Programs that copy this shell's PATH instead of its functions, such as Orca (`zsh -ilc 'printf %s "$PATH"'`, no
+# prompt, so mise's prompt hook never runs), get bin/ first as well.
+path=("$_cmd_bin" ${path:#$_cmd_bin})
+unset _cmd _cmd_bin

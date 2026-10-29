@@ -27,5 +27,11 @@ received="$(foo a b 2>&1)"
 [[ "$received" == "repo foo: a b" ]] && pass "a command in bin/ runs, with its arguments, even when PATH finds another first" \
   || fail "a command in bin/ runs, with its arguments, even when PATH finds another first" "got '$received'"
 
+# Programs that copy the shell's PATH instead of its functions (Orca runs `zsh -ilc 'printf %s "$PATH"'`) must find
+# bin/ first too, ahead of the folders mise put in front of it.
+received="${path[1]}"
+[[ "$received" == "$tmp_dir/repo/bin" ]] && pass "bin/ is the first PATH entry once the shell has loaded" \
+  || fail "bin/ is the first PATH entry once the shell has loaded" "first PATH entry is '$received'"
+
 if (( failures == 0 )); then print -r -- "all assertions passed"; exit 0; fi
 print -r -- "$failures assertion(s) failed"; exit 1
