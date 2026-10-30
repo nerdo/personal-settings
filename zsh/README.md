@@ -142,3 +142,9 @@ first file found wins:
 Nothing is downloaded at shell start: a theme can run commands, and one taken
 from a moving branch is a prompt nobody chose. `ohmyposh/1_shell.omp.json` is a
 copy of relentless's ml4w file (sha256 `bb9bfe50…`, read 2026-10-29).
+
+The prompt needs the `oh-my-posh` program; without it the shell skips the
+prompt with no message. On Linux, `zsh/bin/install-oh-my-posh` installs the
+release it pins (v31.9.1, sha256-checked) at `~/.local/bin/oh-my-posh`, where
+relentless keeps its own copy. Where `oh-my-posh` is already on PATH it does
+nothing. macOS takes it from Homebrew.

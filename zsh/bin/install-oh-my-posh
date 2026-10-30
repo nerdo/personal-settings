@@ -1,0 +1,42 @@
+#!/usr/bin/env zsh
+# install-oh-my-posh: the oh-my-posh release pinned below, as ~/.local/bin/oh-my-posh, for the prompt in
+# zsh/custom/020-customization. Linux only: macOS takes it from Homebrew (`brew install oh-my-posh`).
+#
+# Where oh-my-posh is already on PATH (relentless's ~/.local/bin copy, Homebrew's on the Mac), it does nothing.
+# The download is checked against the sha256 pinned here, so a changed file is refused rather than installed. The
+# digests are the release's checksums.txt, matched against the downloaded binaries on 2026-10-29. To move to a new
+# release, change all three values together from that release's checksums.txt.
+# Usage: install-oh-my-posh
+set -u
+
+version=v31.9.1
+sha256_amd64=574074a4e84797180e0bda0d133da5f01fbda89ecdb450134c7e566b9a389212
+sha256_arm64=a04e7aed0d233ac861161c0f3d4d70912b0747764fd5b10f6bd19c0b6510eb49
+
+whence -p oh-my-posh >/dev/null && exit 0
+
+if [[ "$(uname -s)" != Linux ]]; then
+  print -ru2 -- "install-oh-my-posh: Linux only; on macOS run: brew install oh-my-posh"
+  exit 1
+fi
+case "$(uname -m)" in
+  x86_64)        arch=amd64; expected=$sha256_amd64 ;;
+  aarch64|arm64) arch=arm64; expected=$sha256_arm64 ;;
+  *) print -ru2 -- "install-oh-my-posh: no pinned release for $(uname -m)"; exit 1 ;;
+esac
+
+target="$HOME/.local/bin/oh-my-posh"
+download="$(mktemp)"
+trap 'rm -f "$download"' EXIT
+
+curl -fsSL -o "$download" \
+  "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/$version/posh-linux-$arch" || exit 1
+received="$(sha256sum "$download")"
+received="${received%% *}"
+if [[ "$received" != "$expected" ]]; then
+  print -ru2 -- "install-oh-my-posh: sha256 $received is not the pinned $expected; nothing installed"
+  exit 1
+fi
+
+mkdir -p "${target:h}"
+install -m 755 "$download" "$target" && print -r -- "installed oh-my-posh $version at $target"
