@@ -132,6 +132,13 @@ real dotfiles.
 
 ## oh-my-posh theme
 
-The `POSH` variable in `custom/020-customization` controls the prompt theme. If
-the theme isn't found locally or in system paths, it is auto-downloaded from the
-oh-my-posh built-in themes.
+The `POSH` variable in `custom/020-customization` controls the prompt theme. The
+first file found wins:
+
+1. `~/.config/ohmyposh/<POSH>.toml` or `<POSH>.omp.json` (relentless: ml4w's folder)
+2. the system themes folder (`/usr/share/oh-my-posh/themes`, or Homebrew's on macOS)
+3. this repo's `ohmyposh/<POSH>.omp.json` (frankenstein)
+
+Nothing is downloaded at shell start: a theme can run commands, and one taken
+from a moving branch is a prompt nobody chose. `ohmyposh/1_shell.omp.json` is a
+copy of relentless's ml4w file (sha256 `bb9bfe50…`, read 2026-10-29).

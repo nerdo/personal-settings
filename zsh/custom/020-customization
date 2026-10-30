@@ -92,17 +92,12 @@ if command -v oh-my-posh &>/dev/null; then
         _posh_config="$HOME/.config/ohmyposh/${POSH}.omp.json"
     elif [[ -n "$_posh_themes" && -f "${_posh_themes}/${POSH}.omp.json" ]]; then
         _posh_config="${_posh_themes}/${POSH}.omp.json"
+    elif [[ -f "${${(%):-%x}:A:h:h:h}/ohmyposh/${POSH}.omp.json" ]]; then
+        # This repo's copy, for a machine with no theme of its own (frankenstein). Never fetched at shell start: a theme
+        # can run commands, and one from a moving branch is a prompt nobody chose.
+        _posh_config="${${(%):-%x}:A:h:h:h}/ohmyposh/${POSH}.omp.json"
     else
-        # Auto-download from oh-my-posh built-in themes
-        mkdir -p "$HOME/.config/ohmyposh"
-        local _url="https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/${POSH}.omp.json"
-        local _dest="$HOME/.config/ohmyposh/${POSH}.omp.json"
-        if command -v curl &>/dev/null; then
-            curl -fsSL "$_url" -o "$_dest" 2>/dev/null
-        elif command -v wget &>/dev/null; then
-            wget -qO "$_dest" "$_url" 2>/dev/null
-        fi
-        [[ -s "$_dest" ]] && _posh_config="$_dest" || echo "oh-my-posh: theme '${POSH}' not found"
+        echo "oh-my-posh: theme '${POSH}' not found in ~/.config/ohmyposh or this repo's ohmyposh/"
     fi
 
     if [[ -n "$_posh_config" ]]; then
