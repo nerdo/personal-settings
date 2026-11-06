@@ -9,7 +9,7 @@
           "foreground": "#ffbebc",
           "leading_diamond": "<#ff70a6> \ue200 </>",
           "style": "diamond",
-          "template": "{{ .UserName }}<#ffffff>@</><{{ index (list \"#ff9e3d\" \"#ffe600\" \"#b4f000\" \"#2fd12f\" \"#00d6a8\" \"#4d8dff\" \"#6b6bff\" \"#ff4d4d\" \"#b08a50\" \"#7fa3a3\") (mod (atoi (adler32sum .HostName)) 10) }}><b>{{ .HostName }}</b></> <#ffffff>on</>",
+          "template": "<#111111,{{ index (list \"#ff9e3d\" \"#ffe600\" \"#b4f000\" \"#2fd12f\" \"#00d6a8\" \"#4d8dff\" \"#6b6bff\" \"#ff4d4d\" \"#b08a50\" \"#7fa3a3\") (mod (atoi (adler32sum .HostName)) 10) }}><b> {{ .UserName }}@{{ .HostName }} </b></><#ffffff> on</>",
           "type": "session"
         },
         {
