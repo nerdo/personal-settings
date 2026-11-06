@@ -8,7 +8,7 @@
         {
           "foreground": "#ffbebc",
           "style": "diamond",
-          "template": "<#111111,{{ index (list \"#ff9e3d\" \"#ffe600\" \"#b4f000\" \"#2fd12f\" \"#00d6a8\" \"#4d8dff\" \"#6b6bff\" \"#ff4d4d\" \"#b08a50\" \"#7fa3a3\") (mod (atoi (adler32sum .HostName)) 10) }}><b> {{ .UserName }}@{{ .HostName }} </b></><#ffffff> on</>",
+          "template": "<#111111,{{ index (list \"#ff9e3d\" \"#ffe600\" \"#b4f000\" \"#2fd12f\" \"#00d6a8\" \"#4d8dff\" \"#6b6bff\" \"#ff4d4d\" \"#b08a50\" \"#7fa3a3\") (mod (atoi (adler32sum (printf \"%s@%s\" .UserName .HostName))) 10) }}><b> {{ .UserName }}@{{ .HostName }} </b></><#ffffff> on</>",
           "type": "session"
         },
         {

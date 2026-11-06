@@ -21,10 +21,12 @@ posh="$(command -v oh-my-posh)"
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
 
+login_user=ada
+
 # The prompt as oh-my-posh draws it for a given theme file. env -i because a running oh-my-posh shell exports
 # POSH_SESSION_ID, and with it oh-my-posh reads that session's cached config instead of --config.
 render() {
-  ( cd "$work" && env -i HOME="$work" USER=ada PATH=/usr/bin:/bin TERM=xterm-256color \
+  ( cd "$work" && env -i HOME="$work" USER="$login_user" PATH=/usr/bin:/bin TERM=xterm-256color \
     "$posh" print primary --config "$1" --shell zsh )
 }
 
@@ -55,8 +57,8 @@ host_color() { last_color_before_host "$1" 48 }
 host_text_color() { last_color_before_host "$1" 38 }
 
 assert_two_known_machines_differ() {
-  local statement="relentless and frankenstein are drawn on different background colors"
-  local relentless frankenstein
+  local statement="nerdo on relentless and nerdo on frankenstein are drawn on different background colors"
+  local login_user=nerdo relentless frankenstein
   relentless="$(host_color relentless)"; frankenstein="$(host_color frankenstein)"
 
   if [[ -n "$relentless" && "$relentless" != "$frankenstein" ]]; then
@@ -159,7 +161,20 @@ assert_prompt_opens_with_the_user_at_host_block() {
   fi
 }
 
+assert_two_logins_on_one_machine_differ() {
+  local statement="nerdo and root on relentless are drawn on different background colors"
+  local nerdo root
+  nerdo="$(login_user=nerdo host_color relentless)"; root="$(login_user=root host_color relentless)"
+
+  if [[ -n "$nerdo" && "$nerdo" != "$root" ]]; then
+    pass "$statement"
+  else
+    fail "$statement" "nerdo: ${(qqq)nerdo}, root: ${(qqq)root}"
+  fi
+}
+
 assert_prompt_names_this_machine
+assert_two_logins_on_one_machine_differ
 assert_prompt_opens_with_the_user_at_host_block
 assert_text_is_readable_on_every_background
 assert_host_color_stands_apart_from_the_prompt

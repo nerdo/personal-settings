@@ -144,9 +144,9 @@ from a moving branch is a prompt nobody chose. `ohmyposh/1_shell.omp.json` is a
 copy of relentless's ml4w file (sha256 `bb9bfe50…`, read 2026-10-29), plus the
 host name after the user name.
 
-`user@host` sits on a background color that comes from the host name itself: a
-hash of the name picks one of 10 colors in the theme, so a machine needs no setup
-and keeps its color. Two machines can land on the same color.
+`user@host` sits on a background color that comes from `user@host` itself: a hash
+of it picks one of 10 colors in the theme, so a login needs no setup and keeps its
+color. Two logins can land on the same color.
 
 A new shell repairs item 1 by itself. When `~/.config/ohmyposh/1_shell.omp.json`
 is a regular file, the shell runs `zsh/bin/link-ohmyposh-theme`, which replaces
