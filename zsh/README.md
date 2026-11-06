@@ -141,7 +141,12 @@ first file found wins:
 
 Nothing is downloaded at shell start: a theme can run commands, and one taken
 from a moving branch is a prompt nobody chose. `ohmyposh/1_shell.omp.json` is a
-copy of relentless's ml4w file (sha256 `bb9bfe50…`, read 2026-10-29).
+copy of relentless's ml4w file (sha256 `bb9bfe50…`, read 2026-10-29), plus the
+host name after the user name.
+
+The host name's color comes from the host name itself: a hash of the name picks
+one of 10 colors in the theme, so a machine needs no setup and keeps its color.
+Two machines can land on the same color.
 
 The prompt needs the `oh-my-posh` program; without it the shell skips the
 prompt with no message. On Linux, `zsh/bin/install-oh-my-posh` installs the
