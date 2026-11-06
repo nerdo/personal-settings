@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+# github-ssh-load: put Dannel's GitHub key (OpenBao kv/dannel/github/ssh) into this account's ssh-agent, without writing
+# the private key to disk. ~/.ssh/config runs it from `Match host github.com exec`, so it runs on every GitHub
+# connection and asks OpenBao only when the agent does not hold the key.
+# Exit 0: the agent holds the key, and the Match block applies. Otherwise the block does not apply, and ssh falls back
+# to whatever else ~/.ssh/config says (1Password). Runbook: strflt-system-administration runbooks/github-ssh-from-vault.md
+exec </dev/null
+export SSH_AUTH_SOCK=/run/user/$UID/ssh-agent.socket
+pub=$HOME/.ssh/id_ed25519_github.pub
+item=github/ssh
+source ${0:A:h}/../secretspec/sec.zsh
+
+fp() { ssh-keygen -lf "$pub" 2>/dev/null | awk '{print $2}' }
+if [[ -s $pub && -n $(fp) ]] && ssh-add -l 2>/dev/null | grep -qF -- "$(fp)"; then
+  exit 0
+fi
+sec get $item public_key > "$pub.tmp" && mv "$pub.tmp" "$pub" && chmod 644 "$pub" || {
+  print -u2 "github-ssh-load: could not read kv/dannel/$item public_key"; rm -f "$pub.tmp"; exit 1; }
+{ sec get $item private_key; print } | ssh-add -q -t 8h - 2>/dev/null || {
+  print -u2 "github-ssh-load: could not load kv/dannel/$item into $SSH_AUTH_SOCK"; exit 1; }
+ssh-add -l 2>/dev/null | grep -qF -- "$(fp)"
