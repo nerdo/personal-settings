@@ -93,7 +93,7 @@ assert_a_machine_keeps_its_color() {
 }
 
 # The name has to stand out from the prompt around it. 80 is the distance in RGB between two colors below which they
-# read as shades of one color next to each other, as #ff7ad9 does beside the prompt's #ff70a6. The folder this renders
+# read as shades of one color next to each other, as #ff7ad9 does beside the path's #ffafd2. The folder this renders
 # in is not a git repo, so the git branch's color is not among the ones compared.
 assert_host_color_stands_apart_from_the_prompt() {
   local statement="a host's background is at least 80 (RGB distance) from every other color in the prompt"
@@ -146,7 +146,21 @@ assert_text_is_readable_on_every_background() {
   fi
 }
 
+assert_prompt_opens_with_the_user_at_host_block() {
+  setopt local_options extended_glob
+  local statement="the prompt's first characters, after spaces, are user@host"
+  local actual; actual="$(visible_text "$(render "$theme")")"
+  actual="${actual%%$'\n'*}"
+
+  if [[ "$actual" == [[:space:]]#ada@* ]]; then
+    pass "$statement"
+  else
+    fail "$statement" "first line: ${(qqq)actual}"
+  fi
+}
+
 assert_prompt_names_this_machine
+assert_prompt_opens_with_the_user_at_host_block
 assert_text_is_readable_on_every_background
 assert_host_color_stands_apart_from_the_prompt
 assert_a_machine_keeps_its_color
