@@ -1,0 +1,25 @@
+#!/usr/bin/env zsh
+# link-ohmyposh-theme: make ~/.config/ohmyposh/1_shell.omp.json a link to this repo's theme, for a machine that keeps a
+# theme there and so would never see the repo's (relentless: ml4w's folder). The file that was there is kept beside the
+# link as 1_shell.omp.json.before-link.*.
+# An ml4w update can rewrite that folder and take the link with it; run this again afterwards.
+# Safe to rerun: a link that is already right is left alone, and nothing is printed for it.
+# Usage: link-ohmyposh-theme
+set -u
+
+theme="${0:A:h:h:h}/ohmyposh/1_shell.omp.json"
+link="$HOME/.config/ohmyposh/1_shell.omp.json"
+toml="${link:r:r}.toml"
+
+if [[ -e "$toml" ]]; then
+  print -r -- "link-ohmyposh-theme: the shell uses $toml ahead of the link. Remove $toml, then run this again." >&2
+  exit 1
+fi
+
+[[ -L "$link" && "$(readlink "$link")" == "$theme" ]] && exit 0
+
+mkdir -p "${link:h}" || exit 1
+if [[ -e "$link" || -L "$link" ]]; then
+  mv -f "$link" "$(mktemp "$link.before-link.XXXXXX")" || exit 1
+fi
+ln -s "$theme" "$link"
