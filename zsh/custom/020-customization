@@ -101,12 +101,12 @@ if command -v oh-my-posh &>/dev/null; then
         _posh_config="$HOME/.config/ohmyposh/${POSH}.toml"
     elif [[ -f "$HOME/.config/ohmyposh/${POSH}.omp.json" ]]; then
         _posh_config="$HOME/.config/ohmyposh/${POSH}.omp.json"
+    elif [[ -f "${${(%):-%x}:A:h:h:h}/ohmyposh/${POSH}.omp.json" ]]; then
+        # This repo's copy, ahead of the system themes: oh-my-posh ships its own 1_shell, which Homebrew installs. Never
+        # fetched at shell start: a theme can run commands, and one from a moving branch is a prompt nobody chose.
+        _posh_config="${${(%):-%x}:A:h:h:h}/ohmyposh/${POSH}.omp.json"
     elif [[ -n "$_posh_themes" && -f "${_posh_themes}/${POSH}.omp.json" ]]; then
         _posh_config="${_posh_themes}/${POSH}.omp.json"
-    elif [[ -f "${${(%):-%x}:A:h:h:h}/ohmyposh/${POSH}.omp.json" ]]; then
-        # This repo's copy, for a machine with no theme of its own (frankenstein). Never fetched at shell start: a theme
-        # can run commands, and one from a moving branch is a prompt nobody chose.
-        _posh_config="${${(%):-%x}:A:h:h:h}/ohmyposh/${POSH}.omp.json"
     else
         echo "oh-my-posh: theme '${POSH}' not found in ~/.config/ohmyposh or this repo's ohmyposh/"
     fi

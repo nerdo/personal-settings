@@ -183,6 +183,26 @@ assert_machine_without_a_local_theme_gets_no_folder() {
   fi
 }
 
+# The Mac's case: oh-my-posh ships its own 1_shell theme, and Homebrew installs it in its themes folder.
+assert_repo_theme_wins_over_homebrews_stock_theme() {
+  local statement="with Homebrew's stock 1_shell theme installed, the prompt uses this repo's 1_shell theme"
+  local root; root="$(new_fixture)"
+  mkdir -p "$root/brew/themes"
+  print -r -- '{}' > "$root/brew/themes/1_shell.omp.json"
+  print -r -- "#!/bin/sh
+echo '$root/brew'" > "$root/bin/brew"
+  chmod +x "$root/bin/brew"
+  local actual; actual="$(posh_config "$root")"
+  rm -rf "$root"
+
+  if [[ "$actual" == "$repo_dir/ohmyposh/1_shell.omp.json" ]]; then
+    pass "$statement"
+  else
+    fail "$statement" "got: ${(qqq)actual}"
+  fi
+}
+
+assert_repo_theme_wins_over_homebrews_stock_theme
 assert_repo_theme_is_used_without_a_local_one
 assert_nothing_is_downloaded_without_a_local_theme
 assert_ml4w_theme_becomes_a_link_to_the_repo_theme
