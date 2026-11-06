@@ -1,0 +1,2 @@
+export SURREALDB_HOME="$HOME/.surrealdb"
+export PATH="$SURREALDB_HOME:$PATH"
