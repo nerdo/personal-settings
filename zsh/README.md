@@ -148,11 +148,13 @@ host name after the user name.
 hash of the name picks one of 10 colors in the theme, so a machine needs no setup
 and keeps its color. Two machines can land on the same color.
 
-A machine that keeps its own theme under item 1 misses every change to this
-repo's. `zsh/bin/link-ohmyposh-theme` replaces that file with a link to this
-repo's theme, and keeps the old file beside the link as
-`1_shell.omp.json.before-link.*`. Relentless needs this once. Run it again after
-an ml4w update that rewrites its folder.
+A new shell repairs item 1 by itself. When `~/.config/ohmyposh/1_shell.omp.json`
+is a regular file, the shell runs `zsh/bin/link-ohmyposh-theme`, which replaces
+the file with a link to this repo's theme and keeps the old file beside the link
+as `1_shell.omp.json.before-link.*`. That shell starts on the repo's theme, so
+relentless and an ml4w update that rewrites its folder need no step. A file put
+there on purpose is replaced too: use `<POSH>.toml`, which the shell leaves alone,
+or set `ZSHRC_NO_SELF_HEAL=1`.
 
 The prompt needs the `oh-my-posh` program; without it the shell skips the
 prompt with no message. On Linux, `zsh/bin/install-oh-my-posh` installs the

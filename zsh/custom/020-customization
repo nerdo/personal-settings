@@ -84,6 +84,17 @@ if command -v oh-my-posh &>/dev/null; then
         _posh_themes="$(brew --prefix oh-my-posh 2>/dev/null)/themes"  # macOS Homebrew
     fi
 
+    # An ml4w update can leave its own theme where this repo's link was. Repairing here puts this very shell on the
+    # repo's theme. A .toml wins the lookup below, so a link beside it would change nothing. ZSHRC_NO_SELF_HEAL=1 runs
+    # ml4w as it ships, as in zshenv.
+    _posh_repo="${${(%):-%x}:A:h:h:h}"
+    if [[ -z ${ZSHRC_NO_SELF_HEAL:-} && -f "$HOME/.config/ohmyposh/1_shell.omp.json" \
+        && ! -e "$HOME/.config/ohmyposh/1_shell.toml" \
+        && ! "$HOME/.config/ohmyposh/1_shell.omp.json" -ef "$_posh_repo/ohmyposh/1_shell.omp.json" ]]; then
+        "$_posh_repo/zsh/bin/link-ohmyposh-theme"
+    fi
+    unset _posh_repo
+
     # Resolve theme config file
     _posh_config=""
     if [[ -f "$HOME/.config/ohmyposh/${POSH}.toml" ]]; then

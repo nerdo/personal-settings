@@ -126,6 +126,25 @@ while [ $# -gt 0 ]; do [ "$1" = --config ] && { echo "print -r -- POSH_CONFIG:$2
   fi
 }
 
+# A shell started from another checkout (an Orca worktree) repoints the link, and shells take turns doing so.
+assert_a_link_elsewhere_is_replaced_with_no_copy() {
+  local statement="with a link to another checkout there, it points the link here and keeps no copy"
+  local home; home="$(new_home)"
+  mkdir -p "$home/.config/ohmyposh"
+  ln -s /another/checkout/1_shell.omp.json "$home/.config/ohmyposh/1_shell.omp.json"
+  link_theme "$home" >/dev/null
+  local actual; actual="$(resolved_theme "$home")"
+  local kept=("$home/.config/ohmyposh/1_shell.omp.json.before-link."*(N))
+  rm -rf "$home"
+
+  if [[ "$actual" == "$theme" ]] && (( ${#kept} == 0 )); then
+    pass "$statement"
+  else
+    fail "$statement" "links to ${(qqq)actual}, kept ${#kept} file(s)"
+  fi
+}
+
+assert_a_link_elsewhere_is_replaced_with_no_copy
 assert_a_toml_theme_stops_it_and_says_so
 assert_a_second_run_changes_nothing
 assert_a_new_shell_starts_on_the_repo_theme

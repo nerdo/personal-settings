@@ -2,7 +2,8 @@
 # link-ohmyposh-theme: make ~/.config/ohmyposh/1_shell.omp.json a link to this repo's theme, for a machine that keeps a
 # theme there and so would never see the repo's (relentless: ml4w's folder). The file that was there is kept beside the
 # link as 1_shell.omp.json.before-link.*.
-# An ml4w update can rewrite that folder and take the link with it; run this again afterwards.
+# A new shell runs this by itself when it finds a regular file there (../custom/020-customization), so an ml4w update
+# that rewrites the folder needs no step from anyone.
 # Safe to rerun: a link that is already right is left alone, and nothing is printed for it.
 # Usage: link-ohmyposh-theme
 set -u
@@ -19,7 +20,7 @@ fi
 [[ -L "$link" && "$(readlink "$link")" == "$theme" ]] && exit 0
 
 mkdir -p "${link:h}" || exit 1
-if [[ -e "$link" || -L "$link" ]]; then
+if [[ -e "$link" && ! -L "$link" ]]; then
   mv -f "$link" "$(mktemp "$link.before-link.XXXXXX")" || exit 1
 fi
-ln -s "$theme" "$link"
+ln -sfn "$theme" "$link"
